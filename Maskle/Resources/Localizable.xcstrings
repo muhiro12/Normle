@@ -1,0 +1,153 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%lld" : {
+
+    },
+    "%lld items" : {
+
+    },
+    "Add mapping" : {
+
+    },
+    "AI response to restore" : {
+
+    },
+    "Alias" : {
+
+    },
+    "Alias: %@" : {
+
+    },
+    "Anonymize" : {
+
+    },
+    "Auto save history" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Count: %lld" : {
+
+    },
+    "Delete" : {
+
+    },
+    "Delete All" : {
+
+    },
+    "Delete all history" : {
+
+    },
+    "Delete all history?" : {
+
+    },
+    "Delete all sessions?" : {
+
+    },
+    "History" : {
+
+    },
+    "History limit" : {
+
+    },
+    "Kind" : {
+
+    },
+    "Kind: %@" : {
+
+    },
+    "Latest result" : {
+
+    },
+    "Manual mappings" : {
+
+    },
+    "Manual mappings in use" : {
+
+    },
+    "Mappings" : {
+
+    },
+    "Mappings you set here are applied when you anonymize text on the Mask screen." : {
+
+    },
+    "Mask" : {
+
+    },
+    "Mask email addresses" : {
+
+    },
+    "Mask phone numbers" : {
+
+    },
+    "Mask URLs" : {
+
+    },
+    "Masked text" : {
+
+    },
+    "Masking options" : {
+
+    },
+    "Maskle" : {
+
+    },
+    "Memo" : {
+
+    },
+    "No mappings recorded." : {
+
+    },
+    "Note" : {
+
+    },
+    "OK" : {
+
+    },
+    "Optional memo for this session" : {
+
+    },
+    "Original text" : {
+
+    },
+    "Original: %@" : {
+
+    },
+    "Paste text that includes sensitive content." : {
+
+    },
+    "Paste the AI response to convert aliases back to originals." : {
+
+    },
+    "Processed at" : {
+
+    },
+    "Remove" : {
+
+    },
+    "Restore" : {
+
+    },
+    "Restore with this session" : {
+
+    },
+    "Restored text" : {
+
+    },
+    "Saved to history" : {
+
+    },
+    "Settings" : {
+
+    },
+    "Trim history to limit" : {
+
+    },
+    "You can review this session anytime from History." : {
+
+    }
+  },
+  "version" : "1.1"
+}
