@@ -17,18 +17,17 @@ struct MaskleApp: App {
 
     private var sharedModelContainer: ModelContainer!
     private var sharedSettingsStore: SettingsStore
-    private var sharedMaskSessionStore: MaskSessionStore
     private var sharedStore: Store
 
     init() {
         sharedSettingsStore = .init()
-        sharedMaskSessionStore = .init()
         sharedStore = .init()
         sharedModelContainer = {
             do {
                 return try .init(
                     for: MaskingSession.self,
                     MappingRecord.self,
+                    ManualRule.self,
                     configurations: .init(
                         cloudKitDatabase: isICloudOn ? .automatic : .none
                     )
@@ -38,6 +37,7 @@ struct MaskleApp: App {
                 return try! .init(
                     for: MaskingSession.self,
                     MappingRecord.self,
+                    ManualRule.self,
                     configurations: .init(
                         isStoredInMemoryOnly: true
                     )
@@ -52,7 +52,6 @@ struct MaskleApp: App {
                 .id(isICloudOn)
                 .modelContainer(sharedModelContainer)
                 .environment(sharedSettingsStore)
-                .environment(sharedMaskSessionStore)
                 .environment(sharedStore)
         }
     }

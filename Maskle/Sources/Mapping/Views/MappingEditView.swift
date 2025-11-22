@@ -6,15 +6,16 @@
 //
 
 import MaskleLibrary
+import SwiftData
 import SwiftUI
 
 struct MappingEditView: View {
-    @Environment(MaskSessionStore.self)
-    private var maskSessionStore
+    @Environment(\.modelContext)
+    private var context
     @Environment(\.dismiss)
     private var dismiss
 
-    let ruleID: UUID?
+    let rule: ManualRule?
 
     @Binding var isPresented: Bool
 
@@ -47,7 +48,7 @@ struct MappingEditView: View {
                 }
                 .disabled(original.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
                             alias.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                if ruleID != nil {
+                if rule != nil {
                     Button("Delete", role: .destructive) {
                         delete()
                     }
@@ -71,21 +72,20 @@ struct MappingEditView: View {
 
 private extension MappingEditView {
     var title: String {
-        ruleID == nil ? "New Mapping" : "Edit Mapping"
+        rule == nil ? "New Mapping" : "Edit Mapping"
     }
 
     var saveTitle: String {
-        ruleID == nil ? "Create" : "Save"
+        rule == nil ? "Create" : "Save"
     }
 
     func load() {
-        guard let ruleID,
-              let rule = maskSessionStore.rule(id: ruleID) else {
+        guard let rule else {
             return
         }
         original = rule.original
         alias = rule.alias
-        kind = rule.kind
+        kind = rule.kind ?? .custom
         isEnabled = rule.isEnabled
     }
 
@@ -95,31 +95,30 @@ private extension MappingEditView {
         guard trimmedOriginal.isEmpty == false, trimmedAlias.isEmpty == false else {
             return
         }
-        if let ruleID {
-            maskSessionStore.updateRule(
-                id: ruleID,
-                original: trimmedOriginal,
-                alias: trimmedAlias,
-                kind: kind,
-                isEnabled: isEnabled
-            )
+        if let rule {
+            rule.original = trimmedOriginal
+            rule.alias = trimmedAlias
+            rule.kindID = kind.rawValue
+            rule.isEnabled = isEnabled
         } else {
-            _ = maskSessionStore.addRule(
-                original: trimmedOriginal,
-                alias: trimmedAlias,
-                kind: kind,
-                isEnabled: isEnabled
-            )
+            let newRule = ManualRule()
+            newRule.uuid = UUID()
+            newRule.original = trimmedOriginal
+            newRule.alias = trimmedAlias
+            newRule.kindID = kind.rawValue
+            newRule.createdAt = Date()
+            newRule.isEnabled = isEnabled
+            context.insert(newRule)
         }
         isPresented = false
         dismiss()
     }
 
     func delete() {
-        guard let ruleID else {
+        guard let rule else {
             return
         }
-        maskSessionStore.removeRule(id: ruleID)
+        context.delete(rule)
         isPresented = false
         dismiss()
     }

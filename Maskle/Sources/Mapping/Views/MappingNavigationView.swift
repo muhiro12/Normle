@@ -5,12 +5,18 @@
 //  Created by Hiromu Nakano on 2025/11/23.
 //
 
+import MaskleLibrary
 import SwiftUI
 
 struct MappingNavigationView: View {
+    @State private var path = NavigationPath()
+
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             MappingListView()
+                .navigationDestination(for: ManualRule.self) { rule in
+                    MappingDetailView(rule: rule)
+                }
         }
     }
 }

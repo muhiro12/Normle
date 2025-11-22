@@ -6,19 +6,30 @@
 //
 
 import MaskleLibrary
+import SwiftData
 import SwiftUI
 
 struct MappingListView: View {
-    @Environment(MaskSessionStore.self)
-    private var maskSessionStore
+    @Environment(\.modelContext)
+    private var context
 
-    @State private var path = NavigationPath()
+    @Query private var rules: [ManualRule]
     @State private var isPresentingCreate = false
+
+    init() {
+        _rules = Query(
+            FetchDescriptor(
+                sortBy: [
+                    .init(\ManualRule.createdAt, order: .reverse)
+                ]
+            )
+        )
+    }
 
     var body: some View {
         List {
-            ForEach(maskSessionStore.sortedRules) { rule in
-                NavigationLink(value: rule.id) {
+            ForEach(rules) { rule in
+                NavigationLink(value: rule) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(rule.alias.isEmpty ? "Alias not set" : rule.alias)
                             .font(.headline)
@@ -31,7 +42,7 @@ struct MappingListView: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                         HStack {
-                            Text(rule.kind.displayName)
+                            Text(rule.kind?.displayName ?? "Unknown")
                             Spacer()
                             Text(rule.createdAt.formatted(date: .abbreviated, time: .shortened))
                         }
@@ -51,13 +62,10 @@ struct MappingListView: View {
                 }
             }
         }
-        .navigationDestination(for: UUID.self) { id in
-            MappingDetailView(ruleID: id)
-        }
         .sheet(isPresented: $isPresentingCreate) {
             NavigationStack {
                 MappingEditView(
-                    ruleID: nil,
+                    rule: nil,
                     isPresented: $isPresentingCreate
                 )
             }

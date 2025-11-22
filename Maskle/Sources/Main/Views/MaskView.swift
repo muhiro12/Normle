@@ -14,21 +14,30 @@ struct MaskView: View {
     private var context
     @Environment(SettingsStore.self)
     private var settingsStore
-    @Environment(MaskSessionStore.self)
-    private var maskSessionStore
+
+    @Query private var manualRules: [ManualRule]
 
     @State private var viewModel = MaskViewModel()
     @State private var isHistorySavedMessagePresented = false
 
+    init() {
+        _manualRules = Query(
+            FetchDescriptor(
+                sortBy: [
+                    .init(\ManualRule.createdAt, order: .reverse)
+                ]
+            )
+        )
+    }
+
     var body: some View {
-        @Bindable var maskSessionStore = maskSessionStore
         List {
             Section("Original text") {
                 TextEditor(text: $viewModel.sourceText)
                     .frame(minHeight: 200)
             }
 
-            let mappingCount = maskSessionStore.manualRules.count
+            let mappingCount = manualRules.count
             if mappingCount > .zero {
                 Section("Manual mappings") {
                     HStack {
@@ -52,7 +61,7 @@ struct MaskView: View {
                     viewModel.anonymize(
                         context: context,
                         settingsStore: settingsStore,
-                        manualRules: maskSessionStore.manualRules
+                        manualRules: manualRules.map(\.maskingRule)
                     )
                     isHistorySavedMessagePresented = settingsStore.isHistoryAutoSaveEnabled
                 } label: {
