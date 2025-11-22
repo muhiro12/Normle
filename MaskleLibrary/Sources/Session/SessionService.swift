@@ -35,6 +35,32 @@ public enum SessionService {
         return session
     }
 
+    @discardableResult
+    public static func updateSession(
+        context: ModelContext,
+        session: MaskingSession,
+        maskedText: String,
+        note: String?,
+        mappings: [Mapping]
+    ) throws -> MaskingSession {
+        session.createdAt = Date()
+        session.maskedText = maskedText
+        session.note = note
+
+        session.mappings?.forEach(context.delete)
+        session.mappings = mappings.map {
+            MappingRecord.create(
+                context: context,
+                session: session,
+                mapping: $0
+            )
+        }
+
+        try context.save()
+
+        return session
+    }
+
     public static func deleteAll(
         context: ModelContext
     ) throws {

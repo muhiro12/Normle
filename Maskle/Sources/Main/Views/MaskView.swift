@@ -17,7 +17,7 @@ struct MaskView: View {
 
     @Query private var manualRules: [ManualRule]
 
-    @State private var viewModel = MaskViewModel()
+    @State private var controller = MaskingController()
     @State private var disabledRuleIDs = Set<UUID>()
 
     init() {
@@ -31,13 +31,15 @@ struct MaskView: View {
     }
 
     var body: some View {
+        @Bindable var controller = controller
+
         List {
             Section("Original text") {
-                TextEditor(text: $viewModel.sourceText)
+                TextEditor(text: $controller.sourceText)
                     .frame(minHeight: 180)
             }
 
-            if let result = viewModel.result {
+            if let result = controller.result {
                 Section("Masked text") {
                     TextEditor(text: .constant(result.maskedText))
                         .frame(minHeight: 180)
@@ -51,14 +53,15 @@ struct MaskView: View {
                 }
             }
 
-            if viewModel.result != nil {
+            if controller.result != nil {
                 Section {
                     Button {
-                        viewModel.anonymize(
+                        controller.anonymize(
                             context: context,
-                            settingsStore: settingsStore,
+                            options: maskingOptions(),
                             manualRules: activeManualRules(),
-                            shouldSaveHistory: true
+                            shouldSaveHistory: true,
+                            isHistoryAutoSaveEnabled: settingsStore.isHistoryAutoSaveEnabled
                         )
                     } label: {
                         Label("Save to history", systemImage: "tray.and.arrow.down")
@@ -95,14 +98,17 @@ struct MaskView: View {
                 }
             }
         }
-        .onChange(of: viewModel.sourceText) { _ in
+        .onChange(of: controller.sourceText) { _, _ in
             anonymizeLive()
         }
-        .onChange(of: manualRules) { _ in
+        .onChange(of: manualRules) { _, _ in
             anonymizeLive()
         }
-        .onChange(of: disabledRuleIDs) { _ in
+        .onChange(of: disabledRuleIDs) { _, _ in
             anonymizeLive()
+        }
+        .task {
+            controller.loadLatestSavedSession(context: context)
         }
     }
 }
@@ -117,15 +123,20 @@ private extension MaskView {
     }
 
     func anonymizeLive() {
-        guard viewModel.sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else {
-            viewModel.result = nil
+        guard controller.sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else {
+            controller.result = nil
             return
         }
-        viewModel.anonymize(
+        controller.anonymize(
             context: context,
-            settingsStore: settingsStore,
+            options: maskingOptions(),
             manualRules: activeManualRules(),
-            shouldSaveHistory: false
+            shouldSaveHistory: false,
+            isHistoryAutoSaveEnabled: settingsStore.isHistoryAutoSaveEnabled
+        )
+        controller.scheduleAutoSave(
+            context: context,
+            isHistoryAutoSaveEnabled: settingsStore.isHistoryAutoSaveEnabled
         )
     }
 
@@ -135,5 +146,13 @@ private extension MaskView {
         } else {
             disabledRuleIDs.insert(rule.uuid)
         }
+    }
+
+    func maskingOptions() -> MaskingOptions {
+        .init(
+            isURLMaskingEnabled: settingsStore.isURLMaskingEnabled,
+            isEmailMaskingEnabled: settingsStore.isEmailMaskingEnabled,
+            isPhoneMaskingEnabled: settingsStore.isPhoneMaskingEnabled
+        )
     }
 }
