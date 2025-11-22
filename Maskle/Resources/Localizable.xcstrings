@@ -19,9 +19,6 @@
     "Alias: %@" : {
 
     },
-    "Anonymize" : {
-
-    },
     "Auto save history" : {
 
     },
@@ -58,6 +55,9 @@
     "Enabled" : {
 
     },
+    "Enter text above to see masked output." : {
+
+    },
     "History" : {
 
     },
@@ -70,16 +70,7 @@
     "Kind: %@" : {
 
     },
-    "Latest result" : {
-
-    },
-    "Manual mappings" : {
-
-    },
     "Mapping Detail" : {
-
-    },
-    "Mapping not found" : {
 
     },
     "Mappings" : {
@@ -106,19 +97,10 @@
     "Maskle" : {
 
     },
-    "Memo" : {
+    "No manual mappings" : {
 
     },
     "No mappings recorded." : {
-
-    },
-    "Note" : {
-
-    },
-    "OK" : {
-
-    },
-    "Optional memo for this session" : {
 
     },
     "Original" : {
@@ -130,9 +112,6 @@
     "Original: %@" : {
 
     },
-    "Processed at" : {
-
-    },
     "Restore" : {
 
     },
@@ -142,7 +121,7 @@
     "Restored text" : {
 
     },
-    "Saved to history" : {
+    "Save to history" : {
 
     },
     "Settings" : {
@@ -158,9 +137,6 @@
 
     },
     "Use iCloud sync" : {
-
-    },
-    "You can review this session anytime from History." : {
 
     }
   },

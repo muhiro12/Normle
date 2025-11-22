@@ -20,7 +20,8 @@ final class MaskViewModel {
     func anonymize(
         context: ModelContext,
         settingsStore: SettingsStore,
-        manualRules: [MaskingRule]
+        manualRules: [MaskingRule],
+        shouldSaveHistory: Bool
     ) {
         let options = MaskingOptions(
             isURLMaskingEnabled: settingsStore.isURLMaskingEnabled,
@@ -34,7 +35,7 @@ final class MaskViewModel {
         )
         result = generated
 
-        guard settingsStore.isHistoryAutoSaveEnabled else {
+        guard shouldSaveHistory, settingsStore.isHistoryAutoSaveEnabled else {
             return
         }
 

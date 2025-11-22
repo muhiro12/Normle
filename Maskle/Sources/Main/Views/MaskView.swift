@@ -18,7 +18,7 @@ struct MaskView: View {
     @Query private var manualRules: [ManualRule]
 
     @State private var viewModel = MaskViewModel()
-    @State private var isHistorySavedMessagePresented = false
+    @State private var disabledRuleIDs = Set<UUID>()
 
     init() {
         _manualRules = Query(
@@ -34,99 +34,106 @@ struct MaskView: View {
         List {
             Section("Original text") {
                 TextEditor(text: $viewModel.sourceText)
-                    .frame(minHeight: 200)
-            }
-
-            let mappingCount = manualRules.count
-            if mappingCount > .zero {
-                Section("Manual mappings") {
-                    HStack {
-                        Text("Mappings")
-                        Spacer()
-                        Text("\(mappingCount)")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-
-            Section("Note") {
-                TextField(
-                    "Optional memo for this session",
-                    text: $viewModel.note
-                )
-            }
-
-            Section {
-                Button {
-                    viewModel.anonymize(
-                        context: context,
-                        settingsStore: settingsStore,
-                        manualRules: manualRules.map(\.maskingRule)
-                    )
-                    isHistorySavedMessagePresented = settingsStore.isHistoryAutoSaveEnabled
-                } label: {
-                    Label("Anonymize", systemImage: "wand.and.stars")
-                }
-                .disabled(viewModel.sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .frame(minHeight: 180)
             }
 
             if let result = viewModel.result {
-                summarySection(
-                    result: result,
-                    session: viewModel.lastSavedSession
-                )
-                maskedOutputSection(result: result)
+                Section("Masked text") {
+                    TextEditor(text: .constant(result.maskedText))
+                        .frame(minHeight: 180)
+                        .textSelection(.enabled)
+                    CopyButton(text: result.maskedText)
+                }
+            } else {
+                Section("Masked text") {
+                    Text("Enter text above to see masked output.")
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            if viewModel.result != nil {
+                Section {
+                    Button {
+                        viewModel.anonymize(
+                            context: context,
+                            settingsStore: settingsStore,
+                            manualRules: activeManualRules(),
+                            shouldSaveHistory: true
+                        )
+                    } label: {
+                        Label("Save to history", systemImage: "tray.and.arrow.down")
+                    }
+                }
             }
         }
         .navigationTitle("Mask")
-        .alert("Saved to history", isPresented: $isHistorySavedMessagePresented) {
-            Button("OK") {
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    if manualRules.isEmpty {
+                        Text("No manual mappings")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(manualRules) { rule in
+                            Button {
+                                toggleDisabled(rule: rule)
+                            } label: {
+                                HStack {
+                                    Text(rule.alias.isEmpty ? "Alias not set" : rule.alias)
+                                    Spacer()
+                                    if disabledRuleIDs.contains(rule.uuid) {
+                                        Image(systemName: "slash.circle")
+                                    } else {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    Label("Mappings", systemImage: "slider.horizontal.3")
+                }
             }
-        } message: {
-            Text("You can review this session anytime from History.")
+        }
+        .onChange(of: viewModel.sourceText) { _ in
+            anonymizeLive()
+        }
+        .onChange(of: manualRules) { _ in
+            anonymizeLive()
+        }
+        .onChange(of: disabledRuleIDs) { _ in
+            anonymizeLive()
         }
     }
 }
 
 private extension MaskView {
-    @ViewBuilder
-    func summarySection(
-        result: MaskingResult,
-        session: MaskingSession?
-    ) -> some View {
-        Section("Latest result") {
-            HStack {
-                Text("Processed at")
-                Spacer()
-                Text((session?.createdAt ?? Date()).formatted(date: .abbreviated, time: .shortened))
-                    .foregroundStyle(.secondary)
+    func activeManualRules() -> [MaskingRule] {
+        manualRules
+            .filter { rule in
+                rule.isEnabled && disabledRuleIDs.contains(rule.uuid) == false
             }
-            HStack {
-                Text("Mappings")
-                Spacer()
-                Text("\(result.mappings.count)")
-                    .foregroundStyle(.secondary)
-            }
-            if let note = session?.note?.trimmingCharacters(in: .whitespacesAndNewlines), note.isEmpty == false {
-                HStack {
-                    Text("Memo")
-                    Spacer()
-                    Text(note)
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
+            .map(\.maskingRule)
     }
 
-    @ViewBuilder
-    func maskedOutputSection(
-        result: MaskingResult
-    ) -> some View {
-        Section("Masked text") {
-            TextEditor(text: .constant(result.maskedText))
-                .frame(minHeight: 180)
-                .textSelection(.enabled)
-            CopyButton(text: result.maskedText)
+    func anonymizeLive() {
+        guard viewModel.sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else {
+            viewModel.result = nil
+            return
+        }
+        viewModel.anonymize(
+            context: context,
+            settingsStore: settingsStore,
+            manualRules: activeManualRules(),
+            shouldSaveHistory: false
+        )
+    }
+
+    func toggleDisabled(rule: ManualRule) {
+        if disabledRuleIDs.contains(rule.uuid) {
+            disabledRuleIDs.remove(rule.uuid)
+        } else {
+            disabledRuleIDs.insert(rule.uuid)
         }
     }
 }
