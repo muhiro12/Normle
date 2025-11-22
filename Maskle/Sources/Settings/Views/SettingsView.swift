@@ -42,24 +42,6 @@ struct SettingsView: View {
 
             Section("History") {
                 Toggle("Auto save history", isOn: binding(\.isHistoryAutoSaveEnabled))
-                Stepper(value: binding(\.historyLimit), in: 1...500) {
-                    HStack {
-                        Text("History limit")
-                        Spacer()
-                        Text("\(settingsStore.historyLimit) items")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                Button("Trim history to limit") {
-                    do {
-                        try SessionService.trimHistoryIfNeeded(
-                            context: context,
-                            limit: settingsStore.historyLimit
-                        )
-                    } catch {
-                        assertionFailure(error.localizedDescription)
-                    }
-                }
             }
 
             Section {
@@ -87,16 +69,6 @@ struct SettingsView: View {
             Button(role: .cancel) {
             } label: {
                 Text("Cancel")
-            }
-        }
-        .onChange(of: settingsStore.historyLimit) { _, newValue in
-            do {
-                try SessionService.trimHistoryIfNeeded(
-                    context: context,
-                    limit: newValue
-                )
-            } catch {
-                assertionFailure(error.localizedDescription)
             }
         }
     }

@@ -44,8 +44,7 @@ final class MaskViewModel {
                 context: context,
                 maskedText: generated.maskedText,
                 note: note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : note,
-                mappings: generated.mappings,
-                historyLimit: settingsStore.historyLimit
+                mappings: generated.mappings
             )
         } catch {
             assertionFailure(error.localizedDescription)

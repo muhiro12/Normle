@@ -15,7 +15,6 @@ final class SettingsStore {
         static let isEmailMaskingEnabled = "Maskle.settings.isEmailMaskingEnabled"
         static let isPhoneMaskingEnabled = "Maskle.settings.isPhoneMaskingEnabled"
         static let isHistoryAutoSaveEnabled = "Maskle.settings.isHistoryAutoSaveEnabled"
-        static let historyLimit = "Maskle.settings.historyLimit"
     }
 
     @ObservationIgnored
@@ -45,15 +44,6 @@ final class SettingsStore {
         }
     }
 
-    var historyLimit: Int {
-        didSet {
-            if historyLimit < 1 {
-                historyLimit = 1
-            }
-            save()
-        }
-    }
-
     init(
         defaults: UserDefaults = .standard
     ) {
@@ -63,9 +53,6 @@ final class SettingsStore {
         isEmailMaskingEnabled = defaults.object(forKey: Key.isEmailMaskingEnabled) as? Bool ?? true
         isPhoneMaskingEnabled = defaults.object(forKey: Key.isPhoneMaskingEnabled) as? Bool ?? true
         isHistoryAutoSaveEnabled = defaults.object(forKey: Key.isHistoryAutoSaveEnabled) as? Bool ?? true
-
-        let storedLimit = defaults.object(forKey: Key.historyLimit) as? Int ?? 50
-        historyLimit = max(storedLimit, 1)
     }
 }
 
@@ -75,6 +62,5 @@ private extension SettingsStore {
         defaults.set(isEmailMaskingEnabled, forKey: Key.isEmailMaskingEnabled)
         defaults.set(isPhoneMaskingEnabled, forKey: Key.isPhoneMaskingEnabled)
         defaults.set(isHistoryAutoSaveEnabled, forKey: Key.isHistoryAutoSaveEnabled)
-        defaults.set(historyLimit, forKey: Key.historyLimit)
     }
 }

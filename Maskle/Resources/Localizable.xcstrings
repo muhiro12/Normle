@@ -4,9 +4,6 @@
     "%lld" : {
 
     },
-    "%lld items" : {
-
-    },
     "Add" : {
 
     },
@@ -59,9 +56,6 @@
 
     },
     "History" : {
-
-    },
-    "History limit" : {
 
     },
     "Kind" : {
@@ -131,9 +125,6 @@
 
     },
     "Subscription" : {
-
-    },
-    "Trim history to limit" : {
 
     },
     "Use iCloud sync" : {
