@@ -16,7 +16,7 @@ final class RestoreViewModel {
     func restore(
         with session: MaskingSession
     ) {
-        let mappings = session.mappings?.compactMap { record in
+        let mappings: [Mapping] = session.mappings?.compactMap { record in
             guard let kind = record.kind else {
                 return nil
             }

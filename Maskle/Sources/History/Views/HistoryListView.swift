@@ -22,7 +22,7 @@ struct HistoryListView: View {
     init(
         selection: Binding<MaskingSession?> = .constant(nil)
     ) {
-        _selection = selection
+        self.selection = selection
         _sessions = Query(
             FetchDescriptor(
                 sortBy: [

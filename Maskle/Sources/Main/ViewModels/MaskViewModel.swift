@@ -5,6 +5,7 @@
 //  Created by Hiromu Nakano on 2025/11/23.
 //
 
+import Foundation
 import MaskleLibrary
 import Observation
 import SwiftData

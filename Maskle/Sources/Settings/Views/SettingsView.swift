@@ -20,14 +20,14 @@ struct SettingsView: View {
     var body: some View {
         List {
             Section("Masking options") {
-                Toggle("Mask URLs", isOn: $settingsStore.isURLMaskingEnabled)
-                Toggle("Mask email addresses", isOn: $settingsStore.isEmailMaskingEnabled)
-                Toggle("Mask phone numbers", isOn: $settingsStore.isPhoneMaskingEnabled)
+                Toggle("Mask URLs", isOn: binding(\.isURLMaskingEnabled))
+                Toggle("Mask email addresses", isOn: binding(\.isEmailMaskingEnabled))
+                Toggle("Mask phone numbers", isOn: binding(\.isPhoneMaskingEnabled))
             }
 
             Section("History") {
-                Toggle("Auto save history", isOn: $settingsStore.isHistoryAutoSaveEnabled)
-                Stepper(value: $settingsStore.historyLimit, in: 1...500) {
+                Toggle("Auto save history", isOn: binding(\.isHistoryAutoSaveEnabled))
+                Stepper(value: binding(\.historyLimit), in: 1...500) {
                     HStack {
                         Text("History limit")
                         Spacer()
@@ -84,5 +84,20 @@ struct SettingsView: View {
                 assertionFailure(error.localizedDescription)
             }
         }
+    }
+}
+
+private extension SettingsView {
+    func binding<Value>(
+        _ keyPath: ReferenceWritableKeyPath<SettingsStore, Value>
+    ) -> Binding<Value> {
+        .init(
+            get: {
+                settingsStore[keyPath: keyPath]
+            },
+            set: {
+                settingsStore[keyPath: keyPath] = $0
+            }
+        )
     }
 }
