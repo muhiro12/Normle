@@ -7,7 +7,7 @@
     "%lld items" : {
 
     },
-    "Add mapping" : {
+    "Add" : {
 
     },
     "AI response to restore" : {
@@ -31,6 +31,9 @@
     "Count: %lld" : {
 
     },
+    "Created at" : {
+
+    },
     "Delete" : {
 
     },
@@ -44,6 +47,9 @@
 
     },
     "Delete all sessions?" : {
+
+    },
+    "Edit" : {
 
     },
     "History" : {
@@ -64,10 +70,13 @@
     "Manual mappings" : {
 
     },
-    "Mappings" : {
+    "Mapping Detail" : {
 
     },
-    "Mappings you set here are applied when you anonymize text on the Mask screen." : {
+    "Mapping not found" : {
+
+    },
+    "Mappings" : {
 
     },
     "Mask" : {
@@ -106,6 +115,9 @@
     "Optional memo for this session" : {
 
     },
+    "Original" : {
+
+    },
     "Original text" : {
 
     },
@@ -113,9 +125,6 @@
 
     },
     "Processed at" : {
-
-    },
-    "Remove" : {
 
     },
     "Restore" : {

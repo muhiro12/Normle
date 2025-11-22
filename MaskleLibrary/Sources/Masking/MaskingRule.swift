@@ -12,16 +12,19 @@ public struct MaskingRule: Identifiable, Equatable {
     public var original: String
     public var alias: String
     public var kind: MappingKind
+    public var createdAt: Date
 
     public init(
         id: UUID = .init(),
         original: String,
         alias: String,
-        kind: MappingKind
+        kind: MappingKind,
+        createdAt: Date = .now
     ) {
         self.id = id
         self.original = original
         self.alias = alias
         self.kind = kind
+        self.createdAt = createdAt
     }
 }

@@ -74,11 +74,11 @@ struct SettingsView: View {
                 Text("Cancel")
             }
         }
-        .onChange(of: settingsStore.historyLimit) {
+        .onChange(of: settingsStore.historyLimit) { _, newValue in
             do {
                 try SessionService.trimHistoryIfNeeded(
                     context: context,
-                    limit: settingsStore.historyLimit
+                    limit: newValue
                 )
             } catch {
                 assertionFailure(error.localizedDescription)

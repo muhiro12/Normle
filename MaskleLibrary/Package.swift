@@ -26,6 +26,9 @@ let package = Package(
                 .product(name: "SwiftUtilities", package: "SwiftUtilities")
             ],
             path: ".",
+            exclude: [
+                "Tests"
+            ],
             sources: [
                 "Sources"
             ],
@@ -35,7 +38,11 @@ let package = Package(
         ),
         .testTarget(
             name: "MaskleLibraryTests",
-            dependencies: ["MaskleLibrary"]
+            dependencies: ["MaskleLibrary"],
+            path: "Tests",
+            exclude: [
+                "MaskleLibrary.xctestplan"
+            ]
         )
     ]
 )

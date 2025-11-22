@@ -41,9 +41,7 @@ struct ContentView: View {
                     MaskView()
                 }
             case .mappings:
-                NavigationStack {
-                    MappingView()
-                }
+                MappingNavigationView()
             case .history:
                 HistoryNavigationView()
             case .settings:
