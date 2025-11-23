@@ -44,5 +44,6 @@ let package = Package(
                 "MaskleLibrary.xctestplan"
             ]
         )
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )
