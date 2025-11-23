@@ -1,5 +1,5 @@
 //
-//  SessionService.swift
+//  MaskRecordService.swift
 //
 //
 //  Created by Hiromu Nakano on 2025/11/23.
@@ -8,52 +8,52 @@
 import Foundation
 import SwiftData
 
-public enum SessionService {
+public enum MaskRecordService {
     @discardableResult
-    public static func saveSession(
+    public static func saveRecord(
         context: ModelContext,
         maskedText: String,
         mappings _: [Mapping]
-    ) throws -> MaskingSession {
-        let session = MaskingSession.create(
+    ) throws -> MaskRecord {
+        let record = MaskRecord.create(
             context: context,
             maskedText: maskedText
         )
 
         try context.save()
 
-        return session
+        return record
     }
 
     @discardableResult
-    public static func updateSession(
+    public static func updateRecord(
         context: ModelContext,
-        session: MaskingSession,
+        record: MaskRecord,
         maskedText: String,
         mappings _: [Mapping]
-    ) throws -> MaskingSession {
-        session.update(
+    ) throws -> MaskRecord {
+        record.update(
             maskedText: maskedText
         )
 
         try context.save()
 
-        return session
+        return record
     }
 
     public static func deleteAll(
         context: ModelContext
     ) throws {
-        let descriptor = FetchDescriptor<MaskingSession>()
+        let descriptor = FetchDescriptor<MaskRecord>()
         try context.fetch(descriptor).forEach(context.delete)
         try context.save()
     }
 
     public static func delete(
         context: ModelContext,
-        session: MaskingSession
+        record: MaskRecord
     ) throws {
-        context.delete(session)
+        context.delete(record)
         try context.save()
     }
 }

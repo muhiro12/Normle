@@ -20,7 +20,7 @@ public final class MaskingController {
 
     public var sourceText = String()
     public var result: MaskingResult?
-    public var lastSavedSession: MaskingSession?
+    public var lastSavedRecord: MaskRecord?
 
     public init(
         autoSaveDelayNanoseconds: UInt64 = 2_000_000_000,
@@ -35,19 +35,19 @@ public final class MaskingController {
     }
 
     @MainActor
-    public func loadLatestSavedSession(
+    public func loadLatestSavedRecord(
         context: ModelContext
     ) {
         do {
-            var descriptor = FetchDescriptor<MaskingSession>(
+            var descriptor = FetchDescriptor<MaskRecord>(
                 sortBy: [
                     .init(\.date, order: .reverse)
                 ]
             )
             descriptor.fetchLimit = 1
-            if let session = try context.fetch(descriptor).first {
-                lastSavedSession = session
-                lastSavedMaskedTextCache = session.maskedText
+            if let record = try context.fetch(descriptor).first {
+                lastSavedRecord = record
+                lastSavedMaskedTextCache = record.maskedText
             }
         } catch {
             assertionFailure(error.localizedDescription)
@@ -120,10 +120,10 @@ public final class MaskingController {
             }
 
             if isSimilarToLastSaved(maskedText: maskedText) {
-                if let session = lastSavedSession {
+                if let record = lastSavedRecord {
                     update(
                         context: context,
-                        session: session,
+                        record: record,
                         maskedText: maskedText,
                         mappings: mappings
                     )
@@ -153,7 +153,7 @@ private extension MaskingController {
         mappings: [Mapping]
     ) {
         do {
-            lastSavedSession = try SessionService.saveSession(
+            lastSavedRecord = try MaskRecordService.saveRecord(
                 context: context,
                 maskedText: maskedText,
                 mappings: mappings
@@ -166,14 +166,14 @@ private extension MaskingController {
 
     func update(
         context: ModelContext,
-        session: MaskingSession,
+        record: MaskRecord,
         maskedText: String,
         mappings: [Mapping]
     ) {
         do {
-            lastSavedSession = try SessionService.updateSession(
+            lastSavedRecord = try MaskRecordService.updateRecord(
                 context: context,
-                session: session,
+                record: record,
                 maskedText: maskedText,
                 mappings: mappings
             )

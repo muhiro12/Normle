@@ -13,17 +13,17 @@ struct HistoryListView: View {
     @Environment(\.modelContext)
     private var context
 
-    @Query private var sessions: [MaskingSession]
+    @Query private var records: [MaskRecord]
 
     @State private var isDeleteDialogPresented = false
 
-    private var selection: Binding<MaskingSession?>
+    private var selection: Binding<MaskRecord?>
 
     init(
-        selection: Binding<MaskingSession?> = .constant(nil)
+        selection: Binding<MaskRecord?> = .constant(nil)
     ) {
         self.selection = selection
-        _sessions = Query(
+        _records = Query(
             FetchDescriptor(
                 sortBy: [
                     .init(\.date, order: .reverse)
@@ -34,20 +34,20 @@ struct HistoryListView: View {
 
     var body: some View {
         List(selection: selection) {
-            ForEach(sessions) { session in
-                NavigationLink(value: session) {
-                    HistoryRowView(session: session)
+            ForEach(records) { record in
+                NavigationLink(value: record) {
+                    HistoryRowView(record: record)
                 }
                 .swipeActions {
                     Button(role: .destructive) {
-                        delete(session: session)
+                        delete(record: record)
                     } label: {
                         Label("Delete", systemImage: "trash")
                     }
                 }
             }
             .onDelete { offsets in
-                offsets.map { sessions[$0] }.forEach(delete(session:))
+                offsets.map { records[$0] }.forEach(delete(record:))
             }
         }
         .navigationTitle("History")
@@ -58,16 +58,16 @@ struct HistoryListView: View {
                 } label: {
                     Label("Delete All", systemImage: "trash")
                 }
-                .disabled(sessions.isEmpty)
+                .disabled(records.isEmpty)
             }
         }
         .confirmationDialog(
-            "Delete all sessions?",
+            "Delete all records?",
             isPresented: $isDeleteDialogPresented
         ) {
             Button(role: .destructive) {
                 do {
-                    try SessionService.deleteAll(context: context)
+                    try MaskRecordService.deleteAll(context: context)
                 } catch {
                     assertionFailure(error.localizedDescription)
                 }
@@ -84,12 +84,12 @@ struct HistoryListView: View {
 
 private extension HistoryListView {
     func delete(
-        session: MaskingSession
+        record: MaskRecord
     ) {
         do {
-            try SessionService.delete(
+            try MaskRecordService.delete(
                 context: context,
-                session: session
+                record: record
             )
         } catch {
             assertionFailure(error.localizedDescription)

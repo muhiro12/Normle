@@ -37,7 +37,7 @@
     "Delete all history?" : {
 
     },
-    "Delete all sessions?" : {
+    "Delete all records?" : {
 
     },
     "Disabled" : {
@@ -118,7 +118,7 @@
     "Restore" : {
 
     },
-    "Restore with this session" : {
+    "Restore with this record" : {
 
     },
     "Restored text" : {

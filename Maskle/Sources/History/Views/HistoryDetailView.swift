@@ -9,14 +9,14 @@ import MaskleLibrary
 import SwiftUI
 
 struct HistoryDetailView: View {
-    let session: MaskingSession
+    let record: MaskRecord
 
     var body: some View {
         List {
             Section("Masked text") {
-                Text(session.maskedText)
+                Text(record.maskedText)
                     .textSelection(.enabled)
-                CopyButton(text: session.maskedText)
+                CopyButton(text: record.maskedText)
             }
 
             Section("Mappings") {
@@ -26,12 +26,12 @@ struct HistoryDetailView: View {
 
             Section {
                 NavigationLink {
-                    RestoreView(session: session)
+                    RestoreView(record: record)
                 } label: {
-                    Label("Restore with this session", systemImage: "arrow.uturn.backward")
+                    Label("Restore with this record", systemImage: "arrow.uturn.backward")
                 }
             }
         }
-        .navigationTitle(session.date.formatted(date: .abbreviated, time: .shortened))
+        .navigationTitle(record.date.formatted(date: .abbreviated, time: .shortened))
     }
 }

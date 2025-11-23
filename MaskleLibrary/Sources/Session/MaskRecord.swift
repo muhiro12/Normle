@@ -1,5 +1,5 @@
 //
-//  MaskingSession.swift
+//  MaskRecord.swift
 //
 //
 //  Created by Hiromu Nakano on 2025/11/23.
@@ -8,9 +8,9 @@
 import Foundation
 import SwiftData
 
-/// A persisted anonymization run with associated mapping records.
+/// A persisted mask result entry kept in history.
 @Model
-public final class MaskingSession {
+public final class MaskRecord {
     public private(set) var date = Date()
     public private(set) var maskedText = String()
 
@@ -22,15 +22,15 @@ public final class MaskingSession {
     @discardableResult
     public static func create(
         context: ModelContext,
-        maskedText: String,
-        ) -> MaskingSession {
-        let session = MaskingSession()
-        context.insert(session)
+        maskedText: String
+    ) -> MaskRecord {
+        let record = MaskRecord()
+        context.insert(record)
 
-        session.date = Date()
-        session.maskedText = maskedText
+        record.date = Date()
+        record.maskedText = maskedText
 
-        return session
+        return record
     }
 
     public func update(
@@ -41,7 +41,7 @@ public final class MaskingSession {
     }
 }
 
-public extension MaskingSession {
+public extension MaskRecord {
     var previewText: String {
         if maskedText.count > 80 {
             return "\(maskedText.prefix(80))…"
@@ -50,8 +50,8 @@ public extension MaskingSession {
     }
 }
 
-extension MaskingSession: Hashable {
-    public static func == (lhs: MaskingSession, rhs: MaskingSession) -> Bool {
+extension MaskRecord: Hashable {
+    public static func == (lhs: MaskRecord, rhs: MaskRecord) -> Bool {
         lhs.id == rhs.id
     }
 

@@ -23,7 +23,7 @@ struct MaskleApp: App {
         sharedModelContainer = {
             do {
                 return try .init(
-                    for: MaskingSession.self,
+                    for: MaskRecord.self,
                     MaskRule.self,
                     Tag.self,
                     configurations: .init(
@@ -33,7 +33,7 @@ struct MaskleApp: App {
             } catch {
                 assertionFailure(error.localizedDescription)
                 return try! .init(
-                    for: MaskingSession.self,
+                    for: MaskRecord.self,
                     MaskRule.self,
                     Tag.self,
                     configurations: .init(

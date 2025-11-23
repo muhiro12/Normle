@@ -9,7 +9,7 @@ import MaskleLibrary
 import SwiftUI
 
 struct RestoreView: View {
-    let session: MaskingSession
+    let record: MaskRecord
 
     @State private var viewModel = RestoreViewModel()
 
@@ -22,7 +22,7 @@ struct RestoreView: View {
 
             Section {
                 Button {
-                    viewModel.restore(with: session)
+                    viewModel.restore(with: record)
                 } label: {
                     Label("Restore", systemImage: "arrow.uturn.backward")
                 }

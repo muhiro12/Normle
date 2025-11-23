@@ -30,11 +30,11 @@ final class MaskingControllerTests: XCTestCase {
 
         try await Task.sleep(nanoseconds: 50_000_000)
 
-        let descriptor = FetchDescriptor<MaskingSession>()
-        let sessions = try context.fetch(descriptor)
+        let descriptor = FetchDescriptor<MaskRecord>()
+        let records = try context.fetch(descriptor)
 
-        XCTAssertEqual(sessions.count, 1)
-        XCTAssertEqual(controller.lastSavedSession, sessions.first)
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(controller.lastSavedRecord, records.first)
     }
 
     func testAutoSaveUpdatesSimilarContent() async throws {
@@ -83,10 +83,10 @@ final class MaskingControllerTests: XCTestCase {
 
         try await Task.sleep(nanoseconds: 50_000_000)
 
-        let descriptor = FetchDescriptor<MaskingSession>()
-        let sessions = try context.fetch(descriptor)
+        let descriptor = FetchDescriptor<MaskRecord>()
+        let records = try context.fetch(descriptor)
 
-        XCTAssertEqual(sessions.count, 1)
-        XCTAssertEqual(sessions.first?.maskedText, controller.result?.maskedText)
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records.first?.maskedText, controller.result?.maskedText)
     }
 }

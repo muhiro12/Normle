@@ -14,8 +14,9 @@ final class RestoreViewModel {
     var restoredText = String()
 
     func restore(
-        with _: MaskingSession
+        with record: MaskRecord
     ) {
+        _ = record
         restoredText = RestoreService.restore(
             text: sourceText,
             mappings: []

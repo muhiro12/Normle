@@ -9,16 +9,16 @@ import MaskleLibrary
 import SwiftUI
 
 struct HistoryRowView: View {
-    let session: MaskingSession
+    let record: MaskRecord
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Text(session.date.formatted(date: .abbreviated, time: .shortened))
+                Text(record.date.formatted(date: .abbreviated, time: .shortened))
                     .font(.headline)
                 Spacer()
             }
-            Text(session.previewText)
+            Text(record.previewText)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .lineLimit(2)

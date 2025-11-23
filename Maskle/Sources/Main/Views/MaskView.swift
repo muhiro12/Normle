@@ -86,7 +86,7 @@ struct MaskView: View {
             anonymizeLive()
         }
         .task {
-            controller.loadLatestSavedSession(context: context)
+            controller.loadLatestSavedRecord(context: context)
         }
         .sheet(isPresented: $isPresentingMappingCreation) {
             NavigationStack {

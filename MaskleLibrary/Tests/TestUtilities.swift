@@ -4,7 +4,7 @@ import SwiftData
 var testContext: ModelContext {
     .init(
         try! .init(
-            for: MaskingSession.self,
+            for: MaskRecord.self,
             MaskRule.self,
             Tag.self,
             configurations: .init(

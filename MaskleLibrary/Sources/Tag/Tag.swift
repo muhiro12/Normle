@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-/// A lightweight tag that annotates mask rules or sessions.
+/// A lightweight tag that annotates mask rules or records.
 @Model
 public final class Tag {
     public private(set) var name = String()

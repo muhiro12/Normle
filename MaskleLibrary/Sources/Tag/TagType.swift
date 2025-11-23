@@ -9,5 +9,5 @@ import Foundation
 
 public enum TagType: String, CaseIterable {
     case maskRule = "5f4c06c9"
-    case maskingSession = "c2b7a1e8"
+    case maskRecord = "c2b7a1e8"
 }
