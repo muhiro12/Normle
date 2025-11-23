@@ -11,15 +11,33 @@ import SwiftData
 /// A persisted mapping entry linking an original string to its alias.
 @Model
 public final class MappingRecord {
-    public var original = String()
-    public var alias = String()
-    public var kindID = String()
-    public var occurrenceCount = Int.zero
+    public private(set) var original = String()
+    public private(set) var alias = String()
+    public private(set) var kindID = String()
+    public private(set) var occurrenceCount = Int.zero
 
     @Relationship(inverse: \MaskingSession.mappings)
-    public var session: MaskingSession?
+    public private(set) var session: MaskingSession?
 
-    init() {}
+    private init() {}
+
+    @discardableResult
+    public static func create(
+        context: ModelContext,
+        session: MaskingSession,
+        mapping: Mapping
+    ) -> MappingRecord {
+        let record = MappingRecord()
+        context.insert(record)
+
+        record.original = mapping.original
+        record.alias = mapping.alias
+        record.kindID = mapping.kind.rawValue
+        record.occurrenceCount = mapping.occurrenceCount
+        record.session = session
+
+        return record
+    }
 }
 
 public extension MappingRecord {

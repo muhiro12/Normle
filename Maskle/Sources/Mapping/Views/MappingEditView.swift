@@ -112,19 +112,20 @@ private extension MappingEditView {
             return
         }
         if let rule {
-            rule.original = trimmedOriginal
-            rule.alias = trimmedAlias
-            rule.kindID = kind.rawValue
-            rule.isEnabled = isEnabled
+            rule.update(
+                original: trimmedOriginal,
+                alias: trimmedAlias,
+                kind: kind,
+                isEnabled: isEnabled
+            )
         } else {
-            let newRule = ManualRule()
-            newRule.uuid = UUID()
-            newRule.original = trimmedOriginal
-            newRule.alias = trimmedAlias
-            newRule.kindID = kind.rawValue
-            newRule.createdAt = Date()
-            newRule.isEnabled = isEnabled
-            context.insert(newRule)
+            ManualRule.create(
+                context: context,
+                original: trimmedOriginal,
+                alias: trimmedAlias,
+                kind: kind,
+                isEnabled: isEnabled
+            )
         }
         isPresented = false
         dismiss()

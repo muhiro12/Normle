@@ -16,19 +16,20 @@ public enum SessionService {
         note: String?,
         mappings: [Mapping]
     ) throws -> MaskingSession {
-        let session = MaskingSession()
-        context.insert(session)
-
-        session.createdAt = Date()
-        session.maskedText = maskedText
-        session.note = note
-        session.mappings = mappings.map {
-            MappingRecord.create(
-                context: context,
-                session: session,
-                mapping: $0
-            )
-        }
+        let session = MaskingSession.create(
+            context: context,
+            maskedText: maskedText,
+            note: note
+        )
+        session.replaceMappings(
+            with: mappings.map {
+                MappingRecord.create(
+                    context: context,
+                    session: session,
+                    mapping: $0
+                )
+            }
+        )
 
         try context.save()
 
@@ -43,18 +44,21 @@ public enum SessionService {
         note: String?,
         mappings: [Mapping]
     ) throws -> MaskingSession {
-        session.createdAt = Date()
-        session.maskedText = maskedText
-        session.note = note
+        session.update(
+            maskedText: maskedText,
+            note: note
+        )
 
         session.mappings?.forEach(context.delete)
-        session.mappings = mappings.map {
-            MappingRecord.create(
-                context: context,
-                session: session,
-                mapping: $0
-            )
-        }
+        session.replaceMappings(
+            with: mappings.map {
+                MappingRecord.create(
+                    context: context,
+                    session: session,
+                    mapping: $0
+                )
+            }
+        )
 
         try context.save()
 
@@ -79,20 +83,4 @@ public enum SessionService {
 }
 
 private extension MappingRecord {
-    static func create(
-        context: ModelContext,
-        session: MaskingSession,
-        mapping: Mapping
-    ) -> MappingRecord {
-        let record = MappingRecord()
-        context.insert(record)
-
-        record.original = mapping.original
-        record.alias = mapping.alias
-        record.kindID = mapping.kind.rawValue
-        record.occurrenceCount = mapping.occurrenceCount
-        record.session = session
-
-        return record
-    }
 }

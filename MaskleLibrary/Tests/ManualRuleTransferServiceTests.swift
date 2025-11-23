@@ -6,12 +6,13 @@ final class ManualRuleTransferServiceTests: XCTestCase {
     func testExportAndReplaceImport() throws {
         let context = try makeContext()
 
-        let rule = ManualRule()
-        rule.uuid = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
-        rule.original = "Secret"
-        rule.alias = "Alias"
-        rule.kindID = MappingKind.person.rawValue
-        context.insert(rule)
+        ManualRule.create(
+            context: context,
+            uuid: UUID(uuidString: "11111111-1111-1111-1111-111111111111")!,
+            original: "Secret",
+            alias: "Alias",
+            kind: .person
+        )
         try context.save()
 
         let data = try ManualRuleTransferService.exportData(context: context)
@@ -36,21 +37,23 @@ final class ManualRuleTransferServiceTests: XCTestCase {
         let context = try makeContext()
         let existingID = UUID(uuidString: "22222222-2222-2222-2222-222222222222")!
 
-        let existing = ManualRule()
-        existing.uuid = existingID
-        existing.original = "Old"
-        existing.alias = "OldAlias"
-        existing.kindID = MappingKind.project.rawValue
-        context.insert(existing)
+        ManualRule.create(
+            context: context,
+            uuid: existingID,
+            original: "Old",
+            alias: "OldAlias",
+            kind: .project
+        )
         try context.save()
 
         let payloadContext = try makeContext()
-        let updated = ManualRule()
-        updated.uuid = existingID
-        updated.original = "Old"
-        updated.alias = "NewAlias"
-        updated.kindID = MappingKind.project.rawValue
-        payloadContext.insert(updated)
+        ManualRule.create(
+            context: payloadContext,
+            uuid: existingID,
+            original: "Old",
+            alias: "NewAlias",
+            kind: .project
+        )
 
         let data = try ManualRuleTransferService.exportData(context: payloadContext)
 
@@ -71,21 +74,23 @@ final class ManualRuleTransferServiceTests: XCTestCase {
         let context = try makeContext()
         let duplicateID = UUID(uuidString: "33333333-3333-3333-3333-333333333333")!
 
-        let existing = ManualRule()
-        existing.uuid = duplicateID
-        existing.original = "Keep"
-        existing.alias = "KeepAlias"
-        existing.kindID = MappingKind.other.rawValue
-        context.insert(existing)
+        ManualRule.create(
+            context: context,
+            uuid: duplicateID,
+            original: "Keep",
+            alias: "KeepAlias",
+            kind: .other
+        )
         try context.save()
 
         let payloadContext = try makeContext()
-        let newRule = ManualRule()
-        newRule.uuid = duplicateID
-        newRule.original = "New"
-        newRule.alias = "NewAlias"
-        newRule.kindID = MappingKind.other.rawValue
-        payloadContext.insert(newRule)
+        ManualRule.create(
+            context: payloadContext,
+            uuid: duplicateID,
+            original: "New",
+            alias: "NewAlias",
+            kind: .other
+        )
 
         let data = try ManualRuleTransferService.exportData(context: payloadContext)
 

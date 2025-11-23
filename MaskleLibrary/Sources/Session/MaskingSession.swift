@@ -11,14 +11,45 @@ import SwiftData
 /// A persisted anonymization run with associated mapping records.
 @Model
 public final class MaskingSession {
-    public var createdAt = Date()
-    public var maskedText = String()
-    public var note: String?
+    public private(set) var createdAt = Date()
+    public private(set) var maskedText = String()
+    public private(set) var note: String?
 
     @Relationship(deleteRule: .cascade)
-    public var mappings: [MappingRecord]?
+    public private(set) var mappings: [MappingRecord]?
 
-    init() {}
+    private init() {}
+
+    @discardableResult
+    public static func create(
+        context: ModelContext,
+        maskedText: String,
+        note: String?
+    ) -> MaskingSession {
+        let session = MaskingSession()
+        context.insert(session)
+
+        session.createdAt = Date()
+        session.maskedText = maskedText
+        session.note = note
+
+        return session
+    }
+
+    public func update(
+        maskedText: String,
+        note: String?
+    ) {
+        createdAt = Date()
+        self.maskedText = maskedText
+        self.note = note
+    }
+
+    public func replaceMappings(
+        with records: [MappingRecord]
+    ) {
+        mappings = records
+    }
 }
 
 public extension MaskingSession {

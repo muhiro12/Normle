@@ -185,25 +185,27 @@ private extension ManualRuleTransferService {
         context: ModelContext,
         usePayloadUUID: Bool
     ) {
-        let rule = ManualRule()
-        context.insert(rule)
-
-        rule.uuid = usePayloadUUID ? payload.uuid : UUID()
-        rule.createdAt = payload.createdAt
-        rule.original = payload.original
-        rule.alias = payload.alias
-        rule.kindID = payload.kindID
-        rule.isEnabled = payload.isEnabled
+        ManualRule.create(
+            context: context,
+            uuid: usePayloadUUID ? payload.uuid : UUID(),
+            createdAt: payload.createdAt,
+            original: payload.original,
+            alias: payload.alias,
+            kind: MappingKind(rawValue: payload.kindID) ?? .custom,
+            isEnabled: payload.isEnabled
+        )
     }
 
     private static func apply(
         payload: Payload,
         to rule: ManualRule
     ) {
-        rule.createdAt = payload.createdAt
-        rule.original = payload.original
-        rule.alias = payload.alias
-        rule.kindID = payload.kindID
-        rule.isEnabled = payload.isEnabled
+        rule.update(
+            createdAt: payload.createdAt,
+            original: payload.original,
+            alias: payload.alias,
+            kind: MappingKind(rawValue: payload.kindID) ?? .custom,
+            isEnabled: payload.isEnabled
+        )
     }
 }

@@ -11,14 +11,53 @@ import SwiftData
 /// A persisted manual mapping rule configured by the user.
 @Model
 public final class ManualRule {
-    public var uuid = UUID()
-    public var createdAt = Date()
-    public var original = String()
-    public var alias = String()
-    public var kindID = MappingKind.custom.rawValue
-    public var isEnabled = true
+    public private(set) var uuid = UUID()
+    public private(set) var createdAt = Date()
+    public private(set) var original = String()
+    public private(set) var alias = String()
+    public private(set) var kindID = MappingKind.custom.rawValue
+    public private(set) var isEnabled = true
 
-    public init() {}
+    private init() {}
+
+    @discardableResult
+    public static func create(
+        context: ModelContext,
+        uuid: UUID = UUID(),
+        createdAt: Date = Date(),
+        original: String,
+        alias: String,
+        kind: MappingKind = .custom,
+        isEnabled: Bool = true
+    ) -> ManualRule {
+        let rule = ManualRule()
+        context.insert(rule)
+
+        rule.uuid = uuid
+        rule.createdAt = createdAt
+        rule.original = original
+        rule.alias = alias
+        rule.kindID = kind.rawValue
+        rule.isEnabled = isEnabled
+
+        return rule
+    }
+
+    public func update(
+        createdAt: Date? = nil,
+        original: String,
+        alias: String,
+        kind: MappingKind,
+        isEnabled: Bool
+    ) {
+        if let createdAt {
+            self.createdAt = createdAt
+        }
+        self.original = original
+        self.alias = alias
+        kindID = kind.rawValue
+        self.isEnabled = isEnabled
+    }
 }
 
 public extension ManualRule {
