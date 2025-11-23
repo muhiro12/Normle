@@ -22,7 +22,6 @@ public enum ManualRuleTransferService {
     }
 
     private struct Payload: Codable {
-        let uuid: UUID
         let createdAt: Date
         let original: String
         let alias: String
@@ -60,7 +59,6 @@ public extension ManualRuleTransferService {
     ) throws -> Data {
         let payloads = rules.map { rule in
             Payload(
-                uuid: rule.uuid,
                 createdAt: rule.createdAt,
                 original: rule.original,
                 alias: rule.alias,
@@ -112,26 +110,12 @@ public extension ManualRuleTransferService {
             transfer.rules.forEach { payload in
                 insert(
                     payload: payload,
-                    context: context,
-                    usePayloadUUID: true
+                    context: context
                 )
                 insertedCount += 1
             }
         case .mergeExisting:
-            let rulesByID = Dictionary(
-                uniqueKeysWithValues: existing.map { ($0.uuid, $0) }
-            )
-
             transfer.rules.forEach { payload in
-                if let match = rulesByID[payload.uuid] {
-                    apply(
-                        payload: payload,
-                        to: match
-                    )
-                    updatedCount += 1
-                    return
-                }
-
                 if let match = existing.first(where: {
                     $0.original == payload.original &&
                         $0.alias == payload.alias &&
@@ -147,19 +131,15 @@ public extension ManualRuleTransferService {
 
                 insert(
                     payload: payload,
-                    context: context,
-                    usePayloadUUID: true
+                    context: context
                 )
                 insertedCount += 1
             }
         case .appendNew:
-            let existingIDs = Set(existing.map(\.uuid))
             transfer.rules.forEach { payload in
-                let shouldReuseUUID = existingIDs.contains(payload.uuid) == false
                 insert(
                     payload: payload,
-                    context: context,
-                    usePayloadUUID: shouldReuseUUID
+                    context: context
                 )
                 insertedCount += 1
             }
@@ -182,12 +162,10 @@ public extension ManualRuleTransferService {
 private extension ManualRuleTransferService {
     private static func insert(
         payload: Payload,
-        context: ModelContext,
-        usePayloadUUID: Bool
+        context: ModelContext
     ) {
         ManualRule.create(
             context: context,
-            uuid: usePayloadUUID ? payload.uuid : UUID(),
             createdAt: payload.createdAt,
             original: payload.original,
             alias: payload.alias,

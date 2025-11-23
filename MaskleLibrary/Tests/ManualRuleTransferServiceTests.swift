@@ -8,7 +8,6 @@ final class ManualRuleTransferServiceTests: XCTestCase {
 
         ManualRule.create(
             context: context,
-            uuid: UUID(uuidString: "11111111-1111-1111-1111-111111111111")!,
             original: "Secret",
             alias: "Alias",
             kind: .person
@@ -35,11 +34,9 @@ final class ManualRuleTransferServiceTests: XCTestCase {
 
     func testMergeUpdatesExistingRule() throws {
         let context = try makeContext()
-        let existingID = UUID(uuidString: "22222222-2222-2222-2222-222222222222")!
 
         ManualRule.create(
             context: context,
-            uuid: existingID,
             original: "Old",
             alias: "OldAlias",
             kind: .project
@@ -49,7 +46,6 @@ final class ManualRuleTransferServiceTests: XCTestCase {
         let payloadContext = try makeContext()
         ManualRule.create(
             context: payloadContext,
-            uuid: existingID,
             original: "Old",
             alias: "NewAlias",
             kind: .project
@@ -72,11 +68,9 @@ final class ManualRuleTransferServiceTests: XCTestCase {
 
     func testAppendCreatesNewIDsWhenDuplicated() throws {
         let context = try makeContext()
-        let duplicateID = UUID(uuidString: "33333333-3333-3333-3333-333333333333")!
 
         ManualRule.create(
             context: context,
-            uuid: duplicateID,
             original: "Keep",
             alias: "KeepAlias",
             kind: .other
@@ -86,7 +80,6 @@ final class ManualRuleTransferServiceTests: XCTestCase {
         let payloadContext = try makeContext()
         ManualRule.create(
             context: payloadContext,
-            uuid: duplicateID,
             original: "New",
             alias: "NewAlias",
             kind: .other

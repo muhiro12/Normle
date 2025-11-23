@@ -11,7 +11,6 @@ import SwiftData
 /// A persisted manual mapping rule configured by the user.
 @Model
 public final class ManualRule {
-    public private(set) var uuid = UUID()
     public private(set) var createdAt = Date()
     public private(set) var original = String()
     public private(set) var alias = String()
@@ -23,7 +22,6 @@ public final class ManualRule {
     @discardableResult
     public static func create(
         context: ModelContext,
-        uuid: UUID = UUID(),
         createdAt: Date = Date(),
         original: String,
         alias: String,
@@ -33,7 +31,6 @@ public final class ManualRule {
         let rule = ManualRule()
         context.insert(rule)
 
-        rule.uuid = uuid
         rule.createdAt = createdAt
         rule.original = original
         rule.alias = alias
@@ -66,8 +63,9 @@ public extension ManualRule {
     }
 
     var maskingRule: MaskingRule {
-        .init(
-            id: uuid,
+        let identifier = persistentModelID.base64String
+        return .init(
+            id: identifier,
             original: original,
             alias: alias,
             kind: kind ?? .custom,
@@ -84,5 +82,14 @@ extension ManualRule: Hashable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+private extension PersistentIdentifier {
+    var base64String: String {
+        guard let data = try? JSONEncoder().encode(self) else {
+            return UUID().uuidString
+        }
+        return data.base64EncodedString()
     }
 }

@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import SwiftData
 
 public struct MaskingRule: Identifiable, Equatable {
-    public let id: UUID
+    public let id: String
     public var original: String
     public var alias: String
     public var kind: MappingKind
@@ -16,7 +17,7 @@ public struct MaskingRule: Identifiable, Equatable {
     public var isEnabled: Bool
 
     public init(
-        id: UUID = .init(),
+        id: String = UUID().uuidString,
         original: String,
         alias: String,
         kind: MappingKind,

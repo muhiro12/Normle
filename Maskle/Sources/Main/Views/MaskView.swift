@@ -24,7 +24,7 @@ struct MaskView: View {
     @Query private var manualRules: [ManualRule]
 
     @State private var controller = MaskingController()
-    @State private var disabledRuleIDs = Set<UUID>()
+    @State private var disabledRuleIDs = Set<PersistentIdentifier>()
     @State private var sourceSelection: TextSelection?
     @State private var isPresentingMappingCreation = false
     @State private var pendingOriginalForMapping = String()
@@ -62,7 +62,7 @@ struct MaskView: View {
                                 HStack {
                                     Text(rule.alias.isEmpty ? "Alias not set" : rule.alias)
                                     Spacer()
-                                    if disabledRuleIDs.contains(rule.uuid) {
+                                    if disabledRuleIDs.contains(rule.persistentModelID) {
                                         Image(systemName: "slash.circle")
                                     } else {
                                         Image(systemName: "checkmark")
@@ -136,7 +136,7 @@ private extension MaskView {
     func activeManualRules() -> [MaskingRule] {
         manualRules
             .filter { rule in
-                rule.isEnabled && disabledRuleIDs.contains(rule.uuid) == false
+                rule.isEnabled && disabledRuleIDs.contains(rule.persistentModelID) == false
             }
             .map(\.maskingRule)
     }
@@ -270,10 +270,10 @@ private extension MaskView {
     }
 
     func toggleDisabled(rule: ManualRule) {
-        if disabledRuleIDs.contains(rule.uuid) {
-            disabledRuleIDs.remove(rule.uuid)
+        if disabledRuleIDs.contains(rule.persistentModelID) {
+            disabledRuleIDs.remove(rule.persistentModelID)
         } else {
-            disabledRuleIDs.insert(rule.uuid)
+            disabledRuleIDs.insert(rule.persistentModelID)
         }
     }
 
