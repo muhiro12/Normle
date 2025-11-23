@@ -33,40 +33,52 @@ struct MaskView: View {
     var body: some View {
         @Bindable var controller = controller
 
-        List {
-            Section("Original text") {
-                TextEditor(text: $controller.sourceText)
-                    .frame(minHeight: 180)
-            }
+        GeometryReader { proxy in
+            ScrollView {
+                VStack(spacing: 16) {
+                    SectionContainer(title: "Original text") {
+                        TextEditor(text: $controller.sourceText)
+                            .frame(
+                                minHeight: 180,
+                                maxHeight: max(220, proxy.size.height * 0.6)
+                            )
+                    }
 
-            if let result = controller.result {
-                Section("Masked text") {
-                    TextEditor(text: .constant(result.maskedText))
-                        .frame(minHeight: 180)
-                        .textSelection(.enabled)
-                    CopyButton(text: result.maskedText)
-                }
-            } else {
-                Section("Masked text") {
-                    Text("Enter text above to see masked output.")
-                        .foregroundStyle(.secondary)
-                }
-            }
+                    if let result = controller.result {
+                        SectionContainer(title: "Masked text") {
+                            TextEditor(text: .constant(result.maskedText))
+                                .frame(
+                                    minHeight: 180,
+                                    maxHeight: max(220, proxy.size.height * 0.6)
+                                )
+                                .textSelection(.enabled)
+                            CopyButton(text: result.maskedText)
+                        }
+                    } else {
+                        SectionContainer(title: "Masked text") {
+                            Text("Enter text above to see masked output.")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
 
-            if controller.result != nil {
-                Section {
-                    Button {
-                        controller.anonymize(
-                            context: context,
-                            options: maskingOptions(),
-                            manualRules: activeManualRules(),
-                            shouldSaveHistory: true,
-                            isHistoryAutoSaveEnabled: settingsStore.isHistoryAutoSaveEnabled
-                        )
-                    } label: {
-                        Label("Save to history", systemImage: "tray.and.arrow.down")
+                    if controller.result != nil {
+                        SectionContainer {
+                            Button {
+                                controller.anonymize(
+                                    context: context,
+                                    options: maskingOptions(),
+                                    manualRules: activeManualRules(),
+                                    shouldSaveHistory: true,
+                                    isHistoryAutoSaveEnabled: settingsStore.isHistoryAutoSaveEnabled
+                                )
+                            } label: {
+                                Label("Save to history", systemImage: "tray.and.arrow.down")
+                            }
+                        }
                     }
                 }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
             }
         }
         .navigationTitle("Mask")
@@ -114,6 +126,38 @@ struct MaskView: View {
 }
 
 private extension MaskView {
+    struct SectionContainer<Content: View>: View {
+        let title: String?
+        @ViewBuilder let content: Content
+
+        init(
+            title: String? = nil,
+            @ViewBuilder content: () -> Content
+        ) {
+            self.title = title
+            self.content = content()
+        }
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 8) {
+                if let title {
+                    Text(title)
+                        .font(.headline)
+                }
+                VStack(alignment: .leading, spacing: 8) {
+                    content
+                }
+                .padding(12)
+                .background(.background)
+                .clipShape(.rect(cornerRadius: 10))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(.quaternary, lineWidth: 1)
+                )
+            }
+        }
+    }
+
     func activeManualRules() -> [MaskingRule] {
         manualRules
             .filter { rule in
