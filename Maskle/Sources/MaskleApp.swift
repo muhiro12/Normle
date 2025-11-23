@@ -16,11 +16,9 @@ struct MaskleApp: App {
     private var isICloudOn
 
     private var sharedModelContainer: ModelContainer!
-    private var sharedSettingsStore: SettingsStore
     private var sharedStore: Store
 
     init() {
-        sharedSettingsStore = .init()
         sharedStore = .init()
         sharedModelContainer = {
             do {
@@ -51,7 +49,6 @@ struct MaskleApp: App {
             ContentView()
                 .id(isICloudOn)
                 .modelContainer(sharedModelContainer)
-                .environment(sharedSettingsStore)
                 .environment(sharedStore)
         }
     }

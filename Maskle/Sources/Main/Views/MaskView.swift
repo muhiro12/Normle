@@ -12,8 +12,14 @@ import SwiftUI
 struct MaskView: View {
     @Environment(\.modelContext)
     private var context
-    @Environment(SettingsStore.self)
-    private var settingsStore
+    @AppStorage(.isURLMaskingEnabled)
+    private var isURLMaskingEnabled = true
+    @AppStorage(.isEmailMaskingEnabled)
+    private var isEmailMaskingEnabled = true
+    @AppStorage(.isPhoneMaskingEnabled)
+    private var isPhoneMaskingEnabled = true
+    @AppStorage(.isHistoryAutoSaveEnabled)
+    private var isHistoryAutoSaveEnabled = true
 
     @Query private var manualRules: [ManualRule]
 
@@ -228,7 +234,7 @@ private extension MaskView {
                         options: maskingOptions(),
                         manualRules: activeManualRules(),
                         shouldSaveHistory: true,
-                        isHistoryAutoSaveEnabled: settingsStore.isHistoryAutoSaveEnabled
+                        isHistoryAutoSaveEnabled: isHistoryAutoSaveEnabled
                     )
                 } label: {
                     Label("Save to history", systemImage: "tray.and.arrow.down")
@@ -247,11 +253,11 @@ private extension MaskView {
             options: maskingOptions(),
             manualRules: activeManualRules(),
             shouldSaveHistory: false,
-            isHistoryAutoSaveEnabled: settingsStore.isHistoryAutoSaveEnabled
+            isHistoryAutoSaveEnabled: isHistoryAutoSaveEnabled
         )
         controller.scheduleAutoSave(
             context: context,
-            isHistoryAutoSaveEnabled: settingsStore.isHistoryAutoSaveEnabled
+            isHistoryAutoSaveEnabled: isHistoryAutoSaveEnabled
         )
     }
 
@@ -273,9 +279,9 @@ private extension MaskView {
 
     func maskingOptions() -> MaskingOptions {
         .init(
-            isURLMaskingEnabled: settingsStore.isURLMaskingEnabled,
-            isEmailMaskingEnabled: settingsStore.isEmailMaskingEnabled,
-            isPhoneMaskingEnabled: settingsStore.isPhoneMaskingEnabled
+            isURLMaskingEnabled: isURLMaskingEnabled,
+            isEmailMaskingEnabled: isEmailMaskingEnabled,
+            isPhoneMaskingEnabled: isPhoneMaskingEnabled
         )
     }
 }
