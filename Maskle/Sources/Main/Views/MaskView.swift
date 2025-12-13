@@ -77,6 +77,7 @@ struct MaskView: View {
             }
         }
         .onChange(of: controller.sourceText) { _, _ in
+            sourceSelection = nil
             anonymizeLive()
         }
         .onChange(of: maskRules) { _, _ in
