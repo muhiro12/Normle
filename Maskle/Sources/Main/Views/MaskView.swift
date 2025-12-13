@@ -6,6 +6,9 @@
 //
 
 import MaskleLibrary
+#if os(macOS)
+import AppKit
+#endif
 import SwiftData
 import SwiftUI
 
@@ -25,7 +28,7 @@ struct MaskView: View {
 
     @State private var controller = MaskingController()
     @State private var disabledRuleIDs = Set<PersistentIdentifier>()
-    @State private var sourceSelection: TextSelection?
+    @State private var selectedOriginalText = String()
     @State private var isPresentingMappingCreation = false
     @State private var pendingOriginalForMapping = String()
 
@@ -77,7 +80,6 @@ struct MaskView: View {
             }
         }
         .onChange(of: controller.sourceText) { _, _ in
-            sourceSelection = nil
             anonymizeLive()
         }
         .onChange(of: maskRules) { _, _ in
@@ -86,6 +88,15 @@ struct MaskView: View {
         .onChange(of: disabledRuleIDs) { _, _ in
             anonymizeLive()
         }
+        #if os(macOS)
+        .onReceive(
+            NotificationCenter.default.publisher(
+                for: NSTextView.didChangeSelectionNotification
+            )
+        ) { notification in
+            updateSelectedSourceText(notification: notification)
+        }
+        #endif
         .task {
             controller.loadLatestSavedRecord(context: context)
         }
@@ -143,24 +154,8 @@ private extension MaskView {
     }
 
     var selectedSourceText: String? {
-        guard let selection = sourceSelection else {
-            return nil
-        }
-        let rangeSet: RangeSet<String.Index>
-        switch selection.indices {
-        case let .selection(range):
-            rangeSet = .init(range)
-        case let .multiSelection(set):
-            rangeSet = set
-        @unknown default:
-            return nil
-        }
-        guard let range = rangeSet.ranges.first else {
-            return nil
-        }
-        let trimmed = String(controller.sourceText[range])
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? nil : String(trimmed)
+        let trimmed = selectedOriginalText.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
     }
 
     @ViewBuilder
@@ -184,8 +179,7 @@ private extension MaskView {
     ) -> some View {
         SectionContainer(title: "Original text") {
             TextEditor(
-                text: $controller.sourceText,
-                selection: $sourceSelection
+                text: $controller.sourceText
             )
             .frame(
                 minHeight: 180,
@@ -286,3 +280,38 @@ private extension MaskView {
         )
     }
 }
+
+#if os(macOS)
+private extension MaskView {
+    func updateSelectedSourceText(notification: Notification) {
+        guard let textView = notification.object as? NSTextView else {
+            return
+        }
+
+        guard textView.window?.isKeyWindow == true else {
+            return
+        }
+
+        guard textView.string == controller.sourceText else {
+            return
+        }
+
+        let selection = textView.selectedRange()
+
+        guard selection.length > 0,
+              let range = Range(selection, in: controller.sourceText) else {
+            selectedOriginalText = String()
+            return
+        }
+
+        let trimmed = controller.sourceText[range]
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        selectedOriginalText = String(trimmed)
+    }
+}
+#else
+private extension MaskView {
+    func updateSelectedSourceText(notification _: Notification) {}
+}
+#endif
