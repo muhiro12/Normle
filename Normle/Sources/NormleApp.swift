@@ -23,8 +23,8 @@ struct NormleApp: App {
         sharedModelContainer = {
             do {
                 return try .init(
-                    for: MaskRecord.self,
-                    MaskRule.self,
+                    for: TransformRecord.self,
+                    MappingRule.self,
                     Tag.self,
                     configurations: .init(
                         cloudKitDatabase: isICloudOn ? .automatic : .none
@@ -33,8 +33,8 @@ struct NormleApp: App {
             } catch {
                 assertionFailure(error.localizedDescription)
                 return try! .init(
-                    for: MaskRecord.self,
-                    MaskRule.self,
+                    for: TransformRecord.self,
+                    MappingRule.self,
                     Tag.self,
                     configurations: .init(
                         isStoredInMemoryOnly: true

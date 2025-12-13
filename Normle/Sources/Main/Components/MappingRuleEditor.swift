@@ -14,14 +14,14 @@ struct MappingRuleEditor: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             TextField(
-                "Original text",
+                "Source text",
                 text: $rule.original,
                 axis: .vertical
             )
             .textFieldStyle(.roundedBorder)
 
             TextField(
-                "Masked text",
+                "Target text",
                 text: $rule.masked,
                 axis: .vertical
             )

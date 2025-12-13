@@ -1,5 +1,5 @@
 //
-//  MaskRule.swift
+//  MappingRule.swift
 //
 //
 //  Created by Hiromu Nakano on 2025/11/23.
@@ -8,26 +8,26 @@
 import Foundation
 import SwiftData
 
-public enum MaskRuleError: LocalizedError {
-    case duplicateOriginal
-    case duplicateMasked
+public enum MappingRuleError: LocalizedError {
+    case duplicateSource
+    case duplicateTarget
 
     public var errorDescription: String? {
         switch self {
-        case .duplicateOriginal:
-            "The original text is already registered."
-        case .duplicateMasked:
-            "The masked text is already registered."
+        case .duplicateSource:
+            "The source text is already registered."
+        case .duplicateTarget:
+            "The target text is already registered."
         }
     }
 }
 
 /// A persisted manual mapping rule configured by the user.
 @Model
-public final class MaskRule {
+public final class MappingRule {
     public private(set) var date = Date()
-    public private(set) var original = String()
-    public private(set) var masked = String()
+    public private(set) var source = String()
+    public private(set) var target = String()
     public private(set) var isEnabled = true
 
     @Relationship(deleteRule: .nullify)
@@ -39,23 +39,23 @@ public final class MaskRule {
     public static func create(
         context: ModelContext,
         date: Date = Date(),
-        original: String,
-        masked: String,
+        source: String,
+        target: String,
         isEnabled: Bool = true
-    ) throws -> MaskRule {
+    ) throws -> MappingRule {
         try validateUniqueness(
             context: context,
-            original: original,
-            masked: masked,
+            source: source,
+            target: target,
             excluding: nil
         )
 
-        let rule = MaskRule()
+        let rule = MappingRule()
         context.insert(rule)
 
         rule.date = date
-        rule.original = original
-        rule.masked = masked
+        rule.source = source
+        rule.target = target
         rule.isEnabled = isEnabled
 
         return rule
@@ -64,33 +64,33 @@ public final class MaskRule {
     public func update(
         context: ModelContext,
         date: Date? = nil,
-        original: String,
-        masked: String,
+        source: String,
+        target: String,
         isEnabled: Bool
     ) throws {
         try Self.validateUniqueness(
             context: context,
-            original: original,
-            masked: masked,
+            source: source,
+            target: target,
             excluding: self
         )
 
         if let date {
             self.date = date
         }
-        self.original = original
-        self.masked = masked
+        self.source = source
+        self.target = target
         self.isEnabled = isEnabled
     }
 }
 
-public extension MaskRule {
+public extension MappingRule {
     var maskingRule: MaskingRule {
         let identifier = persistentModelID.base64String
         return .init(
             id: identifier,
-            original: original,
-            masked: masked,
+            original: source,
+            masked: target,
             kind: .custom,
             date: date,
             isEnabled: isEnabled
@@ -98,8 +98,8 @@ public extension MaskRule {
     }
 }
 
-extension MaskRule: Hashable {
-    public static func == (lhs: MaskRule, rhs: MaskRule) -> Bool {
+extension MappingRule: Hashable {
+    public static func == (lhs: MappingRule, rhs: MappingRule) -> Bool {
         lhs.id == rhs.id
     }
 
@@ -117,16 +117,16 @@ private extension PersistentIdentifier {
     }
 }
 
-private extension MaskRule {
+private extension MappingRule {
     static func validateUniqueness(
         context: ModelContext,
-        original: String,
-        masked: String,
-        excluding rule: MaskRule?
+        source: String,
+        target: String,
+        excluding rule: MappingRule?
     ) throws {
-        let descriptor = FetchDescriptor<MaskRule>(
-            predicate: #Predicate<MaskRule> { candidate in
-                candidate.original == original || candidate.masked == masked
+        let descriptor = FetchDescriptor<MappingRule>(
+            predicate: #Predicate<MappingRule> { candidate in
+                candidate.source == source || candidate.target == target
             }
         )
         let conflicts = try context.fetch(descriptor).filter { candidate in
@@ -140,12 +140,12 @@ private extension MaskRule {
             return
         }
 
-        if conflict.original == original {
-            throw MaskRuleError.duplicateOriginal
+        if conflict.source == source {
+            throw MappingRuleError.duplicateSource
         }
 
-        if conflict.masked == masked {
-            throw MaskRuleError.duplicateMasked
+        if conflict.target == target {
+            throw MappingRuleError.duplicateTarget
         }
     }
 }

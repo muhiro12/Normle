@@ -16,11 +16,11 @@ public final class MaskingController {
 
     private var autoSaveTask: Task<Void, Never>?
 
-    private var lastSavedMaskedTextCache: String?
+    private var lastSavedTargetTextCache: String?
 
     public var sourceText = String()
     public var result: MaskingResult?
-    public var lastSavedRecord: MaskRecord?
+    public var lastSavedRecord: TransformRecord?
 
     public init(
         autoSaveDelayNanoseconds: UInt64 = 2_000_000_000,
@@ -39,7 +39,7 @@ public final class MaskingController {
         context: ModelContext
     ) {
         do {
-            var descriptor = FetchDescriptor<MaskRecord>(
+            var descriptor = FetchDescriptor<TransformRecord>(
                 sortBy: [
                     .init(\.date, order: .reverse)
                 ]
@@ -47,7 +47,7 @@ public final class MaskingController {
             descriptor.fetchLimit = 1
             if let record = try context.fetch(descriptor).first {
                 lastSavedRecord = record
-                lastSavedMaskedTextCache = record.maskedText
+                lastSavedTargetTextCache = record.targetText
             }
         } catch {
             assertionFailure(error.localizedDescription)
@@ -75,7 +75,7 @@ public final class MaskingController {
 
         save(
             context: context,
-            maskedText: generated.maskedText,
+            targetText: generated.maskedText,
             mappings: generated.mappings
         )
     }
@@ -95,7 +95,7 @@ public final class MaskingController {
 
         autoSaveTask?.cancel()
 
-        let maskedText = currentResult.maskedText
+        let targetText = currentResult.maskedText
         let mappings = currentResult.mappings
 
         autoSaveTask = Task { @MainActor [weak self] in
@@ -115,22 +115,22 @@ public final class MaskingController {
                 return
             }
 
-            guard let latestResult = result, latestResult.maskedText == maskedText else {
+            guard let latestResult = result, latestResult.maskedText == targetText else {
                 return
             }
 
-            if isSimilarToLastSaved(maskedText: maskedText) {
+            if isSimilarToLastSaved(targetText: targetText) {
                 if let record = lastSavedRecord {
                     update(
                         context: context,
                         record: record,
-                        maskedText: maskedText,
+                        targetText: targetText,
                         mappings: mappings
                     )
                 } else {
                     save(
                         context: context,
-                        maskedText: maskedText,
+                        targetText: targetText,
                         mappings: mappings
                     )
                 }
@@ -139,7 +139,7 @@ public final class MaskingController {
 
             save(
                 context: context,
-                maskedText: maskedText,
+                targetText: targetText,
                 mappings: mappings
             )
         }
@@ -149,16 +149,16 @@ public final class MaskingController {
 private extension MaskingController {
     func save(
         context: ModelContext,
-        maskedText: String,
+        targetText: String,
         mappings: [Mapping]
     ) {
         do {
-            lastSavedRecord = try MaskRecordService.saveRecord(
+            lastSavedRecord = try TransformRecordService.saveRecord(
                 context: context,
-                maskedText: maskedText,
+                targetText: targetText,
                 mappings: mappings
             )
-            lastSavedMaskedTextCache = maskedText
+            lastSavedTargetTextCache = targetText
         } catch {
             assertionFailure(error.localizedDescription)
         }
@@ -166,33 +166,33 @@ private extension MaskingController {
 
     func update(
         context: ModelContext,
-        record: MaskRecord,
-        maskedText: String,
+        record: TransformRecord,
+        targetText: String,
         mappings: [Mapping]
     ) {
         do {
-            lastSavedRecord = try MaskRecordService.updateRecord(
+            lastSavedRecord = try TransformRecordService.updateRecord(
                 context: context,
                 record: record,
-                maskedText: maskedText,
+                targetText: targetText,
                 mappings: mappings
             )
-            lastSavedMaskedTextCache = maskedText
+            lastSavedTargetTextCache = targetText
         } catch {
             assertionFailure(error.localizedDescription)
         }
     }
 
     func isSimilarToLastSaved(
-        maskedText: String
+        targetText: String
     ) -> Bool {
-        guard let lastSaved = lastSavedMaskedTextCache else {
+        guard let lastSaved = lastSavedTargetTextCache else {
             return false
         }
 
         let similarity = MaskingSimilarity.similarityScore(
             between: lastSaved,
-            and: maskedText
+            and: targetText
         )
 
         return similarity >= autoSaveSimilarityThreshold

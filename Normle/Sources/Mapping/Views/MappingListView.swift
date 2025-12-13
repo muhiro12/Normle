@@ -14,11 +14,11 @@ struct MappingListView: View {
     @Environment(\.modelContext)
     private var context
 
-    @Query private var rules: [MaskRule]
+    @Query private var rules: [MappingRule]
 
     @State private var isPresentingCreate = false
     @State private var isExporting = false
-    @State private var exportDocument = MaskRuleExportDocument(data: Data())
+    @State private var exportDocument = MappingRuleExportDocument(data: Data())
     @State private var isImporting = false
     @State private var pendingImportData: Data?
     @State private var isChoosingImportPolicy = false
@@ -30,7 +30,7 @@ struct MappingListView: View {
         _rules = Query(
             FetchDescriptor(
                 sortBy: [
-                    .init(\MaskRule.date, order: .reverse)
+                    .init(\MappingRule.date, order: .reverse)
                 ]
             )
         )
@@ -41,14 +41,14 @@ struct MappingListView: View {
             ForEach(rules) { rule in
                 NavigationLink(value: rule) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(rule.masked.isEmpty ? "Masked not set" : rule.masked)
+                        Text(rule.target.isEmpty ? "Target not set" : rule.target)
                             .font(.headline)
                         if rule.isEnabled == false {
                             Text("Disabled")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
-                        Text(rule.original.isEmpty ? "Original not set" : rule.original)
+                        Text(rule.source.isEmpty ? "Source not set" : rule.source)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                         Text(rule.date.formatted(date: .abbreviated, time: .shortened))
@@ -138,10 +138,10 @@ struct MappingListView: View {
 private extension MappingListView {
     func exportRules() {
         do {
-            let data = try MaskRuleTransferService.exportData(
+            let data = try MappingRuleTransferService.exportData(
                 context: context
             )
-            exportDocument = MaskRuleExportDocument(data: data)
+            exportDocument = MappingRuleExportDocument(data: data)
             isExporting = true
         } catch {
             presentError(message: error.localizedDescription)
@@ -158,13 +158,13 @@ private extension MappingListView {
     }
 
     func applyImport(
-        policy: MaskRuleTransferService.ImportPolicy
+        policy: MappingRuleTransferService.ImportPolicy
     ) {
         guard let data = pendingImportData else {
             return
         }
         do {
-            let result = try MaskRuleTransferService.importData(
+            let result = try MappingRuleTransferService.importData(
                 data,
                 context: context,
                 policy: policy

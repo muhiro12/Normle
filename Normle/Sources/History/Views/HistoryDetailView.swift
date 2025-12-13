@@ -9,14 +9,14 @@ import NormleLibrary
 import SwiftUI
 
 struct HistoryDetailView: View {
-    let record: MaskRecord
+    let record: TransformRecord
 
     var body: some View {
         List {
-            Section("Masked text") {
-                Text(record.maskedText)
+            Section("Target text") {
+                Text(record.targetText)
                     .textSelection(.enabled)
-                CopyButton(text: record.maskedText)
+                CopyButton(text: record.targetText)
             }
 
             Section("Mappings") {

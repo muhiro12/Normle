@@ -30,7 +30,7 @@ final class MaskingControllerTests: XCTestCase {
 
         try await Task.sleep(nanoseconds: 50_000_000)
 
-        let descriptor = FetchDescriptor<MaskRecord>()
+        let descriptor = FetchDescriptor<TransformRecord>()
         let records = try context.fetch(descriptor)
 
         XCTAssertEqual(records.count, 1)
@@ -83,10 +83,10 @@ final class MaskingControllerTests: XCTestCase {
 
         try await Task.sleep(nanoseconds: 50_000_000)
 
-        let descriptor = FetchDescriptor<MaskRecord>()
+        let descriptor = FetchDescriptor<TransformRecord>()
         let records = try context.fetch(descriptor)
 
         XCTAssertEqual(records.count, 1)
-        XCTAssertEqual(records.first?.maskedText, controller.result?.maskedText)
+        XCTAssertEqual(records.first?.targetText, controller.result?.maskedText)
     }
 }

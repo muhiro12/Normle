@@ -2,8 +2,8 @@
 import SwiftData
 import XCTest
 
-final class MaskRecordServiceTests: XCTestCase {
-    func testSavingRecordsPersistsMaskedText() throws {
+final class TransformRecordServiceTests: XCTestCase {
+    func testSavingRecordsPersistsTargetText() throws {
         let context = testContext
         let mapping = Mapping(
             original: "secret",
@@ -12,13 +12,13 @@ final class MaskRecordServiceTests: XCTestCase {
             occurrenceCount: 2
         )
 
-        let first = try MaskRecordService.saveRecord(
+        let first = try TransformRecordService.saveRecord(
             context: context,
-            maskedText: "masked-1",
+            targetText: "masked-1",
             mappings: [mapping]
         )
 
-        let descriptor = FetchDescriptor<MaskRecord>(
+        let descriptor = FetchDescriptor<TransformRecord>(
             sortBy: [
                 .init(\.date, order: .reverse)
             ]
@@ -27,6 +27,6 @@ final class MaskRecordServiceTests: XCTestCase {
 
         XCTAssertEqual(records.count, 1)
         XCTAssertEqual(records.first, first)
-        XCTAssertEqual(records.first?.maskedText, "masked-1")
+        XCTAssertEqual(records.first?.targetText, "masked-1")
     }
 }

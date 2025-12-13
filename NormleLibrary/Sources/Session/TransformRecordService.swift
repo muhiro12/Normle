@@ -1,5 +1,5 @@
 //
-//  MaskRecordService.swift
+//  TransformRecordService.swift
 //
 //
 //  Created by Hiromu Nakano on 2025/11/23.
@@ -8,16 +8,16 @@
 import Foundation
 import SwiftData
 
-public enum MaskRecordService {
+public enum TransformRecordService {
     @discardableResult
     public static func saveRecord(
         context: ModelContext,
-        maskedText: String,
+        targetText: String,
         mappings _: [Mapping]
-    ) throws -> MaskRecord {
-        let record = MaskRecord.create(
+    ) throws -> TransformRecord {
+        let record = TransformRecord.create(
             context: context,
-            maskedText: maskedText
+            targetText: targetText
         )
 
         try context.save()
@@ -28,12 +28,12 @@ public enum MaskRecordService {
     @discardableResult
     public static func updateRecord(
         context: ModelContext,
-        record: MaskRecord,
-        maskedText: String,
+        record: TransformRecord,
+        targetText: String,
         mappings _: [Mapping]
-    ) throws -> MaskRecord {
+    ) throws -> TransformRecord {
         record.update(
-            maskedText: maskedText
+            targetText: targetText
         )
 
         try context.save()
@@ -44,14 +44,14 @@ public enum MaskRecordService {
     public static func deleteAll(
         context: ModelContext
     ) throws {
-        let descriptor = FetchDescriptor<MaskRecord>()
+        let descriptor = FetchDescriptor<TransformRecord>()
         try context.fetch(descriptor).forEach(context.delete)
         try context.save()
     }
 
     public static func delete(
         context: ModelContext,
-        record: MaskRecord
+        record: TransformRecord
     ) throws {
         context.delete(record)
         try context.save()

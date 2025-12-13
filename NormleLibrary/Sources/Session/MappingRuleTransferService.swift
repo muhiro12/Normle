@@ -1,5 +1,5 @@
 //
-//  MaskRuleTransferService.swift
+//  MappingRuleTransferService.swift
 //
 //
 //  Created by Hiromu Nakano on 2025/11/23.
@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-public enum MaskRuleTransferService {
+public enum MappingRuleTransferService {
     public enum ImportPolicy {
         case replaceAll
         case mergeExisting
@@ -23,9 +23,54 @@ public enum MaskRuleTransferService {
 
     private struct Payload: Codable {
         let date: Date
-        let original: String
-        let masked: String
+        let source: String
+        let target: String
         let isEnabled: Bool
+
+        enum CodingKeys: String, CodingKey {
+            case date
+            case source
+            case target
+            case isEnabled
+            case original
+            case masked
+        }
+
+        init(
+            date: Date,
+            source: String,
+            target: String,
+            isEnabled: Bool
+        ) {
+            self.date = date
+            self.source = source
+            self.target = target
+            self.isEnabled = isEnabled
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            date = try container.decode(Date.self, forKey: .date)
+            if let decodedSource = try container.decodeIfPresent(String.self, forKey: .source) {
+                source = decodedSource
+            } else {
+                source = try container.decode(String.self, forKey: .original)
+            }
+            if let decodedTarget = try container.decodeIfPresent(String.self, forKey: .target) {
+                target = decodedTarget
+            } else {
+                target = try container.decode(String.self, forKey: .masked)
+            }
+            isEnabled = try container.decode(Bool.self, forKey: .isEnabled)
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(date, forKey: .date)
+            try container.encode(source, forKey: .source)
+            try container.encode(target, forKey: .target)
+            try container.encode(isEnabled, forKey: .isEnabled)
+        }
     }
 
     private struct Transfer: Codable {
@@ -40,13 +85,13 @@ public enum MaskRuleTransferService {
     }
 }
 
-public extension MaskRuleTransferService {
+public extension MappingRuleTransferService {
     static func exportData(
         context: ModelContext
     ) throws -> Data {
-        let descriptor = FetchDescriptor<MaskRule>(
+        let descriptor = FetchDescriptor<MappingRule>(
             sortBy: [
-                .init(\MaskRule.date, order: .forward)
+                .init(\MappingRule.date, order: .forward)
             ]
         )
         let rules = try context.fetch(descriptor)
@@ -54,19 +99,19 @@ public extension MaskRuleTransferService {
     }
 
     static func exportData(
-        rules: [MaskRule]
+        rules: [MappingRule]
     ) throws -> Data {
         let payloads = rules.map { rule in
             Payload(
                 date: rule.date,
-                original: rule.original,
-                masked: rule.masked,
+                source: rule.source,
+                target: rule.target,
                 isEnabled: rule.isEnabled
             )
         }
 
         let transfer = Transfer(
-            version: 1,
+            version: 2,
             exportedAt: Date(),
             rules: payloads
         )
@@ -91,12 +136,12 @@ public extension MaskRuleTransferService {
         decoder.dateDecodingStrategy = .iso8601
         let transfer = try decoder.decode(Transfer.self, from: data)
 
-        guard transfer.version == 1 else {
+        guard [1, 2].contains(transfer.version) else {
             throw TransferError.unsupportedVersion
         }
 
         let existing = try context.fetch(
-            FetchDescriptor<MaskRule>()
+            FetchDescriptor<MappingRule>()
         )
 
         var insertedCount = 0
@@ -115,8 +160,8 @@ public extension MaskRuleTransferService {
         case .mergeExisting:
             for payload in transfer.rules {
                 if let match = existing.first(where: {
-                    $0.original == payload.original ||
-                        $0.masked == payload.masked
+                    $0.source == payload.source ||
+                        $0.target == payload.target
                 }) {
                     try apply(
                         payload: payload,
@@ -146,7 +191,7 @@ public extension MaskRuleTransferService {
         try context.save()
 
         let totalCount = try context.fetch(
-            FetchDescriptor<MaskRule>()
+            FetchDescriptor<MappingRule>()
         ).count
 
         return .init(
@@ -157,30 +202,30 @@ public extension MaskRuleTransferService {
     }
 }
 
-private extension MaskRuleTransferService {
+private extension MappingRuleTransferService {
     private static func insert(
         payload: Payload,
         context: ModelContext
     ) throws {
-        try MaskRule.create(
+        try MappingRule.create(
             context: context,
             date: payload.date,
-            original: payload.original,
-            masked: payload.masked,
+            source: payload.source,
+            target: payload.target,
             isEnabled: payload.isEnabled
         )
     }
 
     private static func apply(
         payload: Payload,
-        to rule: MaskRule,
+        to rule: MappingRule,
         context: ModelContext
     ) throws {
         try rule.update(
             context: context,
             date: payload.date,
-            original: payload.original,
-            masked: payload.masked,
+            source: payload.source,
+            target: payload.target,
             isEnabled: payload.isEnabled
         )
     }

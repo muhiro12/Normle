@@ -1,5 +1,5 @@
 //
-//  MaskRuleExportDocument.swift
+//  MappingRuleExportDocument.swift
 //
 //
 //  Created by Hiromu Nakano on 2025/11/23.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct MaskRuleExportDocument: FileDocument {
+struct MappingRuleExportDocument: FileDocument {
     static var readableContentTypes: [UTType] {
         [.json]
     }

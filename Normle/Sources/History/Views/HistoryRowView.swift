@@ -9,7 +9,7 @@ import NormleLibrary
 import SwiftUI
 
 struct HistoryRowView: View {
-    let record: MaskRecord
+    let record: TransformRecord
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {

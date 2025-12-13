@@ -9,7 +9,7 @@ import NormleLibrary
 import SwiftUI
 
 struct RestoreView: View {
-    let record: MaskRecord
+    let record: TransformRecord
 
     @State private var viewModel = RestoreViewModel()
 

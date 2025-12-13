@@ -9,17 +9,17 @@ import NormleLibrary
 import SwiftUI
 
 struct MappingDetailView: View {
-    let rule: MaskRule
+    let rule: MappingRule
 
     @State private var isEditing = false
 
     var body: some View {
         List {
-            Section("Masked") {
-                Text(rule.masked.isEmpty ? "Not set" : rule.masked)
+            Section("Target") {
+                Text(rule.target.isEmpty ? "Not set" : rule.target)
             }
-            Section("Original") {
-                Text(rule.original.isEmpty ? "Not set" : rule.original)
+            Section("Source") {
+                Text(rule.source.isEmpty ? "Not set" : rule.source)
             }
             Section("Kind") {
                 Text("Tags are not set")

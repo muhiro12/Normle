@@ -15,36 +15,36 @@ struct MappingEditView: View {
     @Environment(\.dismiss)
     private var dismiss
 
-    let rule: MaskRule?
+    let rule: MappingRule?
 
     @Binding var isPresented: Bool
 
-    @State private var original = String()
-    @State private var masked = String()
+    @State private var source = String()
+    @State private var target = String()
     @State private var isEnabled = true
     @State private var alertMessage: String?
 
     init(
-        rule: MaskRule?,
+        rule: MappingRule?,
         isPresented: Binding<Bool>,
-        prefilledOriginal: String = String(),
-        prefilledMasked: String = String(),
+        prefilledSource: String = String(),
+        prefilledTarget: String = String(),
         prefilledIsEnabled: Bool = true
     ) {
         self.rule = rule
         _isPresented = isPresented
-        _original = .init(initialValue: prefilledOriginal)
-        _masked = .init(initialValue: prefilledMasked)
+        _source = .init(initialValue: prefilledSource)
+        _target = .init(initialValue: prefilledTarget)
         _isEnabled = .init(initialValue: prefilledIsEnabled)
     }
 
     var body: some View {
         Form {
-            Section("Original") {
-                TextField("Original text", text: $original)
+            Section("Source") {
+                TextField("Source text", text: $source)
             }
-            Section("Masked") {
-                TextField("Masked text", text: $masked)
+            Section("Target") {
+                TextField("Target text", text: $target)
             }
             Section("Status") {
                 Toggle("Enabled", isOn: $isEnabled)
@@ -53,8 +53,8 @@ struct MappingEditView: View {
                 Button(saveTitle) {
                     save()
                 }
-                .disabled(original.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                            masked.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                            target.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 if rule != nil {
                     Button("Delete", role: .destructive) {
                         delete()
@@ -104,30 +104,30 @@ private extension MappingEditView {
         guard let rule else {
             return
         }
-        original = rule.original
-        masked = rule.masked
+        source = rule.source
+        target = rule.target
         isEnabled = rule.isEnabled
     }
 
     func save() {
-        let trimmedOriginal = original.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedMasked = masked.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmedOriginal.isEmpty == false, trimmedMasked.isEmpty == false else {
+        let trimmedSource = source.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedTarget = target.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedSource.isEmpty == false, trimmedTarget.isEmpty == false else {
             return
         }
         do {
             if let rule {
                 try rule.update(
                     context: context,
-                    original: trimmedOriginal,
-                    masked: trimmedMasked,
+                    source: trimmedSource,
+                    target: trimmedTarget,
                     isEnabled: isEnabled
                 )
             } else {
-                try MaskRule.create(
+                try MappingRule.create(
                     context: context,
-                    original: trimmedOriginal,
-                    masked: trimmedMasked,
+                    source: trimmedSource,
+                    target: trimmedTarget,
                     isEnabled: isEnabled
                 )
             }

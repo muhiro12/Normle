@@ -14,7 +14,7 @@ struct HistoryNavigationView: View {
     var body: some View {
         NavigationStack(path: $path) {
             HistoryListView()
-                .navigationDestination(for: MaskRecord.self) { record in
+                .navigationDestination(for: TransformRecord.self) { record in
                     HistoryDetailView(record: record)
                 }
         }

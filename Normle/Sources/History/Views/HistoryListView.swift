@@ -13,14 +13,14 @@ struct HistoryListView: View {
     @Environment(\.modelContext)
     private var context
 
-    @Query private var records: [MaskRecord]
+    @Query private var records: [TransformRecord]
 
     @State private var isDeleteDialogPresented = false
 
-    private var selection: Binding<MaskRecord?>
+    private var selection: Binding<TransformRecord?>
 
     init(
-        selection: Binding<MaskRecord?> = .constant(nil)
+        selection: Binding<TransformRecord?> = .constant(nil)
     ) {
         self.selection = selection
         _records = Query(
@@ -67,7 +67,7 @@ struct HistoryListView: View {
         ) {
             Button(role: .destructive) {
                 do {
-                    try MaskRecordService.deleteAll(context: context)
+                    try TransformRecordService.deleteAll(context: context)
                 } catch {
                     assertionFailure(error.localizedDescription)
                 }
@@ -84,10 +84,10 @@ struct HistoryListView: View {
 
 private extension HistoryListView {
     func delete(
-        record: MaskRecord
+        record: TransformRecord
     ) {
         do {
-            try MaskRecordService.delete(
+            try TransformRecordService.delete(
                 context: context,
                 record: record
             )

@@ -4,8 +4,8 @@ import SwiftData
 var testContext: ModelContext {
     .init(
         try! .init(
-            for: MaskRecord.self,
-            MaskRule.self,
+            for: TransformRecord.self,
+            MappingRule.self,
             Tag.self,
             configurations: .init(
                 isStoredInMemoryOnly: true

@@ -65,7 +65,7 @@ struct SettingsView: View {
         ) {
             Button(role: .destructive) {
                 do {
-                    try MaskRecordService.deleteAll(context: context)
+                    try TransformRecordService.deleteAll(context: context)
                 } catch {
                     assertionFailure(error.localizedDescription)
                 }

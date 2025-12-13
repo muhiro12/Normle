@@ -24,19 +24,19 @@ struct MaskView: View {
     @AppStorage(.isHistoryAutoSaveEnabled)
     private var isHistoryAutoSaveEnabled = true
 
-    @Query private var maskRules: [MaskRule]
+    @Query private var mappingRules: [MappingRule]
 
     @State private var controller = MaskingController()
     @State private var disabledRuleIDs = Set<PersistentIdentifier>()
-    @State private var selectedOriginalText = String()
+    @State private var selectedSourceTextRaw = String()
     @State private var isPresentingMappingCreation = false
-    @State private var pendingOriginalForMapping = String()
+    @State private var pendingSourceForMapping = String()
 
     init() {
-        _maskRules = Query(
+        _mappingRules = Query(
             FetchDescriptor(
                 sortBy: [
-                    .init(\MaskRule.date, order: .reverse)
+                    .init(\MappingRule.date, order: .reverse)
                 ]
             )
         )
@@ -54,16 +54,16 @@ struct MaskView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
-                    if maskRules.isEmpty {
+                    if mappingRules.isEmpty {
                         Text("No manual mappings")
                             .foregroundStyle(.secondary)
                     } else {
-                        ForEach(maskRules) { rule in
+                        ForEach(mappingRules) { rule in
                             Button {
                                 toggleDisabled(rule: rule)
                             } label: {
                                 HStack {
-                                    Text(rule.masked.isEmpty ? "Masked not set" : rule.masked)
+                                    Text(rule.target.isEmpty ? "Target not set" : rule.target)
                                     Spacer()
                                     if disabledRuleIDs.contains(rule.persistentModelID) {
                                         Image(systemName: "slash.circle")
@@ -82,7 +82,7 @@ struct MaskView: View {
         .onChange(of: controller.sourceText) { _, _ in
             anonymizeLive()
         }
-        .onChange(of: maskRules) { _, _ in
+        .onChange(of: mappingRules) { _, _ in
             anonymizeLive()
         }
         .onChange(of: disabledRuleIDs) { _, _ in
@@ -105,7 +105,7 @@ struct MaskView: View {
                 MappingEditView(
                     rule: nil,
                     isPresented: $isPresentingMappingCreation,
-                    prefilledOriginal: pendingOriginalForMapping
+                    prefilledSource: pendingSourceForMapping
                 )
             }
         }
@@ -146,7 +146,7 @@ private extension MaskView {
     }
 
     func activeMaskRules() -> [MaskingRule] {
-        maskRules
+        mappingRules
             .filter { rule in
                 rule.isEnabled && disabledRuleIDs.contains(rule.persistentModelID) == false
             }
@@ -154,7 +154,7 @@ private extension MaskView {
     }
 
     var selectedSourceText: String? {
-        let trimmed = selectedOriginalText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = selectedSourceTextRaw.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
     }
 
@@ -164,8 +164,8 @@ private extension MaskView {
         controller: MaskingController
     ) -> some View {
         VStack(spacing: 16) {
-            originalSection(proxy: proxy, controller: controller)
-            maskedSection(proxy: proxy, controller: controller)
+            sourceSection(proxy: proxy, controller: controller)
+            targetSection(proxy: proxy, controller: controller)
             historySection(controller: controller)
         }
         .padding(.horizontal)
@@ -173,11 +173,11 @@ private extension MaskView {
     }
 
     @ViewBuilder
-    func originalSection(
+    func sourceSection(
         proxy: GeometryProxy,
         controller _: MaskingController
     ) -> some View {
-        SectionContainer(title: "Original text") {
+        SectionContainer(title: "Source text") {
             TextEditor(
                 text: $controller.sourceText
             )
@@ -195,12 +195,12 @@ private extension MaskView {
     }
 
     @ViewBuilder
-    func maskedSection(
+    func targetSection(
         proxy: GeometryProxy,
         controller: MaskingController
     ) -> some View {
         if let result = controller.result {
-            SectionContainer(title: "Masked text") {
+            SectionContainer(title: "Target text") {
                 TextEditor(text: .constant(result.maskedText))
                     .frame(
                         minHeight: 180,
@@ -210,7 +210,7 @@ private extension MaskView {
                 CopyButton(text: result.maskedText)
             }
         } else {
-            SectionContainer(title: "Masked text") {
+            SectionContainer(title: "Target text") {
                 Text("Enter text above to see masked output.")
                     .foregroundStyle(.secondary)
             }
@@ -260,11 +260,11 @@ private extension MaskView {
         guard let selectedSourceText else {
             return
         }
-        pendingOriginalForMapping = selectedSourceText
+        pendingSourceForMapping = selectedSourceText
         isPresentingMappingCreation = true
     }
 
-    func toggleDisabled(rule: MaskRule) {
+    func toggleDisabled(rule: MappingRule) {
         if disabledRuleIDs.contains(rule.persistentModelID) {
             disabledRuleIDs.remove(rule.persistentModelID)
         } else {
@@ -300,14 +300,14 @@ private extension MaskView {
 
         guard selection.length > 0,
               let range = Range(selection, in: controller.sourceText) else {
-            selectedOriginalText = String()
+            selectedSourceTextRaw = String()
             return
         }
 
         let trimmed = controller.sourceText[range]
             .trimmingCharacters(in: .whitespacesAndNewlines)
 
-        selectedOriginalText = String(trimmed)
+        selectedSourceTextRaw = String(trimmed)
     }
 }
 #else
