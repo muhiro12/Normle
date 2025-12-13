@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "A9D58196-2B3F-47C6-BEE5-F83CB6E539BE",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "performanceAntipatternCheckerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "NormleLibraryTests",
+        "name" : "NormleLibraryTests"
+      }
+    }
+  ],
+  "version" : 1
+}

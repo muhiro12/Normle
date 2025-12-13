@@ -1,0 +1,147 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Add" : {
+
+    },
+    "AI response to restore" : {
+
+    },
+    "Masked" : {
+
+    },
+    "Append new" : {
+
+    },
+    "Auto save history" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Create mapping from selection" : {
+
+    },
+    "Created at" : {
+
+    },
+    "Delete" : {
+
+    },
+    "Delete All" : {
+
+    },
+    "Delete all history" : {
+
+    },
+    "Delete all history?" : {
+
+    },
+    "Delete all records?" : {
+
+    },
+    "Disabled" : {
+
+    },
+    "Edit" : {
+
+    },
+    "Enabled" : {
+
+    },
+    "Enter text above to see masked output." : {
+
+    },
+    "Export" : {
+
+    },
+    "History" : {
+
+    },
+    "Import" : {
+
+    },
+    "Import mappings" : {
+
+    },
+    "Kind" : {
+
+    },
+    "Mapping Detail" : {
+
+    },
+    "Mappings" : {
+
+    },
+    "Mappings are not retained in history." : {
+
+    },
+    "Mask" : {
+
+    },
+    "Mask email addresses" : {
+
+    },
+    "Mask phone numbers" : {
+
+    },
+    "Mask URLs" : {
+
+    },
+    "Masked text" : {
+
+    },
+    "Masking options" : {
+
+    },
+    "Normle" : {
+
+    },
+    "Merge existing" : {
+
+    },
+    "No manual mappings" : {
+
+    },
+    "OK" : {
+
+    },
+    "Original" : {
+
+    },
+    "Original text" : {
+
+    },
+    "Replace all" : {
+
+    },
+    "Restore" : {
+
+    },
+    "Restore with this record" : {
+
+    },
+    "Restored text" : {
+
+    },
+    "Save to history" : {
+
+    },
+    "Settings" : {
+
+    },
+    "Status" : {
+
+    },
+    "Subscription" : {
+
+    },
+    "Tags are not set" : {
+
+    },
+    "Use iCloud sync" : {
+
+    }
+  },
+  "version" : "1.1"
+}

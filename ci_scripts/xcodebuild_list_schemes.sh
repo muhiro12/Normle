@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-xcodebuild -list -project Maskle.xcodeproj
+xcodebuild -list -project Normle.xcodeproj
 

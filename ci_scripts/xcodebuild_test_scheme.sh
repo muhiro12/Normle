@@ -18,7 +18,7 @@ USE_XCPRETTY="${2:-}"
 # scheme is not configured for tests.
 ACTION="${ACTION:-}"
 
-PROJECT_PATH="Maskle.xcodeproj"
+PROJECT_PATH="Normle.xcodeproj"
 DERIVED_DATA_PATH="${DERIVED_DATA_PATH:-build/DerivedData}"
 RESULTS_DIR="${RESULTS_DIR:-build}"
 

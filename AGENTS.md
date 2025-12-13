@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This document outlines the expectations and tooling references for contributors working on the Maskle project.
+This document outlines the expectations and tooling references for contributors working on the Normle project.
 
 ## Coding Guidelines for Codex Agents
 
@@ -99,21 +99,21 @@ These scripts standardize invocation and keep artifacts under `build/` to avoid 
   bash ci_scripts/xcodebuild_list_schemes.sh
   ```
 
-- Run app tests (Maskle scheme):
+- Run app tests (Normle scheme):
 
   ```sh
   DERIVED_DATA_PATH=build/DerivedData \
   RESULTS_DIR=build \
-  bash ci_scripts/xcodebuild_test_scheme.sh Maskle
+  bash ci_scripts/xcodebuild_test_scheme.sh Normle
   ```
 
-- Run library tests (MaskleLibrary scheme):
+- Run library tests (NormleLibrary scheme):
 
   ```sh
-  # Note: MaskleLibrary is iOS-only. Do not use `swift test`. `xcodebuild` is required because the scheme depends on the iOS Simulator runtime that `swift test` cannot drive.
+  # Note: NormleLibrary is iOS-only. Do not use `swift test`. `xcodebuild` is required because the scheme depends on the iOS Simulator runtime that `swift test` cannot drive.
   DERIVED_DATA_PATH=build/DerivedData \
   RESULTS_DIR=build \
-  bash ci_scripts/xcodebuild_test_scheme.sh MaskleLibrary
+  bash ci_scripts/xcodebuild_test_scheme.sh NormleLibrary
   ```
 
 - Options:
@@ -121,7 +121,7 @@ These scripts standardize invocation and keep artifacts under `build/` to avoid 
   - Concise logs when available: pass `xcpretty` as the second arg
 
     ```sh
-    bash ci_scripts/xcodebuild_test_scheme.sh Maskle xcpretty
+    bash ci_scripts/xcodebuild_test_scheme.sh Normle xcpretty
     ```
   - Auto-fallback: If a scheme has no Test action, the script automatically falls back to `build`.
   - Force action: explicitly set `ACTION=test` or `ACTION=build` to override.
@@ -138,15 +138,15 @@ These scripts standardize invocation and keep artifacts under `build/` to avoid 
 - Run app tests (auto-pick latest iOS Simulator):
 
   ```sh
-  xcodebuild -project Maskle.xcodeproj -scheme Maskle \
+  xcodebuild -project Normle.xcodeproj -scheme Normle \
     -destination 'platform=iOS Simulator,OS=latest' test
   ```
 
 - Run library tests (via Xcode scheme on iOS Simulator):
 
   ```sh
-  # Note: MaskleLibrary is iOS-only. Do not use `swift test`. `xcodebuild` is required because the scheme depends on the iOS Simulator runtime that `swift test` cannot drive.
-  xcodebuild -project Maskle.xcodeproj -scheme MaskleLibrary \
+  # Note: NormleLibrary is iOS-only. Do not use `swift test`. `xcodebuild` is required because the scheme depends on the iOS Simulator runtime that `swift test` cannot drive.
+  xcodebuild -project Normle.xcodeproj -scheme NormleLibrary \
     -destination 'platform=iOS Simulator,OS=latest' test
   ```
 
@@ -159,8 +159,8 @@ These scripts standardize invocation and keep artifacts under `build/` to avoid 
     # Else pick any iPhone simulator (Booted or Shutdown)
     UDID=$(xcrun simctl list devices | awk '/iPhone/ && /(Shutdown|Booted)/ {print $4; exit}' | tr -d '()')
   fi
-  xcodebuild -project Maskle.xcodeproj -scheme Maskle -destination "id=$UDID" test
-  xcodebuild -project Maskle.xcodeproj -scheme MaskleLibrary -destination "id=$UDID" test
+  xcodebuild -project Normle.xcodeproj -scheme Normle -destination "id=$UDID" test
+  xcodebuild -project Normle.xcodeproj -scheme NormleLibrary -destination "id=$UDID" test
   ```
 
 - Tips:

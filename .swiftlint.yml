@@ -21,13 +21,13 @@ disabled_rules:
     - anonymous_argument_in_multiline_closure
 
 excluded:
-    - Maskle.swiftpm/Package.swift
+    - Normle.swiftpm/Package.swift
 
 file_header:
     required_pattern: |
         \/\/
         \/\/  .*?\.swift
-        \/\/  Maskle(Tests|UITests)?$
+        \/\/  Normle(Tests|UITests)?$
         \/\/
         \/\/  Created by .*? on \d{4}\/\d{2}\/\d{2}\.
         \/\/  Copyright © \d{4} Hiromu Nakano\. All rights reserved\.
