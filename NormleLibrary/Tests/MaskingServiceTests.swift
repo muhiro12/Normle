@@ -1,8 +1,8 @@
 @testable import NormleLibrary
-import XCTest
+import Testing
 
-final class MaskingServiceTests: XCTestCase {
-    func testAnonymizeAppliesMaskRulesAndAutomaticDetection() {
+struct MaskingServiceTests {
+    @Test func anonymizeAppliesMaskRulesAndAutomaticDetection() {
         let options = MaskingOptions(
             isURLMaskingEnabled: true,
             isEmailMaskingEnabled: true,
@@ -27,36 +27,36 @@ final class MaskingServiceTests: XCTestCase {
             options: options
         )
 
-        XCTAssertTrue(result.maskedText.contains("Client A"))
-        XCTAssertFalse(result.maskedText.contains("A株式会社"))
-        XCTAssertTrue(result.maskedText.contains("Email(1)"))
-        XCTAssertTrue(result.maskedText.contains("Phone(1)"))
-        XCTAssertTrue(result.maskedText.contains("PrivateURL(1)"))
+        #expect(result.maskedText.contains("Client A"))
+        #expect(result.maskedText.contains("A株式会社") == false)
+        #expect(result.maskedText.contains("Email(1)"))
+        #expect(result.maskedText.contains("Phone(1)"))
+        #expect(result.maskedText.contains("PrivateURL(1)"))
 
-        XCTAssertEqual(result.mappings.count, 4)
+        #expect(result.mappings.count == 4)
 
         let company = result.mappings.first {
             $0.kind == .company
         }
-        XCTAssertEqual(company?.masked, "Client A")
-        XCTAssertEqual(company?.occurrenceCount, 1)
+        #expect(company?.masked == "Client A")
+        #expect(company?.occurrenceCount == 1)
 
         let email = result.mappings.first {
             $0.kind == .email
         }
-        XCTAssertEqual(email?.masked, "Email(1)")
-        XCTAssertEqual(email?.occurrenceCount, 1)
+        #expect(email?.masked == "Email(1)")
+        #expect(email?.occurrenceCount == 1)
 
         let phone = result.mappings.first {
             $0.kind == .phone
         }
-        XCTAssertEqual(phone?.masked, "Phone(1)")
-        XCTAssertEqual(phone?.occurrenceCount, 1)
+        #expect(phone?.masked == "Phone(1)")
+        #expect(phone?.occurrenceCount == 1)
 
         let url = result.mappings.first {
             $0.kind == .url
         }
-        XCTAssertEqual(url?.masked, "PrivateURL(1)")
-        XCTAssertEqual(url?.occurrenceCount, 1)
+        #expect(url?.masked == "PrivateURL(1)")
+        #expect(url?.occurrenceCount == 1)
     }
 }

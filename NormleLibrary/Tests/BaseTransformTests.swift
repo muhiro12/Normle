@@ -1,37 +1,37 @@
 @testable import NormleLibrary
-import XCTest
+import Testing
 
-final class BaseTransformTests: XCTestCase {
-    func testFullwidthAlphanumericToHalfwidth() {
+struct BaseTransformTests {
+    @Test func fullwidthAlphanumericToHalfwidth() {
         let input = "ＡＢＣ１２３"
         let result = BaseTransform.fullwidthAlphanumericToHalfwidth.apply(to: input)
-        XCTAssertEqual(result, "ABC123")
+        #expect(result == "ABC123")
     }
 
-    func testHalfwidthAlphanumericToFullwidth() {
+    @Test func halfwidthAlphanumericToFullwidth() {
         let input = "ABC123"
         let result = BaseTransform.halfwidthAlphanumericToFullwidth.apply(to: input)
-        XCTAssertEqual(result, "ＡＢＣ１２３")
+        #expect(result == "ＡＢＣ１２３")
     }
 
-    func testLowercaseAndUppercase() {
-        XCTAssertEqual(BaseTransform.lowercase.apply(to: "AbC"), "abc")
-        XCTAssertEqual(BaseTransform.uppercase.apply(to: "AbC"), "ABC")
+    @Test func lowercaseAndUppercase() {
+        #expect(BaseTransform.lowercase.apply(to: "AbC") == "abc")
+        #expect(BaseTransform.uppercase.apply(to: "AbC") == "ABC")
     }
 
-    func testDigitConversion() {
-        XCTAssertEqual(BaseTransform.fullwidthDigitsToHalfwidth.apply(to: "１２３"), "123")
-        XCTAssertEqual(BaseTransform.halfwidthDigitsToFullwidth.apply(to: "123"), "１２３")
+    @Test func digitConversion() {
+        #expect(BaseTransform.fullwidthDigitsToHalfwidth.apply(to: "１２３") == "123")
+        #expect(BaseTransform.halfwidthDigitsToFullwidth.apply(to: "123") == "１２３")
     }
 
-    func testSpaceConversion() {
-        XCTAssertEqual(BaseTransform.fullwidthSpaceToHalfwidth.apply(to: "a　b"), "a b")
-        XCTAssertEqual(BaseTransform.halfwidthSpaceToFullwidth.apply(to: "a b"), "a　b")
+    @Test func spaceConversion() {
+        #expect(BaseTransform.fullwidthSpaceToHalfwidth.apply(to: "a　b") == "a b")
+        #expect(BaseTransform.halfwidthSpaceToFullwidth.apply(to: "a b") == "a　b")
     }
 
-    func testKatakanaConversion() {
+    @Test func katakanaConversion() {
         let input = "ｶﾀｶﾅ"
         let result = BaseTransform.halfwidthKatakanaToFullwidth.apply(to: input)
-        XCTAssertEqual(result, "カタカナ")
+        #expect(result == "カタカナ")
     }
 }

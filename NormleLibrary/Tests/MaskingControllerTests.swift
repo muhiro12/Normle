@@ -1,10 +1,10 @@
 @testable import NormleLibrary
 import SwiftData
-import XCTest
+import Testing
 
 @MainActor
-final class MaskingControllerTests: XCTestCase {
-    func testAutoSavePersistsAfterDelay() async throws {
+struct MaskingControllerTests {
+    @Test func autoSavePersistsAfterDelay() async throws {
         let context = testContext
         let controller = MaskingController(
             autoSaveDelayNanoseconds: 20_000_000,
@@ -33,12 +33,12 @@ final class MaskingControllerTests: XCTestCase {
         let descriptor = FetchDescriptor<TransformRecord>()
         let records = try context.fetch(descriptor)
 
-        XCTAssertEqual(records.count, 1)
-        XCTAssertEqual(controller.lastSavedRecord, records.first)
-        XCTAssertEqual(records.first?.sourceText, "")
+        #expect(records.count == 1)
+        #expect(controller.lastSavedRecord == records.first)
+        #expect(records.first?.sourceText == "")
     }
 
-    func testAutoSaveUpdatesSimilarContent() async throws {
+    @Test func autoSaveUpdatesSimilarContent() async throws {
         let context = testContext
         let controller = MaskingController(
             autoSaveDelayNanoseconds: 20_000_000,
@@ -87,7 +87,7 @@ final class MaskingControllerTests: XCTestCase {
         let descriptor = FetchDescriptor<TransformRecord>()
         let records = try context.fetch(descriptor)
 
-        XCTAssertEqual(records.count, 1)
-        XCTAssertEqual(records.first?.targetText, controller.result?.maskedText)
+        #expect(records.count == 1)
+        #expect(records.first?.targetText == controller.result?.maskedText)
     }
 }

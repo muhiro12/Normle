@@ -1,8 +1,8 @@
 @testable import NormleLibrary
-import XCTest
+import Testing
 
-final class MappingRuleTests: XCTestCase {
-    func testCreateRejectsDuplicateSource() throws {
+struct MappingRuleTests {
+    @Test func createRejectsDuplicateSource() throws {
         let context = testContext
 
         _ = try MappingRule.create(
@@ -11,18 +11,16 @@ final class MappingRuleTests: XCTestCase {
             target: "A社"
         )
 
-        XCTAssertThrowsError(
+        #expect(throws: MappingRuleError.duplicateSource) {
             try MappingRule.create(
                 context: context,
                 source: "Apple",
                 target: "B社"
             )
-        ) { error in
-            XCTAssertEqual(error as? MappingRuleError, .duplicateSource)
         }
     }
 
-    func testUpdateRejectsDuplicateTarget() throws {
+    @Test func updateRejectsDuplicateTarget() throws {
         let context = testContext
 
         _ = try MappingRule.create(
@@ -36,15 +34,13 @@ final class MappingRuleTests: XCTestCase {
             target: "C社"
         )
 
-        XCTAssertThrowsError(
+        #expect(throws: MappingRuleError.duplicateTarget) {
             try ruleToUpdate.update(
                 context: context,
                 source: "Orange",
                 target: "A社",
                 isEnabled: true
             )
-        ) { error in
-            XCTAssertEqual(error as? MappingRuleError, .duplicateTarget)
         }
     }
 }

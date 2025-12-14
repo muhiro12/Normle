@@ -1,8 +1,8 @@
 @testable import NormleLibrary
-import XCTest
+import Testing
 
-final class RestoreServiceTests: XCTestCase {
-    func testRestoreRevertsMaskedText() {
+struct RestoreServiceTests {
+    @Test func restoreRevertsMaskedText() {
         let mappings = [
             Mapping(
                 original: "A株式会社",
@@ -37,9 +37,9 @@ final class RestoreServiceTests: XCTestCase {
             mappings: mappings
         )
 
-        XCTAssertTrue(restored.contains("A株式会社"))
-        XCTAssertTrue(restored.contains("john@example.com"))
-        XCTAssertTrue(restored.contains("+1-555-1234"))
-        XCTAssertTrue(restored.contains("https://internal.example.com/path"))
+        #expect(restored.contains("A株式会社"))
+        #expect(restored.contains("john@example.com"))
+        #expect(restored.contains("+1-555-1234"))
+        #expect(restored.contains("https://internal.example.com/path"))
     }
 }

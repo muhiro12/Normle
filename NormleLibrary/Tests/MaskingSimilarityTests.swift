@@ -1,31 +1,31 @@
 @testable import NormleLibrary
-import XCTest
+import Testing
 
-final class MaskingSimilarityTests: XCTestCase {
-    func testIdenticalStringsAreFullySimilar() {
+struct MaskingSimilarityTests {
+    @Test func identicalStringsAreFullySimilar() {
         let score = MaskingSimilarity.similarityScore(
             between: "Normle",
             and: "Normle"
         )
 
-        XCTAssertEqual(score, 1.0)
+        #expect(score == 1.0)
     }
 
-    func testMinorDifferenceRemainsHighlySimilar() {
+    @Test func minorDifferenceRemainsHighlySimilar() {
         let score = MaskingSimilarity.similarityScore(
             between: "Client A project",
             and: "Client A Project"
         )
 
-        XCTAssertGreaterThanOrEqual(score, 0.9)
+        #expect(score >= 0.9)
     }
 
-    func testDifferentStringsAreDissimilar() {
+    @Test func differentStringsAreDissimilar() {
         let score = MaskingSimilarity.similarityScore(
             between: "Client A",
             and: "PrivateURL(1)"
         )
 
-        XCTAssertLessThan(score, 0.5)
+        #expect(score < 0.5)
     }
 }

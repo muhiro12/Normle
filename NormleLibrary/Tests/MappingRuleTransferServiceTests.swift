@@ -1,9 +1,9 @@
 @testable import NormleLibrary
 import SwiftData
-import XCTest
+import Testing
 
-final class MappingRuleTransferServiceTests: XCTestCase {
-    func testExportAndReplaceImport() throws {
+struct MappingRuleTransferServiceTests {
+    @Test func exportAndReplaceImport() throws {
         let context = try makeContext()
 
         try MappingRule.create(
@@ -22,15 +22,15 @@ final class MappingRuleTransferServiceTests: XCTestCase {
             policy: .replaceAll
         )
 
-        XCTAssertEqual(result.insertedCount, 1)
-        XCTAssertEqual(result.updatedCount, 0)
+        #expect(result.insertedCount == 1)
+        #expect(result.updatedCount == 0)
 
         let fetched = try importContext.fetch(FetchDescriptor<MappingRule>())
-        XCTAssertEqual(fetched.count, 1)
-        XCTAssertEqual(fetched.first?.target, "Alias")
+        #expect(fetched.count == 1)
+        #expect(fetched.first?.target == "Alias")
     }
 
-    func testMergeUpdatesExistingRule() throws {
+    @Test func mergeUpdatesExistingRule() throws {
         let context = try makeContext()
 
         try MappingRule.create(
@@ -55,14 +55,14 @@ final class MappingRuleTransferServiceTests: XCTestCase {
             policy: .mergeExisting
         )
 
-        XCTAssertEqual(result.insertedCount, 0)
-        XCTAssertEqual(result.updatedCount, 1)
+        #expect(result.insertedCount == 0)
+        #expect(result.updatedCount == 1)
 
         let fetched = try context.fetch(FetchDescriptor<MappingRule>())
-        XCTAssertEqual(fetched.first?.target, "NewAlias")
+        #expect(fetched.first?.target == "NewAlias")
     }
 
-    func testAppendCreatesNewIDsWhenDuplicated() throws {
+    @Test func appendCreatesNewIDsWhenDuplicated() throws {
         let context = try makeContext()
 
         try MappingRule.create(
@@ -87,15 +87,15 @@ final class MappingRuleTransferServiceTests: XCTestCase {
             policy: .appendNew
         )
 
-        XCTAssertEqual(result.insertedCount, 1)
-        XCTAssertEqual(result.updatedCount, 0)
+        #expect(result.insertedCount == 1)
+        #expect(result.updatedCount == 0)
 
         let fetched = try context.fetch(FetchDescriptor<MappingRule>())
-        XCTAssertEqual(fetched.count, 2)
-        XCTAssertTrue(fetched.contains { $0.source == "New" && $0.target == "NewAlias" })
+        #expect(fetched.count == 2)
+        #expect(fetched.contains { $0.source == "New" && $0.target == "NewAlias" })
     }
 
-    func testImportHandlesLegacyFieldNames() throws {
+    @Test func importHandlesLegacyFieldNames() throws {
         let context = try makeContext()
         let payload = """
         {
@@ -112,7 +112,7 @@ final class MappingRuleTransferServiceTests: XCTestCase {
         }
         """
         guard let data = payload.data(using: .utf8) else {
-            XCTFail("Failed to build legacy payload")
+            Issue.record("Failed to build legacy payload")
             return
         }
 
@@ -122,14 +122,14 @@ final class MappingRuleTransferServiceTests: XCTestCase {
             policy: .replaceAll
         )
 
-        XCTAssertEqual(result.insertedCount, 1)
-        XCTAssertEqual(result.updatedCount, 0)
-        XCTAssertEqual(result.totalCount, 1)
+        #expect(result.insertedCount == 1)
+        #expect(result.updatedCount == 0)
+        #expect(result.totalCount == 1)
 
         let fetched = try context.fetch(FetchDescriptor<MappingRule>())
-        XCTAssertEqual(fetched.count, 1)
-        XCTAssertEqual(fetched.first?.source, "Legacy")
-        XCTAssertEqual(fetched.first?.target, "Alias")
+        #expect(fetched.count == 1)
+        #expect(fetched.first?.source == "Legacy")
+        #expect(fetched.first?.target == "Alias")
     }
 }
 

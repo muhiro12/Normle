@@ -1,9 +1,9 @@
 @testable import NormleLibrary
 import SwiftData
-import XCTest
+import Testing
 
-final class TransformRecordServiceTests: XCTestCase {
-    func testSavingRecordsPersistsSourceAndTargetText() throws {
+struct TransformRecordServiceTests {
+    @Test func savingRecordsPersistsSourceAndTargetText() throws {
         let context = testContext
         let mapping = Mapping(
             original: "secret",
@@ -26,9 +26,9 @@ final class TransformRecordServiceTests: XCTestCase {
         )
         let records = try context.fetch(descriptor)
 
-        XCTAssertEqual(records.count, 1)
-        XCTAssertEqual(records.first, first)
-        XCTAssertEqual(records.first?.sourceText, "")
-        XCTAssertEqual(records.first?.targetText, "masked-1")
+        #expect(records.count == 1)
+        #expect(records.first == first)
+        #expect(records.first?.sourceText == "")
+        #expect(records.first?.targetText == "masked-1")
     }
 }
