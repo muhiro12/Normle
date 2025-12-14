@@ -11,6 +11,7 @@ import StoreKitWrapper
 import SwiftUI
 
 private enum Tab: Hashable {
+    case base
     case mask
     case mappings
     case history
@@ -29,6 +30,14 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selection) {
+            NavigationStack {
+                BaseTransformView()
+            }
+            .tabItem {
+                Label("Transforms", systemImage: "arrow.triangle.2.circlepath")
+            }
+            .tag(Tab.base)
+
             NavigationStack {
                 MaskView()
             }
