@@ -223,11 +223,12 @@ private extension BaseTransformView {
         guard let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(UTType.image.identifier) }) else {
             return
         }
+        let suggestedName = provider.suggestedName
         provider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { data, _ in
             guard let data else { return }
             DispatchQueue.main.async {
                 selectedImageData = data
-                importedImageName = provider.suggestedName
+                importedImageName = suggestedName
                 resultText = String()
             }
         }
