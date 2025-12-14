@@ -10,7 +10,7 @@ import StoreKit
 import StoreKitWrapper
 import SwiftUI
 
-private enum SidebarItem: Hashable {
+private enum Tab: Hashable {
     case mask
     case mappings
     case history
@@ -25,42 +25,35 @@ struct ContentView: View {
     private var isSubscribeOn
     @AppStorage(.isICloudOn)
     private var isICloudOn
-    @State private var selection: SidebarItem? = .mask
+    @State private var selection: Tab = .mask
 
     var body: some View {
-        NavigationSplitView {
-            List(selection: $selection) {
-                NavigationLink(value: SidebarItem.mask) {
-                    Label("Mask", systemImage: "wand.and.stars")
-                }
-                NavigationLink(value: SidebarItem.mappings) {
+        TabView(selection: $selection) {
+            NavigationStack {
+                MaskView()
+            }
+            .tabItem {
+                Label("Mask", systemImage: "wand.and.stars")
+            }
+            .tag(Tab.mask)
+
+            MappingNavigationView()
+                .tabItem {
                     Label("Mappings", systemImage: "list.bullet.clipboard")
                 }
-                NavigationLink(value: SidebarItem.history) {
+                .tag(Tab.mappings)
+
+            HistoryNavigationView()
+                .tabItem {
                     Label("History", systemImage: "clock.arrow.circlepath")
                 }
-                NavigationLink(value: SidebarItem.settings) {
+                .tag(Tab.history)
+
+            SettingsNavigationView()
+                .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
-            }
-            .navigationTitle("Normle")
-        } detail: {
-            switch selection {
-            case .mask:
-                NavigationStack {
-                    MaskView()
-                }
-            case .mappings:
-                MappingNavigationView()
-            case .history:
-                HistoryNavigationView()
-            case .settings:
-                SettingsNavigationView()
-            case .none:
-                NavigationStack {
-                    MaskView()
-                }
-            }
+                .tag(Tab.settings)
         }
         .task {
             store.open(
