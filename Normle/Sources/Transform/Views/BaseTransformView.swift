@@ -266,7 +266,9 @@ private struct DropAreaView<Content: View>: View {
         }
         .frame(maxWidth: .infinity, minHeight: 160)
         .padding()
-        .background(isActive ? Color.accentColor.opacity(0.1) : Color(.systemBackground))
+        .background(
+            isActive ? Color.accentColor.opacity(0.1) : Color.secondary
+        )
         .clipShape(.rect(cornerRadius: 10))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
