@@ -11,8 +11,7 @@ import StoreKitWrapper
 import SwiftUI
 
 private enum Tab: Hashable {
-    case base
-    case mask
+    case transforms
     case mappings
     case history
     case settings
@@ -26,25 +25,17 @@ struct ContentView: View {
     private var isSubscribeOn
     @AppStorage(.isICloudOn)
     private var isICloudOn
-    @State private var selection: Tab = .mask
+    @State private var selection: Tab = .transforms
 
     var body: some View {
         TabView(selection: $selection) {
             NavigationStack {
-                BaseTransformView()
+                TransformsHomeView()
             }
             .tabItem {
                 Label("Transforms", systemImage: "arrow.triangle.2.circlepath")
             }
-            .tag(Tab.base)
-
-            NavigationStack {
-                MaskView()
-            }
-            .tabItem {
-                Label("Mask", systemImage: "wand.and.stars")
-            }
-            .tag(Tab.mask)
+            .tag(Tab.transforms)
 
             MappingNavigationView()
                 .tabItem {

@@ -50,7 +50,7 @@ struct MaskView: View {
                 content(proxy: proxy, controller: controller)
             }
         }
-        .navigationTitle("Mask")
+        .navigationTitle("Custom")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Menu {

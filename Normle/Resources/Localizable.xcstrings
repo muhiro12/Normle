@@ -22,6 +22,9 @@
     "Created at" : {
 
     },
+    "Custom" : {
+
+    },
     "Delete" : {
 
     },
@@ -77,9 +80,6 @@
 
     },
     "Mappings are not retained in history." : {
-
-    },
-    "Mask" : {
 
     },
     "Mask email addresses" : {
@@ -152,6 +152,9 @@
 
     },
     "Transform & Save" : {
+
+    },
+    "Transform category" : {
 
     },
     "Transform failed" : {
