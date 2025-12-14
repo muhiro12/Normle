@@ -16,6 +16,7 @@ struct BaseTransformView: View {
     @State private var sourceText = String()
     @State private var selectedTransform = BaseTransform.allCases.first ?? .lowercase
     @State private var resultText = String()
+    @State private var alertMessage: String?
 
     var body: some View {
         ScrollView {
@@ -58,22 +59,45 @@ struct BaseTransformView: View {
             .padding()
         }
         .navigationTitle("Transforms")
+        .alert(
+            "Transform failed",
+            isPresented: Binding(
+                get: { alertMessage != nil },
+                set: { isPresented in
+                    if isPresented == false {
+                        alertMessage = nil
+                    }
+                }
+            ),
+            presenting: alertMessage
+        ) { _ in
+            Button("OK", role: .cancel) {}
+        } message: { message in
+            Text(message)
+        }
     }
 }
 
 private extension BaseTransformView {
     func runTransform() {
-        let output = selectedTransform.apply(to: sourceText)
-        resultText = output
-        do {
-            _ = try TransformRecordService.saveRecord(
-                context: context,
-                sourceText: sourceText,
-                targetText: output,
-                mappings: []
-            )
-        } catch {
-            assertionFailure(error.localizedDescription)
+        let result = selectedTransform.apply(to: sourceText)
+        switch result {
+        case .success(let output):
+            alertMessage = nil
+            resultText = output
+            do {
+                _ = try TransformRecordService.saveRecord(
+                    context: context,
+                    sourceText: sourceText,
+                    targetText: output,
+                    mappings: []
+                )
+            } catch {
+                assertionFailure(error.localizedDescription)
+            }
+        case .failure(let error):
+            resultText = String()
+            alertMessage = error.localizedDescription
         }
     }
 }
