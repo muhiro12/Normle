@@ -3,7 +3,7 @@ import SwiftData
 import XCTest
 
 final class TransformRecordServiceTests: XCTestCase {
-    func testSavingRecordsPersistsTargetText() throws {
+    func testSavingRecordsPersistsSourceAndTargetText() throws {
         let context = testContext
         let mapping = Mapping(
             original: "secret",
@@ -14,6 +14,7 @@ final class TransformRecordServiceTests: XCTestCase {
 
         let first = try TransformRecordService.saveRecord(
             context: context,
+            sourceText: "",
             targetText: "masked-1",
             mappings: [mapping]
         )
@@ -27,6 +28,7 @@ final class TransformRecordServiceTests: XCTestCase {
 
         XCTAssertEqual(records.count, 1)
         XCTAssertEqual(records.first, first)
+        XCTAssertEqual(records.first?.sourceText, "")
         XCTAssertEqual(records.first?.targetText, "masked-1")
     }
 }

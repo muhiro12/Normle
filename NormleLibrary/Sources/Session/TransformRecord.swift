@@ -8,10 +8,12 @@
 import Foundation
 import SwiftData
 
-/// A persisted transform result entry kept in history.
+/// A persisted mapping transform entry kept in history, pairing source and target texts.
+/// When `sourceText` is empty, it represents an intentional decision not to retain the input text for security.
 @Model
 public final class TransformRecord {
     public private(set) var date = Date()
+    public private(set) var sourceText = String()
     public private(set) var targetText = String()
 
     @Relationship(deleteRule: .nullify)
@@ -22,21 +24,25 @@ public final class TransformRecord {
     @discardableResult
     public static func create(
         context: ModelContext,
+        sourceText: String,
         targetText: String
     ) -> TransformRecord {
         let record = TransformRecord()
         context.insert(record)
 
         record.date = Date()
+        record.sourceText = sourceText
         record.targetText = targetText
 
         return record
     }
 
     public func update(
+        sourceText: String,
         targetText: String
     ) {
         date = Date()
+        self.sourceText = sourceText
         self.targetText = targetText
     }
 }

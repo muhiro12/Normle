@@ -13,6 +13,11 @@ struct HistoryDetailView: View {
 
     var body: some View {
         List {
+            Section("Source text") {
+                Text(record.sourceText)
+                    .textSelection(.enabled)
+                CopyButton(text: record.sourceText)
+            }
             Section("Target text") {
                 Text(record.targetText)
                     .textSelection(.enabled)

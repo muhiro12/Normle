@@ -35,6 +35,7 @@ final class MaskingControllerTests: XCTestCase {
 
         XCTAssertEqual(records.count, 1)
         XCTAssertEqual(controller.lastSavedRecord, records.first)
+        XCTAssertEqual(records.first?.sourceText, "")
     }
 
     func testAutoSaveUpdatesSimilarContent() async throws {

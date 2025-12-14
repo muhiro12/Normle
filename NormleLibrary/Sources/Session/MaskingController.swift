@@ -75,6 +75,7 @@ public final class MaskingController {
 
         save(
             context: context,
+            sourceText: "",
             targetText: generated.maskedText,
             mappings: generated.mappings
         )
@@ -97,6 +98,7 @@ public final class MaskingController {
 
         let targetText = currentResult.maskedText
         let mappings = currentResult.mappings
+        let sourceTextToStore = ""
 
         autoSaveTask = Task { @MainActor [weak self] in
             guard let self else {
@@ -124,12 +126,14 @@ public final class MaskingController {
                     update(
                         context: context,
                         record: record,
+                        sourceText: sourceTextToStore,
                         targetText: targetText,
                         mappings: mappings
                     )
                 } else {
                     save(
                         context: context,
+                        sourceText: sourceTextToStore,
                         targetText: targetText,
                         mappings: mappings
                     )
@@ -139,6 +143,7 @@ public final class MaskingController {
 
             save(
                 context: context,
+                sourceText: sourceTextToStore,
                 targetText: targetText,
                 mappings: mappings
             )
@@ -149,12 +154,14 @@ public final class MaskingController {
 private extension MaskingController {
     func save(
         context: ModelContext,
+        sourceText: String,
         targetText: String,
         mappings: [Mapping]
     ) {
         do {
             lastSavedRecord = try TransformRecordService.saveRecord(
                 context: context,
+                sourceText: sourceText,
                 targetText: targetText,
                 mappings: mappings
             )
@@ -167,6 +174,7 @@ private extension MaskingController {
     func update(
         context: ModelContext,
         record: TransformRecord,
+        sourceText: String,
         targetText: String,
         mappings: [Mapping]
     ) {
@@ -174,6 +182,7 @@ private extension MaskingController {
             lastSavedRecord = try TransformRecordService.updateRecord(
                 context: context,
                 record: record,
+                sourceText: sourceText,
                 targetText: targetText,
                 mappings: mappings
             )
