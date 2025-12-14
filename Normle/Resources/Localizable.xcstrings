@@ -7,9 +7,6 @@
     "AI response to restore" : {
 
     },
-    "Masked" : {
-
-    },
     "Append new" : {
 
     },
@@ -43,6 +40,9 @@
     "Disabled" : {
 
     },
+    "Drop an image or select a file." : {
+
+    },
     "Edit" : {
 
     },
@@ -50,6 +50,9 @@
 
     },
     "Enter text above to see masked output." : {
+
+    },
+    "Enter text and run QR Encode." : {
 
     },
     "Export" : {
@@ -88,13 +91,7 @@
     "Mask URLs" : {
 
     },
-    "Masked text" : {
-
-    },
     "Masking options" : {
-
-    },
-    "Normle" : {
 
     },
     "Merge existing" : {
@@ -106,10 +103,7 @@
     "OK" : {
 
     },
-    "Original" : {
-
-    },
-    "Original text" : {
+    "Preset" : {
 
     },
     "Replace all" : {
@@ -127,7 +121,19 @@
     "Save to history" : {
 
     },
+    "Select a preset and run transform." : {
+
+    },
+    "Select image" : {
+
+    },
     "Settings" : {
+
+    },
+    "Source" : {
+
+    },
+    "Source text" : {
 
     },
     "Status" : {
@@ -137,6 +143,21 @@
 
     },
     "Tags are not set" : {
+
+    },
+    "Target" : {
+
+    },
+    "Target text" : {
+
+    },
+    "Transform & Save" : {
+
+    },
+    "Transform failed" : {
+
+    },
+    "Transforms" : {
 
     },
     "Use iCloud sync" : {
