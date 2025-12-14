@@ -5,6 +5,7 @@
 //  Created by Hiromu Nakano on 2025/11/23.
 //
 
+import CoreImage.CIFilterBuiltins
 import Foundation
 
 public enum BaseTransform: CaseIterable, Identifiable {
@@ -22,6 +23,8 @@ public enum BaseTransform: CaseIterable, Identifiable {
     case base64Decode
     case urlEncode
     case urlDecode
+    case qrEncode
+    case qrDecode
 
     public var id: Self { self }
 
@@ -55,10 +58,14 @@ public enum BaseTransform: CaseIterable, Identifiable {
             "URL Encode"
         case .urlDecode:
             "URL Decode"
+        case .qrEncode:
+            "QR Encode"
+        case .qrDecode:
+            "QR Decode"
         }
     }
 
-    public func apply(to text: String) -> Result<String, BaseTransformError> {
+    public func apply(text: String, imageData: Data? = nil) -> Result<String, BaseTransformError> {
         switch self {
         case .fullwidthAlphanumericToHalfwidth:
             return .success(applyingTransform(text, transform: .fullwidthToHalfwidth))
@@ -103,6 +110,15 @@ public enum BaseTransform: CaseIterable, Identifiable {
                 return .failure(.invalidURL)
             }
             return .success(decoded)
+        case .qrEncode:
+            // targetText is intentionally empty for QR encode; QR image is generated at call site.
+            return .success(String())
+        case .qrDecode:
+            guard let imageData,
+                  let decoded = decodeQRCode(from: imageData) else {
+                return .failure(.qrNotDetected)
+            }
+            return .success(decoded)
         }
     }
 }
@@ -110,6 +126,8 @@ public enum BaseTransform: CaseIterable, Identifiable {
 public enum BaseTransformError: LocalizedError, Equatable {
     case invalidBase64
     case invalidURL
+    case qrNotDetected
+    case qrGenerationFailed
 
     public var errorDescription: String? {
         switch self {
@@ -117,6 +135,10 @@ public enum BaseTransformError: LocalizedError, Equatable {
             "Failed to decode Base64 text."
         case .invalidURL:
             "Failed to process URL text."
+        case .qrNotDetected:
+            "Failed to detect a QR code."
+        case .qrGenerationFailed:
+            "Failed to generate a QR code."
         }
     }
 }
@@ -150,5 +172,46 @@ private extension BaseTransform {
             return scalar
         }
         return String(String.UnicodeScalarView(scalars))
+    }
+
+    func makeQRCodeImage(for text: String) -> CGImage? {
+        let filter = CIFilter.qrCodeGenerator()
+        filter.message = Data(text.utf8)
+        filter.correctionLevel = "H"
+
+        guard let outputImage = filter.outputImage else {
+            return nil
+        }
+        let scaledImage = outputImage.transformed(by: CGAffineTransform(scaleX: 10, y: 10))
+
+        let context = CIContext()
+        let colorSpace = CGColorSpaceCreateDeviceGray()
+        return context.createCGImage(scaledImage, from: scaledImage.extent, format: .L8, colorSpace: colorSpace)
+    }
+
+    func decodeQRCode(from imageData: Data) -> String? {
+        guard let ciImage = CIImage(data: imageData) else {
+            return nil
+        }
+        let context = CIContext()
+        guard let detector = CIDetector(
+            ofType: CIDetectorTypeQRCode,
+            context: context,
+            options: [CIDetectorAccuracy: CIDetectorAccuracyHigh]
+        ) else {
+            return nil
+        }
+        let features = detector.features(in: ciImage)
+        let messages = features.compactMap { ($0 as? CIQRCodeFeature)?.messageString }
+        return messages.first
+    }
+}
+
+public extension BaseTransform {
+    func qrCodeImage(for text: String) -> Result<CGImage, BaseTransformError> {
+        guard let image = makeQRCodeImage(for: text) else {
+            return .failure(.qrGenerationFailed)
+        }
+        return .success(image)
     }
 }
