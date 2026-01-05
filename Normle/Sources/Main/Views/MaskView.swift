@@ -45,9 +45,46 @@ struct MaskView: View {
     var body: some View {
         @Bindable var controller = controller
 
-        GeometryReader { proxy in
-            ScrollView {
-                content(proxy: proxy, controller: controller)
+        Form {
+            Section("Source text") {
+                TextEditor(
+                    text: $controller.sourceText
+                )
+                .frame(minHeight: 180)
+                Button {
+                    presentMappingFromSelection()
+                } label: {
+                    Label("Create mapping from selection", systemImage: "plus")
+                }
+                .disabled(selectedSourceText == nil)
+            }
+
+            Section("Target text") {
+                if let result = controller.result {
+                    TextEditor(text: .constant(result.maskedText))
+                        .frame(minHeight: 180)
+                        .textSelection(.enabled)
+                    CopyButton(text: result.maskedText)
+                } else {
+                    Text("Enter text above to see masked output.")
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            if controller.result != nil {
+                Section {
+                    Button {
+                        controller.anonymize(
+                            context: context,
+                            options: maskingOptions(),
+                            maskRules: activeMaskRules(),
+                            shouldSaveHistory: true,
+                            isHistoryAutoSaveEnabled: isHistoryAutoSaveEnabled
+                        )
+                    } label: {
+                        Label("Save to history", systemImage: "tray.and.arrow.down")
+                    }
+                }
             }
         }
         .navigationTitle("Custom")
@@ -113,38 +150,6 @@ struct MaskView: View {
 }
 
 private extension MaskView {
-    struct SectionContainer<Content: View>: View {
-        let title: String?
-        @ViewBuilder let content: Content
-
-        init(
-            title: String? = nil,
-            @ViewBuilder content: () -> Content
-        ) {
-            self.title = title
-            self.content = content()
-        }
-
-        var body: some View {
-            VStack(alignment: .leading, spacing: 8) {
-                if let title {
-                    Text(title)
-                        .font(.headline)
-                }
-                VStack(alignment: .leading, spacing: 8) {
-                    content
-                }
-                .padding(12)
-                .background(.background)
-                .clipShape(.rect(cornerRadius: 10))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(.quaternary, lineWidth: 1)
-                )
-            }
-        }
-    }
-
     func activeMaskRules() -> [MaskingRule] {
         mappingRules
             .filter { rule in
@@ -157,87 +162,6 @@ private extension MaskView {
         let trimmed = selectedSourceTextRaw.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
     }
-
-    @ViewBuilder
-    func content(
-        proxy: GeometryProxy,
-        controller: MaskingController
-    ) -> some View {
-        VStack(spacing: 16) {
-            sourceSection(proxy: proxy, controller: controller)
-            targetSection(proxy: proxy, controller: controller)
-            historySection(controller: controller)
-        }
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-    }
-
-    @ViewBuilder
-    func sourceSection(
-        proxy: GeometryProxy,
-        controller _: MaskingController
-    ) -> some View {
-        SectionContainer(title: "Source text") {
-            TextEditor(
-                text: $controller.sourceText
-            )
-            .frame(
-                minHeight: 180,
-                maxHeight: max(220, proxy.size.height * 0.6)
-            )
-            Button {
-                presentMappingFromSelection()
-            } label: {
-                Label("Create mapping from selection", systemImage: "plus")
-            }
-            .disabled(selectedSourceText == nil)
-        }
-    }
-
-    @ViewBuilder
-    func targetSection(
-        proxy: GeometryProxy,
-        controller: MaskingController
-    ) -> some View {
-        if let result = controller.result {
-            SectionContainer(title: "Target text") {
-                TextEditor(text: .constant(result.maskedText))
-                    .frame(
-                        minHeight: 180,
-                        maxHeight: max(220, proxy.size.height * 0.6)
-                    )
-                    .textSelection(.enabled)
-                CopyButton(text: result.maskedText)
-            }
-        } else {
-            SectionContainer(title: "Target text") {
-                Text("Enter text above to see masked output.")
-                    .foregroundStyle(.secondary)
-            }
-        }
-    }
-
-    @ViewBuilder
-    func historySection(
-        controller: MaskingController
-    ) -> some View {
-        if controller.result != nil {
-            SectionContainer {
-                Button {
-                    controller.anonymize(
-                        context: context,
-                        options: maskingOptions(),
-                        maskRules: activeMaskRules(),
-                        shouldSaveHistory: true,
-                        isHistoryAutoSaveEnabled: isHistoryAutoSaveEnabled
-                    )
-                } label: {
-                    Label("Save to history", systemImage: "tray.and.arrow.down")
-                }
-            }
-        }
-    }
-
     func anonymizeLive() {
         guard controller.sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else {
             controller.result = nil

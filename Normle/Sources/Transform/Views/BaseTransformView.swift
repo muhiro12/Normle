@@ -24,63 +24,54 @@ struct BaseTransformView: View {
     @State private var isImporterPresented = false
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                if selectedTransform != .qrDecode {
-                    SectionContainer(title: "Source text") {
-                        TextEditor(text: $sourceText)
-                            .frame(minHeight: 160)
-                    }
-                } else {
-                    SectionContainer(title: "QR image") {
-                        VStack(alignment: .leading, spacing: 8) {
-                            DropAreaView(isActive: selectedImageData != nil) {
-                                if let name = importedImageName {
-                                    Text(name).font(.subheadline)
-                                } else {
-                                    Text("Drop an image or select a file.")
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
+        Form {
+            if selectedTransform != .qrDecode {
+                Section("Source text") {
+                    TextEditor(text: $sourceText)
+                        .frame(minHeight: 160)
+                }
+            } else {
+                Section("QR image") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(importedImageName ?? "Drop an image or select a file.")
+                            .foregroundStyle(importedImageName == nil ? .secondary : .primary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
                             .onDrop(of: [UTType.image.identifier], isTargeted: nil) { providers in
                                 handleDrop(providers: providers)
                                 return true
                             }
 
-                            Button {
-                                isImporterPresented = true
-                            } label: {
-                                Label("Select image", systemImage: "photo.on.rectangle")
-                                    .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.bordered)
+                        Button {
+                            isImporterPresented = true
+                        } label: {
+                            Label("Select image", systemImage: "photo.on.rectangle")
                         }
                     }
                 }
+            }
 
-                SectionContainer(title: "Preset") {
-                    Picker("Preset", selection: $selectedTransform) {
-                        ForEach(BaseTransform.allCases) { preset in
-                            Text(preset.title).tag(preset)
-                        }
+            Section("Preset") {
+                Picker("Preset", selection: $selectedTransform) {
+                    ForEach(BaseTransform.allCases) { preset in
+                        Text(preset.title).tag(preset)
                     }
-                    .pickerStyle(.inline)
                 }
+                .pickerStyle(.inline)
+            }
 
-                SectionContainer(title: "Result") {
-                    resultContent
-                }
+            Section("Result") {
+                resultContent
+            }
 
+            Section {
                 Button {
                     runTransform()
                 } label: {
                     Label("Transform & Save", systemImage: "arrow.triangle.2.circlepath")
-                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.borderedProminent)
                 .disabled(isRunDisabled)
             }
-            .padding()
         }
         .navigationTitle("Transforms")
         .alert(
@@ -95,7 +86,8 @@ struct BaseTransformView: View {
             ),
             presenting: alertMessage
         ) { _ in
-            Button("OK", role: .cancel) {}
+            Button("OK", role: .cancel) {
+            }
         } message: { message in
             Text(message)
         }
@@ -232,51 +224,5 @@ private extension BaseTransformView {
                 resultText = String()
             }
         }
-    }
-}
-
-private struct SectionContainer<Content: View>: View {
-    let title: String
-    @ViewBuilder let content: Content
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.headline)
-            VStack(alignment: .leading, spacing: 8) {
-                content
-            }
-            .padding(12)
-            .background(.background)
-            .clipShape(.rect(cornerRadius: 10))
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(.quaternary, lineWidth: 1)
-            )
-        }
-    }
-}
-
-private struct DropAreaView<Content: View>: View {
-    let isActive: Bool
-    @ViewBuilder let content: Content
-
-    var body: some View {
-        VStack {
-            content
-        }
-        .frame(maxWidth: .infinity, minHeight: 160)
-        .padding()
-        .background(
-            isActive ? Color.accentColor.opacity(0.1) : Color.secondary
-        )
-        .clipShape(.rect(cornerRadius: 10))
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(
-                    isActive ? Color.accentColor : Color.secondary.opacity(0.4),
-                    lineWidth: 1
-                )
-        )
     }
 }
