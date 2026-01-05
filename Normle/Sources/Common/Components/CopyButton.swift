@@ -9,21 +9,21 @@ import SwiftUI
 
 struct CopyButton: View {
     private let text: String
-    private let label: String
+    private let labelKey: String
 
     init(
         _ label: String = "Copy",
         text: String
     ) {
         self.text = text
-        self.label = label
+        labelKey = label
     }
 
     var body: some View {
         Button {
             ClipboardService.copy(text)
         } label: {
-            Label(label, systemImage: "doc.on.doc")
+            Label(String(localized: .init(labelKey)), systemImage: "doc.on.doc")
         }
     }
 }

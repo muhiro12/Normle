@@ -75,7 +75,7 @@ struct MappingEditView: View {
             load()
         }
         .alert(
-            alertMessage ?? "Error",
+            alertMessage ?? String(localized: "Error"),
             isPresented: .init(
                 get: { alertMessage != nil },
                 set: { isPresented in
@@ -93,11 +93,11 @@ struct MappingEditView: View {
 
 private extension MappingEditView {
     var title: String {
-        rule == nil ? "New Mapping" : "Edit Mapping"
+        rule == nil ? String(localized: "New Mapping") : String(localized: "Edit Mapping")
     }
 
     var saveTitle: String {
-        rule == nil ? "Create" : "Save"
+        rule == nil ? String(localized: "Create") : String(localized: "Save")
     }
 
     func load() {

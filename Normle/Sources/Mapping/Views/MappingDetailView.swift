@@ -16,16 +16,16 @@ struct MappingDetailView: View {
     var body: some View {
         List {
             Section("Target") {
-                Text(rule.target.isEmpty ? "Not set" : rule.target)
+                Text(rule.target.isEmpty ? String(localized: "Not set") : rule.target)
             }
             Section("Source") {
-                Text(rule.source.isEmpty ? "Not set" : rule.source)
+                Text(rule.source.isEmpty ? String(localized: "Not set") : rule.source)
             }
             Section("Kind") {
                 Text("Tags are not set")
             }
             Section("Status") {
-                Text(rule.isEnabled ? "Enabled" : "Disabled")
+                Text(rule.isEnabled ? String(localized: "Enabled") : String(localized: "Disabled"))
             }
             Section("Created at") {
                 Text(rule.date.formatted(date: .abbreviated, time: .shortened))

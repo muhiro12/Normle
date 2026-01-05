@@ -33,7 +33,7 @@ struct BaseTransformView: View {
             } else {
                 Section("QR image") {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(importedImageName ?? "Drop an image or select a file.")
+                        Text(importedImageName ?? String(localized: "Drop an image or select a file."))
                             .foregroundStyle(importedImageName == nil ? .secondary : .primary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .contentShape(Rectangle())
@@ -170,7 +170,7 @@ private extension BaseTransformView {
             }
         case .qrDecode:
             guard let imageData = selectedImageData else {
-                alertMessage = "Select an image to decode."
+                alertMessage = String(localized: "Select an image to decode.")
                 return
             }
             let result = selectedTransform.apply(text: String(), imageData: imageData)

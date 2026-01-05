@@ -41,14 +41,14 @@ struct MappingListView: View {
             ForEach(rules) { rule in
                 NavigationLink(value: rule) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(rule.target.isEmpty ? "Target not set" : rule.target)
+                        Text(rule.target.isEmpty ? String(localized: "Target not set") : rule.target)
                             .font(.headline)
                         if rule.isEnabled == false {
                             Text("Disabled")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
-                        Text(rule.source.isEmpty ? "Source not set" : rule.source)
+                        Text(rule.source.isEmpty ? String(localized: "Source not set") : rule.source)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                         Text(rule.date.formatted(date: .abbreviated, time: .shortened))
@@ -90,7 +90,7 @@ struct MappingListView: View {
             isPresented: $isExporting,
             document: exportDocument,
             contentType: .json,
-            defaultFilename: "mappings"
+            defaultFilename: String(localized: "mappings")
         ) { result in
             if case let .failure(error) = result {
                 presentError(message: error.localizedDescription)
@@ -128,7 +128,8 @@ struct MappingListView: View {
             alertTitle,
             isPresented: $isShowingAlert
         ) {
-            Button("OK", role: .cancel) {}
+            Button("OK", role: .cancel) {
+            }
         } message: {
             Text(alertMessage)
         }
@@ -169,12 +170,20 @@ private extension MappingListView {
                 context: context,
                 policy: policy
             )
-            alertTitle = "Import completed"
-            alertMessage = """
-            Inserted: \(result.insertedCount)
-            Updated: \(result.updatedCount)
-            Total: \(result.totalCount)
-            """
+            alertTitle = String(localized: "Import completed")
+            let insertedText = String.localizedStringWithFormat(
+                String(localized: "Inserted: %d"),
+                result.insertedCount
+            )
+            let updatedText = String.localizedStringWithFormat(
+                String(localized: "Updated: %d"),
+                result.updatedCount
+            )
+            let totalText = String.localizedStringWithFormat(
+                String(localized: "Total: %d"),
+                result.totalCount
+            )
+            alertMessage = [insertedText, updatedText, totalText].joined(separator: "\n")
             isShowingAlert = true
         } catch {
             presentError(message: error.localizedDescription)
@@ -185,7 +194,7 @@ private extension MappingListView {
     func presentError(
         message: String
     ) {
-        alertTitle = "Error"
+        alertTitle = String(localized: "Error")
         alertMessage = message
         isShowingAlert = true
     }

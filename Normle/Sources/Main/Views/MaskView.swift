@@ -100,7 +100,7 @@ struct MaskView: View {
                                 toggleDisabled(rule: rule)
                             } label: {
                                 HStack {
-                                    Text(rule.target.isEmpty ? "Target not set" : rule.target)
+                                    Text(rule.target.isEmpty ? String(localized: "Target not set") : rule.target)
                                     Spacer()
                                     if disabledRuleIDs.contains(rule.persistentModelID) {
                                         Image(systemName: "slash.circle")

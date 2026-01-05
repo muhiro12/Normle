@@ -45,9 +45,9 @@ private enum TransformCategory: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .builtIn:
-            "Built-in"
+            String(localized: "Built-in")
         case .customMapping:
-            "Custom"
+            String(localized: "Custom")
         }
     }
 }
