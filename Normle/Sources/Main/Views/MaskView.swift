@@ -52,6 +52,16 @@ struct MaskView: View {
                 )
                 .frame(minHeight: 180)
                 Button {
+                    pasteSourceText()
+                } label: {
+                    Label("Paste", systemImage: "doc.on.clipboard")
+                }
+                Button {
+                    clearSourceText()
+                } label: {
+                    Label("Clear", systemImage: "xmark.circle")
+                }
+                Button {
                     presentMappingFromSelection()
                 } label: {
                     Label("Create mapping from selection", systemImage: "plus")
@@ -202,6 +212,17 @@ private extension MaskView {
             isEmailMaskingEnabled: isEmailMaskingEnabled,
             isPhoneMaskingEnabled: isPhoneMaskingEnabled
         )
+    }
+
+    func pasteSourceText() {
+        guard let pastedText = ClipboardService.pasteText() else {
+            return
+        }
+        controller.sourceText = pastedText
+    }
+
+    func clearSourceText() {
+        controller.sourceText = String()
     }
 }
 

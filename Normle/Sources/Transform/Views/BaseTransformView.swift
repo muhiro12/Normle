@@ -29,6 +29,16 @@ struct BaseTransformView: View {
                 Section("Source text") {
                     TextEditor(text: $sourceText)
                         .frame(minHeight: 160)
+                    Button {
+                        pasteSourceText()
+                    } label: {
+                        Label("Paste", systemImage: "doc.on.clipboard")
+                    }
+                    Button {
+                        clearSourceText()
+                    } label: {
+                        Label("Clear", systemImage: "xmark.circle")
+                    }
                 }
             } else {
                 Section("QR image") {
@@ -46,6 +56,13 @@ struct BaseTransformView: View {
                             isImporterPresented = true
                         } label: {
                             Label("Select image", systemImage: "photo.on.rectangle")
+                        }
+                        if selectedImageData != nil {
+                            Button {
+                                clearSelectedImage()
+                            } label: {
+                                Label("Clear image", systemImage: "xmark.circle")
+                            }
                         }
                     }
                 }
@@ -196,6 +213,30 @@ private extension BaseTransformView {
                 alertMessage = error.localizedDescription
             }
         }
+    }
+
+    func pasteSourceText() {
+        guard let pastedText = ClipboardService.pasteText() else {
+            return
+        }
+        sourceText = pastedText
+        resultText = String()
+        qrImage = nil
+    }
+
+    func clearSourceText() {
+        sourceText = String()
+        resultText = String()
+        qrImage = nil
+        alertMessage = nil
+    }
+
+    func clearSelectedImage() {
+        selectedImageData = nil
+        importedImageName = nil
+        resultText = String()
+        qrImage = nil
+        alertMessage = nil
     }
 
     func saveRecord(source: String, target: String) {

@@ -22,4 +22,14 @@ enum ClipboardService {
         pasteboard.setString(text, forType: .string)
         #endif
     }
+
+    static func pasteText() -> String? {
+        #if os(iOS)
+        UIPasteboard.general.string
+        #elseif os(macOS)
+        NSPasteboard.general.string(forType: .string)
+        #else
+        nil
+        #endif
+    }
 }
