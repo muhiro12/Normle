@@ -98,4 +98,20 @@ struct BaseTransformTests {
             Issue.record("Failed to generate QR: \(error)")
         }
     }
+
+    @Test func qrDecodeFailsWithNonImageData() throws {
+        let data = Data("not an image".utf8)
+        let result = BaseTransform.qrDecode.apply(text: String(), imageData: data)
+        switch result {
+        case .success:
+            Issue.record("Expected QR decode to fail for non-image data")
+        case .failure(let error):
+            #expect(error == .qrNotDetected)
+        }
+    }
+
+    @Test func qrEncodeApplyReturnsEmptyText() throws {
+        let result = try BaseTransform.qrEncode.apply(text: String()).get()
+        #expect(result.isEmpty)
+    }
 }

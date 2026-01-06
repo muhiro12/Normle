@@ -59,4 +59,50 @@ struct MaskingServiceTests {
         #expect(url?.masked == "PrivateURL(1)")
         #expect(url?.occurrenceCount == 1)
     }
+
+    @Test func anonymizeSkipsAutomaticMaskingWhenDisabled() {
+        let options = MaskingOptions(
+            isURLMaskingEnabled: false,
+            isEmailMaskingEnabled: false,
+            isPhoneMaskingEnabled: false
+        )
+
+        let source = """
+        Contact john@example.com, +1-555-1234, or https://internal.example.com/path
+        """
+
+        let result = MaskingService.anonymize(
+            text: source,
+            maskRules: [],
+            options: options
+        )
+
+        #expect(result.maskedText == source)
+        #expect(result.mappings.isEmpty)
+    }
+
+    @Test func anonymizeAppliesManualRulesEvenWhenAutomaticDisabled() {
+        let options = MaskingOptions(
+            isURLMaskingEnabled: false,
+            isEmailMaskingEnabled: false,
+            isPhoneMaskingEnabled: false
+        )
+        let maskRules = [
+            MaskingRule(
+                original: "Secret",
+                masked: "Alias",
+                kind: .custom
+            )
+        ]
+
+        let result = MaskingService.anonymize(
+            text: "Secret message",
+            maskRules: maskRules,
+            options: options
+        )
+
+        #expect(result.maskedText.contains("Alias"))
+        #expect(result.maskedText.contains("Secret") == false)
+        #expect(result.mappings.count == 1)
+    }
 }
