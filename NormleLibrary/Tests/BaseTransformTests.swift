@@ -1,7 +1,8 @@
 import CoreGraphics
-import CoreImage
+import ImageIO
 @testable import NormleLibrary
 import Testing
+import UniformTypeIdentifiers
 
 struct BaseTransformTests {
     @Test func fullwidthAlphanumericToHalfwidth() throws {
@@ -79,20 +80,14 @@ struct BaseTransformTests {
         let imageResult = BaseTransform.qrEncode.qrCodeImage(for: text)
         switch imageResult {
         case .success(let image):
-            let context = CIContext()
-            let colorSpace = CGColorSpaceCreateDeviceRGB()
-            let ciImage = CIImage(cgImage: image)
-            guard
-                let data = context.pngRepresentation(
-                    of: ciImage,
-                    format: CIFormat.RGBA8,
-                    colorSpace: colorSpace
-                )
-            else {
+            guard let imageData = pngData(from: image) else {
                 Issue.record("Failed to build PNG data for QR")
                 return
             }
-            let decoded = try BaseTransform.qrDecode.apply(text: String(), imageData: data).get()
+            let decoded = try BaseTransform.qrDecode.apply(
+                text: String(),
+                imageData: imageData
+            ).get()
             #expect(decoded == text)
         case .failure(let error):
             Issue.record("Failed to generate QR: \(error)")
@@ -100,8 +95,14 @@ struct BaseTransformTests {
     }
 
     @Test func qrDecodeFailsWithNonImageData() throws {
-        let data = Data("not an image".utf8)
-        let result = BaseTransform.qrDecode.apply(text: String(), imageData: data)
+        guard let imageData = makeSolidPNGData() else {
+            Issue.record("Failed to build PNG data for non-QR test")
+            return
+        }
+        let result = BaseTransform.qrDecode.apply(
+            text: String(),
+            imageData: imageData
+        )
         switch result {
         case .success:
             Issue.record("Expected QR decode to fail for non-image data")
@@ -113,5 +114,67 @@ struct BaseTransformTests {
     @Test func qrEncodeApplyReturnsEmptyText() throws {
         let result = try BaseTransform.qrEncode.apply(text: String()).get()
         #expect(result.isEmpty)
+    }
+}
+
+private extension BaseTransformTests {
+    func pngData(from image: CGImage) -> Data? {
+        let mutableData = NSMutableData()
+        guard let destination = CGImageDestinationCreateWithData(
+            mutableData,
+            UTType.png.identifier as CFString,
+            1,
+            nil
+        ) else {
+            return nil
+        }
+
+        CGImageDestinationAddImage(destination, image, nil)
+        guard CGImageDestinationFinalize(destination) else {
+            return nil
+        }
+
+        return mutableData as Data
+    }
+
+    func makeSolidPNGData() -> Data? {
+        let width = 4
+        let height = 4
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue
+        guard let context = CGContext(
+            data: nil,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: 0,
+            space: colorSpace,
+            bitmapInfo: bitmapInfo
+        ) else {
+            return nil
+        }
+
+        context.setFillColor(
+            CGColor(
+                red: 1,
+                green: 1,
+                blue: 1,
+                alpha: 1
+            )
+        )
+        context.fill(
+            CGRect(
+                x: 0,
+                y: 0,
+                width: CGFloat(width),
+                height: CGFloat(height)
+            )
+        )
+
+        guard let image = context.makeImage() else {
+            return nil
+        }
+
+        return pngData(from: image)
     }
 }

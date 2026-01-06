@@ -184,7 +184,7 @@ private extension BaseTransform {
         }
         let scaledImage = outputImage.transformed(by: CGAffineTransform(scaleX: 10, y: 10))
 
-        let context = CIContext()
+        let context = makeCIContext()
         let colorSpace = CGColorSpaceCreateDeviceGray()
         return context.createCGImage(scaledImage, from: scaledImage.extent, format: .L8, colorSpace: colorSpace)
     }
@@ -193,7 +193,7 @@ private extension BaseTransform {
         guard let ciImage = CIImage(data: imageData) else {
             return nil
         }
-        let context = CIContext()
+        let context = makeCIContext()
         guard let detector = CIDetector(
             ofType: CIDetectorTypeQRCode,
             context: context,
@@ -204,6 +204,16 @@ private extension BaseTransform {
         let features = detector.features(in: ciImage)
         let messages = features.compactMap { ($0 as? CIQRCodeFeature)?.messageString }
         return messages.first
+    }
+
+    func makeCIContext() -> CIContext {
+        #if targetEnvironment(simulator)
+        return CIContext(options: [
+            CIContextOption.useSoftwareRenderer: true
+        ])
+        #else
+        return CIContext()
+        #endif
     }
 }
 
