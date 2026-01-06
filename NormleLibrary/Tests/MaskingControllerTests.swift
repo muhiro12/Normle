@@ -90,4 +90,58 @@ struct MaskingControllerTests {
         #expect(records.count == 1)
         #expect(records.first?.targetText == controller.result?.maskedText)
     }
+
+    @Test func autoSaveSkipsWhenHistoryAutoSaveDisabled() async throws {
+        let context = testContext
+        let controller = MaskingController(
+            autoSaveDelayNanoseconds: 20_000_000,
+            autoSaveSimilarityThreshold: 0.9
+        )
+        controller.sourceText = "Secret text"
+
+        controller.anonymize(
+            context: context,
+            options: .init(
+                isURLMaskingEnabled: true,
+                isEmailMaskingEnabled: true,
+                isPhoneMaskingEnabled: true
+            ),
+            maskRules: [],
+            shouldSaveHistory: false,
+            isHistoryAutoSaveEnabled: false
+        )
+        controller.scheduleAutoSave(
+            context: context,
+            isHistoryAutoSaveEnabled: false
+        )
+
+        try await Task.sleep(nanoseconds: 50_000_000)
+
+        let descriptor = FetchDescriptor<TransformRecord>()
+        let records = try context.fetch(descriptor)
+
+        #expect(records.isEmpty)
+        #expect(controller.lastSavedRecord == nil)
+    }
+
+    @Test func autoSaveSkipsWhenResultIsMissing() async throws {
+        let context = testContext
+        let controller = MaskingController(
+            autoSaveDelayNanoseconds: 20_000_000,
+            autoSaveSimilarityThreshold: 0.9
+        )
+
+        controller.scheduleAutoSave(
+            context: context,
+            isHistoryAutoSaveEnabled: true
+        )
+
+        try await Task.sleep(nanoseconds: 50_000_000)
+
+        let descriptor = FetchDescriptor<TransformRecord>()
+        let records = try context.fetch(descriptor)
+
+        #expect(records.isEmpty)
+        #expect(controller.lastSavedRecord == nil)
+    }
 }
