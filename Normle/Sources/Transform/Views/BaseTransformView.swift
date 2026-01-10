@@ -13,23 +13,12 @@ import UniformTypeIdentifiers
 struct BaseTransformView: View {
     @Environment(\.modelContext)
     private var context
-
-    @AppStorage(.isURLMaskingEnabled)
-    private var isURLMaskingEnabled = true
-    @AppStorage(.isEmailMaskingEnabled)
-    private var isEmailMaskingEnabled = true
-    @AppStorage(.isPhoneMaskingEnabled)
-    private var isPhoneMaskingEnabled = true
+    @EnvironmentObject private var preferencesStore: UserPreferencesStore
 
     @Query private var mappingRules: [MappingRule]
 
     @State private var sourceText = String()
-    @State private var selectedTransforms: Set<TransformPreset> = {
-        if let firstPreset = TransformPreset.allCases.first {
-            return [firstPreset]
-        }
-        return []
-    }()
+    @State private var selectedTransforms = Set<TransformPreset>()
     @State private var resultText = String()
     @State private var alertMessage: String?
     @State private var qrImage: Image?
@@ -129,6 +118,12 @@ struct BaseTransformView: View {
                     prefilledSource: pendingSourceForMapping
                 )
             }
+        }
+        .task {
+            applyPresetSelection(preferencesStore.preferences.presetSelection)
+        }
+        .onChange(of: preferencesStore.preferences) { _, newValue in
+            applyPresetSelection(newValue.presetSelection)
         }
         .alert(
             "Transform failed",
@@ -354,13 +349,13 @@ private extension BaseTransformView {
         NavigationStack {
             Form {
                 Section("Masking Options") {
-                    Toggle(isOn: $isURLMaskingEnabled) {
+                    Toggle(isOn: maskingToggleBinding(\.isURLMaskingEnabled)) {
                         Text("Mask URLs")
                     }
-                    Toggle(isOn: $isEmailMaskingEnabled) {
+                    Toggle(isOn: maskingToggleBinding(\.isEmailMaskingEnabled)) {
                         Text("Mask emails")
                     }
-                    Toggle(isOn: $isPhoneMaskingEnabled) {
+                    Toggle(isOn: maskingToggleBinding(\.isPhoneMaskingEnabled)) {
                         Text("Mask phone numbers")
                     }
                 }
@@ -440,6 +435,7 @@ private extension BaseTransformView {
         } else {
             selectedTransforms.remove(customMappingPreset)
         }
+        syncPresetSelection()
         resetSelectionState()
     }
 
@@ -461,6 +457,7 @@ private extension BaseTransformView {
             selectedTransforms.remove(qrDecodePreset)
             selectedTransforms.insert(selectedPreset)
         }
+        syncPresetSelection()
         resetSelectionState()
     }
 
@@ -501,10 +498,21 @@ private extension BaseTransformView {
     }
 
     func maskingOptions() -> MaskingOptions {
-        .init(
-            isURLMaskingEnabled: isURLMaskingEnabled,
-            isEmailMaskingEnabled: isEmailMaskingEnabled,
-            isPhoneMaskingEnabled: isPhoneMaskingEnabled
+        preferencesStore.preferences.maskingPreferences.maskingOptions
+    }
+
+    func maskingToggleBinding(
+        _ keyPath: WritableKeyPath<MaskingPreferences, Bool>
+    ) -> Binding<Bool> {
+        Binding(
+            get: {
+                preferencesStore.preferences.maskingPreferences[keyPath: keyPath]
+            },
+            set: { newValue in
+                preferencesStore.update { preferences in
+                    preferences.maskingPreferences[keyPath: keyPath] = newValue
+                }
+            }
         )
     }
 
@@ -587,6 +595,117 @@ private extension BaseTransformView {
                 isQRCodeGroup: true
             )
         ]
+    }
+
+    func applyPresetSelection(_ selection: PresetSelection) {
+        if let qrTransform = selection.qrTransform,
+           let qrPreset = presetForGroupSelection(
+            qrTransform,
+            group: qrGroup
+           ) {
+            selectedTransforms = [qrPreset]
+            return
+        }
+
+        var updatedSelection = Set<TransformPreset>()
+        if selection.isCustomMappingEnabled {
+            updatedSelection.insert(customMappingPreset)
+        }
+        if let preset = presetForGroupSelection(selection.caseTransform, group: caseGroup) {
+            updatedSelection.insert(preset)
+        }
+        if let preset = presetForGroupSelection(selection.alphanumericWidthTransform, group: alphanumericWidthGroup) {
+            updatedSelection.insert(preset)
+        }
+        if let preset = presetForGroupSelection(selection.spaceWidthTransform, group: spaceWidthGroup) {
+            updatedSelection.insert(preset)
+        }
+        if let preset = presetForGroupSelection(selection.katakanaWidthTransform, group: katakanaWidthGroup) {
+            updatedSelection.insert(preset)
+        }
+        if let preset = presetForGroupSelection(selection.digitsWidthTransform, group: digitsWidthGroup) {
+            updatedSelection.insert(preset)
+        }
+        if let preset = presetForGroupSelection(selection.base64Transform, group: base64Group) {
+            updatedSelection.insert(preset)
+        }
+        if let preset = presetForGroupSelection(selection.urlTransform, group: urlGroup) {
+            updatedSelection.insert(preset)
+        }
+        selectedTransforms = updatedSelection
+    }
+
+    func syncPresetSelection() {
+        let selection = PresetSelection(
+            isCustomMappingEnabled: selectedTransforms.contains(customMappingPreset),
+            caseTransform: selectedTransform(in: caseGroup),
+            alphanumericWidthTransform: selectedTransform(in: alphanumericWidthGroup),
+            spaceWidthTransform: selectedTransform(in: spaceWidthGroup),
+            katakanaWidthTransform: selectedTransform(in: katakanaWidthGroup),
+            digitsWidthTransform: selectedTransform(in: digitsWidthGroup),
+            base64Transform: selectedTransform(in: base64Group),
+            urlTransform: selectedTransform(in: urlGroup),
+            qrTransform: selectedTransform(in: qrGroup)
+        )
+        preferencesStore.update { preferences in
+            preferences.presetSelection = selection
+        }
+    }
+
+    func presetForGroupSelection(
+        _ transform: BaseTransform?,
+        group: TransformGroup
+    ) -> TransformPreset? {
+        guard let transform else {
+            return nil
+        }
+        let preset = TransformPreset.builtIn(transform)
+        guard group.options.contains(preset) else {
+            return nil
+        }
+        return preset
+    }
+
+    func selectedTransform(in group: TransformGroup) -> BaseTransform? {
+        for option in group.options {
+            if selectedTransforms.contains(option),
+               case .builtIn(let transform) = option {
+                return transform
+            }
+        }
+        return nil
+    }
+
+    var caseGroup: TransformGroup {
+        transformGroups[0]
+    }
+
+    var alphanumericWidthGroup: TransformGroup {
+        transformGroups[1]
+    }
+
+    var spaceWidthGroup: TransformGroup {
+        transformGroups[2]
+    }
+
+    var katakanaWidthGroup: TransformGroup {
+        transformGroups[3]
+    }
+
+    var digitsWidthGroup: TransformGroup {
+        transformGroups[4]
+    }
+
+    var base64Group: TransformGroup {
+        transformGroups[5]
+    }
+
+    var urlGroup: TransformGroup {
+        transformGroups[6]
+    }
+
+    var qrGroup: TransformGroup {
+        transformGroups[7]
     }
 }
 private enum TransformPreset: Hashable, Identifiable {

@@ -8,7 +8,7 @@
 import CoreImage.CIFilterBuiltins
 import Foundation
 
-public enum BaseTransform: CaseIterable, Identifiable {
+public enum BaseTransform: String, CaseIterable, Identifiable, Codable {
     case fullwidthAlphanumericToHalfwidth
     case halfwidthAlphanumericToFullwidth
     case fullwidthSpaceToHalfwidth

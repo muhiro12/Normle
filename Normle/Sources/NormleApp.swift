@@ -14,6 +14,7 @@ import SwiftUI
 struct NormleApp: App {
     @AppStorage(.isICloudOn)
     private var isICloudOn
+    @StateObject private var preferencesStore = UserPreferencesStore()
 
     private var sharedModelContainer: ModelContainer!
     private var sharedStore: Store
@@ -50,6 +51,7 @@ struct NormleApp: App {
                 .id(isICloudOn)
                 .modelContainer(sharedModelContainer)
                 .environment(sharedStore)
+                .environmentObject(preferencesStore)
         }
     }
 }

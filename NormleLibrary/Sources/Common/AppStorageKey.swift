@@ -16,6 +16,10 @@ public enum BoolAppStorageKey: String {
     case isHistoryAutoSaveEnabled = "J5c0W7y2"
 }
 
+public enum DataAppStorageKey: String {
+    case userPreferences = "U9r3E7p2"
+}
+
 public extension AppStorage {
     init(_ key: BoolAppStorageKey) where Value == Bool {
         self.init(wrappedValue: false, key.rawValue)
@@ -25,6 +29,20 @@ public extension AppStorage {
         wrappedValue: Value,
         _ key: BoolAppStorageKey
     ) where Value == Bool {
+        self.init(
+            wrappedValue: wrappedValue,
+            key.rawValue
+        )
+    }
+
+    init(_ key: DataAppStorageKey) where Value == Data {
+        self.init(wrappedValue: Data(), key.rawValue)
+    }
+
+    init(
+        wrappedValue: Value,
+        _ key: DataAppStorageKey
+    ) where Value == Data {
         self.init(
             wrappedValue: wrappedValue,
             key.rawValue

@@ -15,12 +15,7 @@ import SwiftUI
 struct MaskView: View {
     @Environment(\.modelContext)
     private var context
-    @AppStorage(.isURLMaskingEnabled)
-    private var isURLMaskingEnabled = true
-    @AppStorage(.isEmailMaskingEnabled)
-    private var isEmailMaskingEnabled = true
-    @AppStorage(.isPhoneMaskingEnabled)
-    private var isPhoneMaskingEnabled = true
+    @EnvironmentObject private var preferencesStore: UserPreferencesStore
     @AppStorage(.isHistoryAutoSaveEnabled)
     private var isHistoryAutoSaveEnabled = true
 
@@ -207,11 +202,7 @@ private extension MaskView {
     }
 
     func maskingOptions() -> MaskingOptions {
-        .init(
-            isURLMaskingEnabled: isURLMaskingEnabled,
-            isEmailMaskingEnabled: isEmailMaskingEnabled,
-            isPhoneMaskingEnabled: isPhoneMaskingEnabled
-        )
+        preferencesStore.preferences.maskingPreferences.maskingOptions
     }
 
     func pasteSourceText() {
