@@ -36,6 +36,7 @@ struct BaseTransformView: View {
     @State private var selectedImageData: Data?
     @State private var importedImageName: String?
     @State private var isImporterPresented = false
+    @State private var isPresetSelectorPresented = false
 
     var body: some View {
         Form {
@@ -82,32 +83,6 @@ struct BaseTransformView: View {
                 }
             }
 
-            Section("Preset") {
-                Picker("Custom", selection: customSelectionBinding()) {
-                    Text("None")
-                        .tag(false)
-                    Text(customMappingPreset.title)
-                        .tag(true)
-                }
-                .pickerStyle(.segmented)
-                .disabled(isCustomDisabled)
-                Text("Applied first.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                ForEach(transformGroups) { group in
-                    Picker(group.title, selection: groupSelectionBinding(for: group)) {
-                        Text("None").tag(Optional<TransformPreset>.none)
-                        ForEach(group.options) { option in
-                            Text(option.title)
-                                .tag(TransformPreset?.some(option))
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .disabled(isGroupDisabled(group: group))
-                }
-            }
-
             Section("Result") {
                 resultContent
             }
@@ -122,17 +97,17 @@ struct BaseTransformView: View {
             }
         }
         .navigationTitle("Transforms")
-        .navigationDestination(for: MappingRule.self) { rule in
-            MappingDetailView(rule: rule)
-        }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                NavigationLink {
-                    MappingListView()
+                Button {
+                    isPresetSelectorPresented = true
                 } label: {
-                    Label("Manage mappings", systemImage: "list.bullet.clipboard")
+                    Label("Presets", systemImage: "slider.horizontal.3")
                 }
             }
+        }
+        .sheet(isPresented: $isPresetSelectorPresented) {
+            presetSelectionSheet
         }
         .alert(
             "Transform failed",
@@ -347,6 +322,49 @@ private extension BaseTransformView {
         alertMessage = nil
         resultText = outputText
         saveRecord(source: sourceText, target: outputText)
+    }
+
+    var presetSelectionSheet: some View {
+        NavigationStack {
+            Form {
+                Section("Custom") {
+                    Picker("Custom", selection: customSelectionBinding()) {
+                        Text("None")
+                            .tag(false)
+                        Text(customMappingPreset.title)
+                            .tag(true)
+                    }
+                    .pickerStyle(.segmented)
+                    .disabled(isCustomDisabled)
+                    Text("Applied first.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                ForEach(transformGroups) { group in
+                    Section(group.title) {
+                        Picker(group.title, selection: groupSelectionBinding(for: group)) {
+                            Text("None")
+                                .tag(Optional<TransformPreset>.none)
+                            ForEach(group.options) { option in
+                                Text(option.title)
+                                    .tag(TransformPreset?.some(option))
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .disabled(isGroupDisabled(group: group))
+                    }
+                }
+            }
+            .navigationTitle("Presets")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        isPresetSelectorPresented = false
+                    }
+                }
+            }
+        }
     }
 
     func customSelectionBinding() -> Binding<Bool> {

@@ -253,6 +253,16 @@
         }
       }
     },
+    "Done" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        }
+      }
+    },
     "Drop an image or select a file." : {
       "localizations" : {
         "ja" : {
@@ -404,6 +414,7 @@
       }
     },
     "Manage mappings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -564,6 +575,17 @@
       }
     },
     "Preset" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プリセット"
+          }
+        }
+      }
+    },
+    "Presets" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
