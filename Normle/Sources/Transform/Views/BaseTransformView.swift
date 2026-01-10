@@ -122,6 +122,18 @@ struct BaseTransformView: View {
             }
         }
         .navigationTitle("Transforms")
+        .navigationDestination(for: MappingRule.self) { rule in
+            MappingDetailView(rule: rule)
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                NavigationLink {
+                    MappingListView()
+                } label: {
+                    Label("Manage mappings", systemImage: "list.bullet.clipboard")
+                }
+            }
+        }
         .alert(
             "Transform failed",
             isPresented: Binding(
