@@ -353,6 +353,18 @@ private extension BaseTransformView {
     var presetSelectionSheet: some View {
         NavigationStack {
             Form {
+                Section("Masking Options") {
+                    Toggle(isOn: $isURLMaskingEnabled) {
+                        Text("Mask URLs")
+                    }
+                    Toggle(isOn: $isEmailMaskingEnabled) {
+                        Text("Mask emails")
+                    }
+                    Toggle(isOn: $isPhoneMaskingEnabled) {
+                        Text("Mask phone numbers")
+                    }
+                }
+
                 Section("Custom") {
                     Picker("Custom", selection: customSelectionBinding()) {
                         Text("None")

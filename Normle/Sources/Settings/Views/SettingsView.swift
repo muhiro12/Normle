@@ -16,12 +16,6 @@ struct SettingsView: View {
     private var isSubscribeOn
     @AppStorage(.isICloudOn)
     private var isICloudOn
-    @AppStorage(.isURLMaskingEnabled)
-    private var isURLMaskingEnabled = true
-    @AppStorage(.isEmailMaskingEnabled)
-    private var isEmailMaskingEnabled = true
-    @AppStorage(.isPhoneMaskingEnabled)
-    private var isPhoneMaskingEnabled = true
     @AppStorage(.isHistoryAutoSaveEnabled)
     private var isHistoryAutoSaveEnabled = true
 
@@ -40,12 +34,6 @@ struct SettingsView: View {
                     }
                 }
             }
-            Section("Masking options") {
-                Toggle("Mask URLs", isOn: $isURLMaskingEnabled)
-                Toggle("Mask email addresses", isOn: $isEmailMaskingEnabled)
-                Toggle("Mask phone numbers", isOn: $isPhoneMaskingEnabled)
-            }
-
             Section("History") {
                 Toggle("Auto save history", isOn: $isHistoryAutoSaveEnabled)
             }

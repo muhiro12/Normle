@@ -465,6 +465,17 @@
       }
     },
     "Mask email addresses" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールアドレスをマスク"
+          }
+        }
+      }
+    },
+    "Mask emails" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -495,6 +506,17 @@
       }
     },
     "Masking options" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マスキング設定"
+          }
+        }
+      }
+    },
+    "Masking Options" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
