@@ -6,6 +6,9 @@
 //
 
 import NormleLibrary
+#if os(macOS)
+import AppKit
+#endif
 import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
@@ -37,6 +40,9 @@ struct BaseTransformView: View {
     @State private var importedImageName: String?
     @State private var isImporterPresented = false
     @State private var isPresetSelectorPresented = false
+    @State private var selectedSourceTextRaw = String()
+    @State private var isPresentingMappingCreation = false
+    @State private var pendingSourceForMapping = String()
 
     var body: some View {
         Form {
@@ -54,6 +60,12 @@ struct BaseTransformView: View {
                     } label: {
                         Label("Clear", systemImage: "xmark.circle")
                     }
+                    Button {
+                        presentMappingFromSelection()
+                    } label: {
+                        Label("Create mapping from selection", systemImage: "plus")
+                    }
+                    .disabled(selectedSourceText == nil)
                 }
             } else {
                 Section("QR image") {
@@ -109,6 +121,15 @@ struct BaseTransformView: View {
         .sheet(isPresented: $isPresetSelectorPresented) {
             presetSelectionSheet
         }
+        .sheet(isPresented: $isPresentingMappingCreation) {
+            NavigationStack {
+                MappingEditView(
+                    rule: nil,
+                    isPresented: $isPresentingMappingCreation,
+                    prefilledSource: pendingSourceForMapping
+                )
+            }
+        }
         .alert(
             "Transform failed",
             isPresented: Binding(
@@ -144,10 +165,24 @@ struct BaseTransformView: View {
                 alertMessage = error.localizedDescription
             }
         }
+        #if os(macOS)
+        .onReceive(
+            NotificationCenter.default.publisher(
+                for: NSTextView.didChangeSelectionNotification
+            )
+        ) { notification in
+            updateSelectedSourceText(notification: notification)
+        }
+        #endif
     }
 }
 
 private extension BaseTransformView {
+    var selectedSourceText: String? {
+        let trimmed = selectedSourceTextRaw.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     var isRunDisabled: Bool {
         if selectedTransforms.isEmpty {
             return true
@@ -448,6 +483,14 @@ private extension BaseTransformView {
         alertMessage = nil
     }
 
+    func presentMappingFromSelection() {
+        guard let selectedSourceText else {
+            return
+        }
+        pendingSourceForMapping = selectedSourceText
+        isPresentingMappingCreation = true
+    }
+
     var activeMaskRules: [MaskingRule] {
         mappingRules
             .filter(\.isEnabled)
@@ -544,6 +587,29 @@ private extension BaseTransformView {
     }
 }
 
+#if os(macOS)
+private extension BaseTransformView {
+    func updateSelectedSourceText(notification: Notification) {
+        guard let textView = notification.object as? NSTextView else {
+            return
+        }
+
+        guard textView.window?.isKeyWindow == true else {
+            return
+        }
+
+        guard textView.string == sourceText else {
+            return
+        }
+
+        guard let range = Range(textView.selectedRange(), in: textView.string) else {
+            return
+        }
+
+        selectedSourceTextRaw = String(textView.string[range])
+    }
+}
+#endif
 private enum TransformPreset: Hashable, Identifiable {
     case builtIn(BaseTransform)
     case customMapping
