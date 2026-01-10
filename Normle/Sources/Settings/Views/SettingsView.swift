@@ -16,8 +16,6 @@ struct SettingsView: View {
     private var isSubscribeOn
     @AppStorage(.isICloudOn)
     private var isICloudOn
-    @AppStorage(.isHistoryAutoSaveEnabled)
-    private var isHistoryAutoSaveEnabled = true
 
     @State private var isDeleteDialogPresented = false
 
@@ -34,10 +32,6 @@ struct SettingsView: View {
                     }
                 }
             }
-            Section("History") {
-                Toggle("Auto save history", isOn: $isHistoryAutoSaveEnabled)
-            }
-
             Section {
                 Button(role: .destructive) {
                     isDeleteDialogPresented = true

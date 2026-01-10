@@ -51,16 +51,6 @@
         }
       }
     },
-    "Auto save history" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "履歴を自動保存"
-          }
-        }
-      }
-    },
     "Base64" : {
       "localizations" : {
         "ja" : {
@@ -304,6 +294,7 @@
       }
     },
     "Enter text above to see masked output." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -547,6 +538,7 @@
       }
     },
     "No manual mappings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -709,6 +701,7 @@
       }
     },
     "Save to history" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
