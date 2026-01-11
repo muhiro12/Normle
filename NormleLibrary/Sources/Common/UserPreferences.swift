@@ -8,13 +8,18 @@
 import Foundation
 
 public struct UserPreferences: Codable, Equatable {
+    public static let currentVersion = 1
+
+    public var version: Int
     public var maskingPreferences: MaskingPreferences
     public var presetSelection: PresetSelection
 
     public init(
+        version: Int = Self.currentVersion,
         maskingPreferences: MaskingPreferences,
         presetSelection: PresetSelection
     ) {
+        self.version = version
         self.maskingPreferences = maskingPreferences
         self.presetSelection = presetSelection
     }
@@ -29,15 +34,48 @@ public extension UserPreferences {
     }
 
     static func decode(from data: Data) -> UserPreferences {
-        guard data.isEmpty == false,
-              let decoded = try? JSONDecoder().decode(UserPreferences.self, from: data) else {
+        guard data.isEmpty == false else {
             return .defaults
         }
-        return decoded
+
+        let decoder = JSONDecoder()
+        if let decoded = try? decoder.decode(UserPreferences.self, from: data) {
+            return decoded.normalized()
+        }
+
+        if let decoded = try? decoder.decode(LegacyUserPreferences.self, from: data) {
+            return decoded.userPreferences
+        }
+
+        return .defaults
     }
 
     func encode() -> Data {
         (try? JSONEncoder().encode(self)) ?? Data()
+    }
+
+    private func normalized() -> UserPreferences {
+        guard version != Self.currentVersion else {
+            return self
+        }
+
+        return .init(
+            version: Self.currentVersion,
+            maskingPreferences: maskingPreferences,
+            presetSelection: presetSelection
+        )
+    }
+}
+
+private struct LegacyUserPreferences: Codable {
+    var maskingPreferences: MaskingPreferences
+    var presetSelection: PresetSelection
+
+    var userPreferences: UserPreferences {
+        .init(
+            maskingPreferences: maskingPreferences,
+            presetSelection: presetSelection
+        )
     }
 }
 
