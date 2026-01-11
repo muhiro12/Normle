@@ -153,6 +153,16 @@
         }
       }
     },
+    "Create mapping" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マッピングを作成"
+          }
+        }
+      }
+    },
     "Created at" : {
       "localizations" : {
         "ja" : {

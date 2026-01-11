@@ -6,15 +6,20 @@
 //
 
 import SwiftUI
+#if os(iOS)
+import UIKit
+#endif
 
 struct SelectableTextEditor: View {
     @Binding var text: String
     @Binding var selectedText: String
+    let onCreateMapping: ((String) -> Void)?
 
     var body: some View {
         SelectableTextView(
             text: $text,
-            selectedText: $selectedText
+            selectedText: $selectedText,
+            onCreateMapping: onCreateMapping
         )
     }
 }
@@ -23,15 +28,17 @@ struct SelectableTextEditor: View {
 private struct SelectableTextView: UIViewRepresentable {
     @Binding var text: String
     @Binding var selectedText: String
+    let onCreateMapping: ((String) -> Void)?
 
     func makeUIView(context: Context) -> UITextView {
-        let textView = UITextView()
+        let textView = SelectableTextViewUITextView()
         textView.delegate = context.coordinator
         textView.font = UIFont.preferredFont(forTextStyle: .body)
         textView.isEditable = true
         textView.isScrollEnabled = true
         textView.backgroundColor = .clear
         textView.text = text
+        textView.onCreateMapping = onCreateMapping
         return textView
     }
 
@@ -75,11 +82,48 @@ private struct SelectableTextView: UIViewRepresentable {
             parent.updateSelectedText(from: textView)
         }
     }
+
+    final class SelectableTextViewUITextView: UITextView {
+        var onCreateMapping: ((String) -> Void)?
+
+        override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+            if action == #selector(createMapping) {
+                return selectedTextRange?.isEmpty == false
+            }
+            return super.canPerformAction(action, withSender: sender)
+        }
+
+        @objc private func createMapping() {
+            guard let range = selectedTextRange,
+                  let selection = text(in: range) else {
+                return
+            }
+            let trimmedSelection = selection.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard trimmedSelection.isEmpty == false else {
+                return
+            }
+            onCreateMapping?(trimmedSelection)
+        }
+
+        override func editMenu(
+            for _: UITextRange,
+            suggestedActions: [UIMenuElement]
+        ) -> UIMenu? {
+            guard selectedTextRange?.isEmpty == false else {
+                return UIMenu(children: suggestedActions)
+            }
+            let action = UIAction(title: String(localized: "Create mapping")) { [weak self] _ in
+                self?.createMapping()
+            }
+            return UIMenu(children: [action] + suggestedActions)
+        }
+    }
 }
 #else
 private struct SelectableTextView: NSViewRepresentable {
     @Binding var text: String
     @Binding var selectedText: String
+    let onCreateMapping: ((String) -> Void)?
 
     func makeNSView(context: Context) -> NSScrollView {
         let textView = NSTextView()

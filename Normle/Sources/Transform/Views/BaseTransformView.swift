@@ -37,7 +37,9 @@ struct BaseTransformView: View {
                     SelectableTextEditor(
                         text: $sourceText,
                         selectedText: $selectedSourceText
-                    )
+                    ) { selectedText in
+                        presentMappingFromSelection(text: selectedText)
+                    }
                     .frame(minHeight: 160)
                     Button {
                         pasteSourceText()
@@ -49,12 +51,14 @@ struct BaseTransformView: View {
                     } label: {
                         Label("Clear", systemImage: "xmark.circle")
                     }
+                    #if os(macOS)
                     Button {
                         presentMappingFromSelection()
                     } label: {
                         Label("Create mapping from selection", systemImage: "plus")
                     }
                     .disabled(selectedSourceTextValue == nil)
+                    #endif
                 }
             } else {
                 Section("QR image") {
@@ -488,6 +492,15 @@ private extension BaseTransformView {
             return
         }
         pendingSourceForMapping = selectedSourceTextValue
+        isPresentingMappingCreation = true
+    }
+
+    func presentMappingFromSelection(text: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.isEmpty == false else {
+            return
+        }
+        pendingSourceForMapping = trimmed
         isPresentingMappingCreation = true
     }
 
