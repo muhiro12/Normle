@@ -110,10 +110,13 @@ extension MappingRule: Hashable {
 
 private extension PersistentIdentifier {
     var base64String: String {
-        guard let data = try? JSONEncoder().encode(self) else {
-            return UUID().uuidString
+        do {
+            let data = try JSONEncoder().encode(self)
+            return data.base64EncodedString()
+        } catch {
+            assertionFailure(error.localizedDescription)
+            return String(describing: self)
         }
-        return data.base64EncodedString()
     }
 }
 
