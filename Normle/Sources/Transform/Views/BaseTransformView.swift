@@ -239,7 +239,7 @@ private extension BaseTransformView {
                 alertMessage = nil
                 qrImage = nil
                 resultText = output
-                saveRecord(source: String(), target: output)
+                saveRecord(source: nil, target: output)
             case .failure(let error):
                 resultText = String()
                 alertMessage = error.localizedDescription
@@ -273,7 +273,7 @@ private extension BaseTransformView {
         alertMessage = nil
     }
 
-    func saveRecord(source: String, target: String) {
+    func saveRecord(source: String?, target: String) {
         do {
             _ = try TransformRecordService.saveRecord(
                 context: context,

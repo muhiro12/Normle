@@ -14,7 +14,7 @@ struct TransformRecordServiceTests {
 
         let first = try TransformRecordService.saveRecord(
             context: context,
-            sourceText: "",
+            sourceText: "source-1",
             targetText: "masked-1",
             mappings: [mapping]
         )
@@ -28,7 +28,25 @@ struct TransformRecordServiceTests {
 
         #expect(records.count == 1)
         #expect(records.first == first)
-        #expect(records.first?.sourceText == "")
+        #expect(records.first?.sourceText == "source-1")
+        #expect(records.first?.targetText == "masked-1")
+    }
+
+    @Test func savingRecordWithNilSourceTextOmitsSourceText() throws {
+        let context = testContext
+
+        _ = try TransformRecordService.saveRecord(
+            context: context,
+            sourceText: nil,
+            targetText: "masked-1",
+            mappings: []
+        )
+
+        let descriptor = FetchDescriptor<TransformRecord>()
+        let records = try context.fetch(descriptor)
+
+        #expect(records.count == 1)
+        #expect(records.first?.sourceText == nil)
         #expect(records.first?.targetText == "masked-1")
     }
 

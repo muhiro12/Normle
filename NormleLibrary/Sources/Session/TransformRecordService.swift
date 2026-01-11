@@ -12,7 +12,7 @@ public enum TransformRecordService {
     @discardableResult
     public static func saveRecord(
         context: ModelContext,
-        sourceText: String,
+        sourceText: String?,
         targetText: String,
         mappings _: [Mapping]
     ) throws -> TransformRecord {
@@ -31,7 +31,7 @@ public enum TransformRecordService {
     public static func updateRecord(
         context: ModelContext,
         record: TransformRecord,
-        sourceText: String,
+        sourceText: String?,
         targetText: String,
         mappings _: [Mapping]
     ) throws -> TransformRecord {
