@@ -19,9 +19,7 @@ struct MappingEditView: View {
 
     @Binding var isPresented: Bool
 
-    @State private var source = String()
-    @State private var target = String()
-    @State private var isEnabled = true
+    @State private var draft = MappingRuleDraft()
     @State private var alertMessage: String?
 
     init(
@@ -33,28 +31,31 @@ struct MappingEditView: View {
     ) {
         self.rule = rule
         _isPresented = isPresented
-        _source = .init(initialValue: prefilledSource)
-        _target = .init(initialValue: prefilledTarget)
-        _isEnabled = .init(initialValue: prefilledIsEnabled)
+        _draft = .init(
+            initialValue: .init(
+                sourceText: prefilledSource,
+                targetText: prefilledTarget,
+                isEnabled: prefilledIsEnabled
+            )
+        )
     }
 
     var body: some View {
         Form {
             Section("Source") {
-                TextField("Source text", text: $source)
+                TextField("Source text", text: $draft.sourceText)
             }
             Section("Target") {
-                TextField("Target text", text: $target)
+                TextField("Target text", text: $draft.targetText)
             }
             Section("Status") {
-                Toggle("Enabled", isOn: $isEnabled)
+                Toggle("Enabled", isOn: $draft.isEnabled)
             }
             Section {
                 Button(saveTitle) {
                     save()
                 }
-                .disabled(source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                            target.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(draft.canSave == false)
                 if rule != nil {
                     Button("Delete", role: .destructive) {
                         delete()
@@ -104,33 +105,15 @@ private extension MappingEditView {
         guard let rule else {
             return
         }
-        source = rule.source
-        target = rule.target
-        isEnabled = rule.isEnabled
+        draft = .init(rule: rule)
     }
 
     func save() {
-        let trimmedSource = source.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedTarget = target.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmedSource.isEmpty == false, trimmedTarget.isEmpty == false else {
-            return
-        }
         do {
-            if let rule {
-                try rule.update(
-                    context: context,
-                    source: trimmedSource,
-                    target: trimmedTarget,
-                    isEnabled: isEnabled
-                )
-            } else {
-                try MappingRule.create(
-                    context: context,
-                    source: trimmedSource,
-                    target: trimmedTarget,
-                    isEnabled: isEnabled
-                )
-            }
+            _ = try draft.apply(
+                context: context,
+                to: rule
+            )
         } catch {
             alertMessage = error.localizedDescription
             return
