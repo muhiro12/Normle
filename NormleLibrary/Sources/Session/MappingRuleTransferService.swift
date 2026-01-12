@@ -19,6 +19,18 @@ public enum MappingRuleTransferService {
         public let insertedCount: Int
         public let updatedCount: Int
         public let totalCount: Int
+
+        public func summaryLines(
+            insertedText: (Int) -> String,
+            updatedText: (Int) -> String,
+            totalText: (Int) -> String
+        ) -> [String] {
+            [
+                insertedText(insertedCount),
+                updatedText(updatedCount),
+                totalText(totalCount)
+            ]
+        }
     }
 
     private struct Payload: Codable {

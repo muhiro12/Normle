@@ -131,6 +131,22 @@ struct MappingRuleTransferServiceTests {
         #expect(fetched.first?.source == "Legacy")
         #expect(fetched.first?.target == "Alias")
     }
+
+    @Test func summaryLinesReturnInsertedUpdatedTotalInOrder() {
+        let result = MappingRuleTransferService.ImportResult(
+            insertedCount: 2,
+            updatedCount: 1,
+            totalCount: 3
+        )
+
+        let lines = result.summaryLines(
+            insertedText: { "Inserted: \($0)" },
+            updatedText: { "Updated: \($0)" },
+            totalText: { "Total: \($0)" }
+        )
+
+        #expect(lines == ["Inserted: 2", "Updated: 1", "Total: 3"])
+    }
 }
 
 private extension MappingRuleTransferServiceTests {

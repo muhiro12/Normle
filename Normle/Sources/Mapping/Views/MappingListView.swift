@@ -171,19 +171,27 @@ private extension MappingListView {
                 policy: policy
             )
             alertTitle = String(localized: "Import completed")
-            let insertedText = String.localizedStringWithFormat(
-                String(localized: "Inserted: %d"),
-                result.insertedCount
+            let lines = result.summaryLines(
+                insertedText: { count in
+                    String.localizedStringWithFormat(
+                        String(localized: "Inserted: %d"),
+                        count
+                    )
+                },
+                updatedText: { count in
+                    String.localizedStringWithFormat(
+                        String(localized: "Updated: %d"),
+                        count
+                    )
+                },
+                totalText: { count in
+                    String.localizedStringWithFormat(
+                        String(localized: "Total: %d"),
+                        count
+                    )
+                }
             )
-            let updatedText = String.localizedStringWithFormat(
-                String(localized: "Updated: %d"),
-                result.updatedCount
-            )
-            let totalText = String.localizedStringWithFormat(
-                String(localized: "Total: %d"),
-                result.totalCount
-            )
-            alertMessage = [insertedText, updatedText, totalText].joined(separator: "\n")
+            alertMessage = lines.joined(separator: "\n")
             isShowingAlert = true
         } catch {
             presentError(message: error.localizedDescription)
