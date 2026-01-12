@@ -2,31 +2,94 @@
   "sourceLanguage" : "en",
   "strings" : {
     "Alphanumeric Width" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "英数字の全角半角"
+          }
+        }
+      }
     },
     "Base64" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base64"
+          }
+        }
+      }
     },
     "Case" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大文字小文字"
+          }
+        }
+      }
     },
     "Custom" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カスタム"
+          }
+        }
+      }
     },
     "Digits Width" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数字の全角半角"
+          }
+        }
+      }
     },
     "Katakana Width" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カタカナの全角半角"
+          }
+        }
+      }
     },
     "QR" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QR"
+          }
+        }
+      }
     },
     "Space Width" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空白の全角半角"
+          }
+        }
+      }
     },
     "URL" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"

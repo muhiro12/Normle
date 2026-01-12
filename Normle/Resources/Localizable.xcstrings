@@ -798,7 +798,14 @@
       }
     },
     "Source text not retained." : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "元のテキストは保存されていません。"
+          }
+        }
+      }
     },
     "Space Width" : {
       "extractionState" : "stale",
