@@ -18,7 +18,7 @@ struct BaseTransformView: View {
     @Query private var mappingRules: [MappingRule]
 
     @State private var sourceText = String()
-    @State private var selectedTransforms = Set<TransformPreset>()
+    @State private var presetSelectionState = TransformPresetSelectionState()
     @State private var resultText = String()
     @State private var alertMessage: String?
     @State private var qrImage: Image?
@@ -32,7 +32,7 @@ struct BaseTransformView: View {
 
     var body: some View {
         Form {
-            if selectedTransforms.contains(qrDecodePreset) == false {
+            if presetSelectionState.selectedPresets.contains(.qrDecode) == false {
                 Section("Source text") {
                     SelectableTextEditor(
                         text: $sourceText,
@@ -174,13 +174,13 @@ private extension BaseTransformView {
     }
 
     var isRunDisabled: Bool {
-        if selectedTransforms.isEmpty {
+        if presetSelectionState.selectedPresets.isEmpty {
             return true
         }
-        if selectedTransforms.contains(qrEncodePreset) {
+        if presetSelectionState.selectedPresets.contains(.qrEncode) {
             return sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }
-        if selectedTransforms.contains(qrDecodePreset) {
+        if presetSelectionState.selectedPresets.contains(.qrDecode) {
             return selectedImageData == nil
         }
         return sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -188,7 +188,7 @@ private extension BaseTransformView {
 
     @ViewBuilder
     var resultContent: some View {
-        if selectedTransforms.contains(qrEncodePreset) {
+        if presetSelectionState.selectedPresets.contains(.qrEncode) {
             if let qrImage {
                 qrImage
                     .resizable()
@@ -215,7 +215,7 @@ private extension BaseTransformView {
     }
 
     func runTransform() {
-        if selectedTransforms.contains(qrEncodePreset) {
+        if presetSelectionState.selectedPresets.contains(.qrEncode) {
             let generation = BaseTransform.qrEncode.qrCodeImage(for: sourceText)
             switch generation {
             case .success(let image):
@@ -228,7 +228,7 @@ private extension BaseTransformView {
                 resultText = String()
                 alertMessage = error.localizedDescription
             }
-        } else if selectedTransforms.contains(qrDecodePreset) {
+        } else if presetSelectionState.selectedPresets.contains(.qrDecode) {
             guard let imageData = selectedImageData else {
                 alertMessage = String(localized: "Select an image to decode.")
                 return
@@ -308,17 +308,7 @@ private extension BaseTransformView {
 
 private extension BaseTransformView {
     var orderedSelectedTransforms: [TransformPreset] {
-        var orderedPresets = [TransformPreset]()
-        if selectedTransforms.contains(customMappingPreset) {
-            orderedPresets.append(customMappingPreset)
-        }
-        for transform in BaseTransform.allCases {
-            let preset = TransformPreset.builtIn(transform)
-            if selectedTransforms.contains(preset) {
-                orderedPresets.append(preset)
-            }
-        }
-        return orderedPresets
+        presetSelectionState.orderedSelectedPresets
     }
 
     func applyTransformsToText() {
@@ -368,7 +358,7 @@ private extension BaseTransformView {
                     Picker("Custom", selection: customSelectionBinding()) {
                         Text("None")
                             .tag(false)
-                        Text(customMappingPreset.title)
+                        Text(TransformPreset.customMapping.title)
                             .tag(true)
                     }
                     .pickerStyle(.segmented)
@@ -407,7 +397,7 @@ private extension BaseTransformView {
     func customSelectionBinding() -> Binding<Bool> {
         Binding(
             get: {
-                selectedTransforms.contains(customMappingPreset)
+                presetSelectionState.selectedPresets.contains(.customMapping)
             },
             set: { isSelected in
                 updateCustomSelection(isSelected: isSelected)
@@ -418,12 +408,7 @@ private extension BaseTransformView {
     func groupSelectionBinding(for group: TransformGroup) -> Binding<TransformPreset?> {
         Binding(
             get: {
-                for option in group.options {
-                    if selectedTransforms.contains(option) {
-                        return option
-                    }
-                }
-                return nil
+                presetSelectionState.selectedPreset(in: group)
             },
             set: { selectedPreset in
                 updateGroupSelection(group: group, selectedPreset: selectedPreset)
@@ -432,13 +417,7 @@ private extension BaseTransformView {
     }
 
     func updateCustomSelection(isSelected: Bool) {
-        if isSelected {
-            selectedTransforms.remove(qrEncodePreset)
-            selectedTransforms.remove(qrDecodePreset)
-            selectedTransforms.insert(customMappingPreset)
-        } else {
-            selectedTransforms.remove(customMappingPreset)
-        }
+        presetSelectionState.updateCustomSelection(isSelected: isSelected)
         syncPresetSelection()
         resetSelectionState()
     }
@@ -447,38 +426,20 @@ private extension BaseTransformView {
         group: TransformGroup,
         selectedPreset: TransformPreset?
     ) {
-        for option in group.options {
-            selectedTransforms.remove(option)
-        }
-        guard let selectedPreset else {
-            resetSelectionState()
-            return
-        }
-        if group.isQRCodeGroup {
-            selectedTransforms = [selectedPreset]
-        } else {
-            selectedTransforms.remove(qrEncodePreset)
-            selectedTransforms.remove(qrDecodePreset)
-            selectedTransforms.insert(selectedPreset)
-        }
+        presetSelectionState.updateGroupSelection(
+            group: group,
+            selectedPreset: selectedPreset
+        )
         syncPresetSelection()
         resetSelectionState()
     }
 
     var isCustomDisabled: Bool {
-        isQRSelected
+        presetSelectionState.isCustomDisabled
     }
 
     func isGroupDisabled(group: TransformGroup) -> Bool {
-        if group.isQRCodeGroup {
-            return selectedTransforms.isEmpty == false && isQRSelected == false
-        }
-        return isQRSelected
-    }
-
-    var isQRSelected: Bool {
-        selectedTransforms.contains(qrEncodePreset) ||
-            selectedTransforms.contains(qrDecodePreset)
+        presetSelectionState.isGroupDisabled(group)
     }
 
     func resetSelectionState() {
@@ -529,253 +490,18 @@ private extension BaseTransformView {
         )
     }
 
-    var qrEncodePreset: TransformPreset {
-        .builtIn(.qrEncode)
-    }
-
-    var qrDecodePreset: TransformPreset {
-        .builtIn(.qrDecode)
-    }
-
-    var customMappingPreset: TransformPreset {
-        .customMapping
-    }
-
     var transformGroups: [TransformGroup] {
-        [
-            .init(
-                title: String(localized: "Case"),
-                options: [
-                    .builtIn(.lowercase),
-                    .builtIn(.uppercase)
-                ],
-                isQRCodeGroup: false
-            ),
-            .init(
-                title: String(localized: "Alphanumeric Width"),
-                options: [
-                    .builtIn(.fullwidthAlphanumericToHalfwidth),
-                    .builtIn(.halfwidthAlphanumericToFullwidth)
-                ],
-                isQRCodeGroup: false
-            ),
-            .init(
-                title: String(localized: "Space Width"),
-                options: [
-                    .builtIn(.fullwidthSpaceToHalfwidth),
-                    .builtIn(.halfwidthSpaceToFullwidth)
-                ],
-                isQRCodeGroup: false
-            ),
-            .init(
-                title: String(localized: "Katakana Width"),
-                options: [
-                    .builtIn(.halfwidthKatakanaToFullwidth),
-                    .builtIn(.fullwidthKatakanaToHalfwidth)
-                ],
-                isQRCodeGroup: false
-            ),
-            .init(
-                title: String(localized: "Digits Width"),
-                options: [
-                    .builtIn(.fullwidthDigitsToHalfwidth),
-                    .builtIn(.halfwidthDigitsToFullwidth)
-                ],
-                isQRCodeGroup: false
-            ),
-            .init(
-                title: String(localized: "Base64"),
-                options: [
-                    .builtIn(.base64Encode),
-                    .builtIn(.base64Decode)
-                ],
-                isQRCodeGroup: false
-            ),
-            .init(
-                title: String(localized: "URL"),
-                options: [
-                    .builtIn(.urlEncode),
-                    .builtIn(.urlDecode)
-                ],
-                isQRCodeGroup: false
-            ),
-            .init(
-                title: String(localized: "QR"),
-                options: [
-                    .builtIn(.qrEncode),
-                    .builtIn(.qrDecode)
-                ],
-                isQRCodeGroup: true
-            )
-        ]
+        presetSelectionState.transformGroups
     }
 
     func applyPresetSelection(_ selection: PresetSelection) {
-        if let qrTransform = selection.qrTransform,
-           let qrPreset = presetForGroupSelection(
-            qrTransform,
-            group: qrGroup
-           ) {
-            selectedTransforms = [qrPreset]
-            return
-        }
-
-        var updatedSelection = Set<TransformPreset>()
-        if selection.isCustomMappingEnabled {
-            updatedSelection.insert(customMappingPreset)
-        }
-        if let preset = presetForGroupSelection(selection.caseTransform, group: caseGroup) {
-            updatedSelection.insert(preset)
-        }
-        if let preset = presetForGroupSelection(selection.alphanumericWidthTransform, group: alphanumericWidthGroup) {
-            updatedSelection.insert(preset)
-        }
-        if let preset = presetForGroupSelection(selection.spaceWidthTransform, group: spaceWidthGroup) {
-            updatedSelection.insert(preset)
-        }
-        if let preset = presetForGroupSelection(selection.katakanaWidthTransform, group: katakanaWidthGroup) {
-            updatedSelection.insert(preset)
-        }
-        if let preset = presetForGroupSelection(selection.digitsWidthTransform, group: digitsWidthGroup) {
-            updatedSelection.insert(preset)
-        }
-        if let preset = presetForGroupSelection(selection.base64Transform, group: base64Group) {
-            updatedSelection.insert(preset)
-        }
-        if let preset = presetForGroupSelection(selection.urlTransform, group: urlGroup) {
-            updatedSelection.insert(preset)
-        }
-        selectedTransforms = updatedSelection
+        presetSelectionState.applyPresetSelection(selection)
     }
 
     func syncPresetSelection() {
-        let selection = PresetSelection(
-            isCustomMappingEnabled: selectedTransforms.contains(customMappingPreset),
-            caseTransform: selectedTransform(in: caseGroup),
-            alphanumericWidthTransform: selectedTransform(in: alphanumericWidthGroup),
-            spaceWidthTransform: selectedTransform(in: spaceWidthGroup),
-            katakanaWidthTransform: selectedTransform(in: katakanaWidthGroup),
-            digitsWidthTransform: selectedTransform(in: digitsWidthGroup),
-            base64Transform: selectedTransform(in: base64Group),
-            urlTransform: selectedTransform(in: urlGroup),
-            qrTransform: selectedTransform(in: qrGroup)
-        )
+        let selection = presetSelectionState.presetSelection()
         preferencesStore.update { preferences in
             preferences.presetSelection = selection
         }
-    }
-
-    func presetForGroupSelection(
-        _ transform: BaseTransform?,
-        group: TransformGroup
-    ) -> TransformPreset? {
-        guard let transform else {
-            return nil
-        }
-        let preset = TransformPreset.builtIn(transform)
-        guard group.options.contains(preset) else {
-            return nil
-        }
-        return preset
-    }
-
-    func selectedTransform(in group: TransformGroup) -> BaseTransform? {
-        for option in group.options {
-            if selectedTransforms.contains(option),
-               case .builtIn(let transform) = option {
-                return transform
-            }
-        }
-        return nil
-    }
-
-    var caseGroup: TransformGroup {
-        transformGroups[0]
-    }
-
-    var alphanumericWidthGroup: TransformGroup {
-        transformGroups[1]
-    }
-
-    var spaceWidthGroup: TransformGroup {
-        transformGroups[2]
-    }
-
-    var katakanaWidthGroup: TransformGroup {
-        transformGroups[3]
-    }
-
-    var digitsWidthGroup: TransformGroup {
-        transformGroups[4]
-    }
-
-    var base64Group: TransformGroup {
-        transformGroups[5]
-    }
-
-    var urlGroup: TransformGroup {
-        transformGroups[6]
-    }
-
-    var qrGroup: TransformGroup {
-        transformGroups[7]
-    }
-}
-private enum TransformPreset: Hashable, Identifiable {
-    case builtIn(BaseTransform)
-    case customMapping
-
-    var id: String {
-        switch self {
-        case .builtIn(let transform):
-            return "builtIn_\(transform.id)"
-        case .customMapping:
-            return "customMapping"
-        }
-    }
-
-    var title: String {
-        switch self {
-        case .builtIn(let transform):
-            return transform.title
-        case .customMapping:
-            return String(localized: "Custom")
-        }
-    }
-
-    var isQRCodeOnly: Bool {
-        switch self {
-        case .builtIn(let transform):
-            return transform == .qrEncode || transform == .qrDecode
-        case .customMapping:
-            return false
-        }
-    }
-
-    static var allCases: [Self] {
-        let builtIns: [Self] = BaseTransform.allCases.map { transform in
-            .builtIn(transform) as Self
-        }
-        return [
-            .customMapping
-        ] + builtIns
-    }
-}
-
-private struct TransformGroup: Identifiable {
-    let id: String
-    let title: String
-    let options: [TransformPreset]
-    let isQRCodeGroup: Bool
-
-    init(
-        title: String,
-        options: [TransformPreset],
-        isQRCodeGroup: Bool
-    ) {
-        self.id = title
-        self.title = title
-        self.options = options
-        self.isQRCodeGroup = isQRCodeGroup
     }
 }

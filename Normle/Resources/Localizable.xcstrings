@@ -143,22 +143,22 @@
         }
       }
     },
-    "Create mapping from selection" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選択範囲からマッピングを作成"
-          }
-        }
-      }
-    },
     "Create mapping" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "マッピングを作成"
+          }
+        }
+      }
+    },
+    "Create mapping from selection" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択範囲からマッピングを作成"
           }
         }
       }
@@ -790,6 +790,9 @@
           }
         }
       }
+    },
+    "Source text not retained." : {
+
     },
     "Space Width" : {
       "localizations" : {
