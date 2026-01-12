@@ -46,11 +46,7 @@ struct SettingsView: View {
             isPresented: $isDeleteDialogPresented
         ) {
             Button(role: .destructive) {
-                do {
-                    try TransformRecordService.deleteAll(context: context)
-                } catch {
-                    assertionFailure(error.localizedDescription)
-                }
+                HistoryDeletionService.deleteAll(context: context)
             } label: {
                 Text("Delete")
             }

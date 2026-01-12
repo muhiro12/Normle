@@ -66,11 +66,7 @@ struct HistoryListView: View {
             isPresented: $isDeleteDialogPresented
         ) {
             Button(role: .destructive) {
-                do {
-                    try TransformRecordService.deleteAll(context: context)
-                } catch {
-                    assertionFailure(error.localizedDescription)
-                }
+                HistoryDeletionService.deleteAll(context: context)
             } label: {
                 Text("Delete")
             }
@@ -86,13 +82,9 @@ private extension HistoryListView {
     func delete(
         record: TransformRecord
     ) {
-        do {
-            try TransformRecordService.delete(
-                context: context,
-                record: record
-            )
-        } catch {
-            assertionFailure(error.localizedDescription)
-        }
+        HistoryDeletionService.delete(
+            record: record,
+            context: context
+        )
     }
 }
