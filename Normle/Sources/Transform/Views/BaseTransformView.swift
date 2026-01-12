@@ -215,37 +215,32 @@ private extension BaseTransformView {
     }
 
     func runTransform() {
-        if presetSelectionState.selectedPresets.contains(.qrEncode) {
-            let generation = BaseTransform.qrEncode.qrCodeImage(for: sourceText)
-            switch generation {
-            case .success(let image):
+        let pipeline = TransformPipeline()
+        let result = pipeline.run(
+            sourceText: sourceText,
+            presets: orderedSelectedTransforms,
+            maskRules: activeMaskRules,
+            options: maskingOptions(),
+            imageData: selectedImageData
+        )
+        switch result {
+        case .success(let output):
+            alertMessage = nil
+            resultText = output.outputText
+            if let image = output.qrImage {
                 qrImage = Image(decorative: image, scale: 1, orientation: .up)
-                resultText = String()
-                alertMessage = nil
-                saveRecord(source: sourceText, target: String())
-            case .failure(let error):
+            } else {
                 qrImage = nil
-                resultText = String()
-                alertMessage = error.localizedDescription
             }
-        } else if presetSelectionState.selectedPresets.contains(.qrDecode) {
-            guard let imageData = selectedImageData else {
+            saveRecord(source: output.recordSourceText, target: output.recordTargetText)
+        case .failure(let error):
+            qrImage = nil
+            resultText = String()
+            if error == .missingImageData {
                 alertMessage = String(localized: "Select an image to decode.")
-                return
-            }
-            let result = BaseTransform.qrDecode.apply(text: String(), imageData: imageData)
-            switch result {
-            case .success(let output):
-                alertMessage = nil
-                qrImage = nil
-                resultText = output
-                saveRecord(source: nil, target: output)
-            case .failure(let error):
-                resultText = String()
+            } else {
                 alertMessage = error.localizedDescription
             }
-        } else {
-            applyTransformsToText()
         }
     }
 
@@ -309,34 +304,6 @@ private extension BaseTransformView {
 private extension BaseTransformView {
     var orderedSelectedTransforms: [TransformPreset] {
         presetSelectionState.orderedSelectedPresets
-    }
-
-    func applyTransformsToText() {
-        var outputText = sourceText
-        for preset in orderedSelectedTransforms {
-            switch preset {
-            case .builtIn(let transform):
-                let result = transform.apply(text: outputText)
-                switch result {
-                case .success(let transformedText):
-                    outputText = transformedText
-                case .failure(let error):
-                    resultText = String()
-                    alertMessage = error.localizedDescription
-                    return
-                }
-            case .customMapping:
-                let masked = MaskingService.anonymize(
-                    text: outputText,
-                    maskRules: activeMaskRules,
-                    options: maskingOptions()
-                )
-                outputText = masked.maskedText
-            }
-        }
-        alertMessage = nil
-        resultText = outputText
-        saveRecord(source: sourceText, target: outputText)
     }
 
     var presetSelectionSheet: some View {
