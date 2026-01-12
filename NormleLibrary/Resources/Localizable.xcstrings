@@ -1,7 +1,33 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Alphanumeric Width" : {
 
+    },
+    "Base64" : {
+
+    },
+    "Case" : {
+
+    },
+    "Custom" : {
+
+    },
+    "Digits Width" : {
+
+    },
+    "Katakana Width" : {
+
+    },
+    "QR" : {
+
+    },
+    "Space Width" : {
+
+    },
+    "URL" : {
+
+    }
   },
   "version" : "1.1"
 }
