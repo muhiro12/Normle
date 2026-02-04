@@ -6,6 +6,7 @@
 //
 
 import NormleLibrary
+import SwiftData
 import SwiftUI
 
 struct HistoryRowView: View {
@@ -24,4 +25,12 @@ struct HistoryRowView: View {
                 .lineLimit(2)
         }
     }
+}
+
+#Preview("History - Row") {
+    let container = PreviewData.makeContainer()
+    let record = PreviewData.makeSampleTransformRecord(container: container)
+    return HistoryRowView(record: record)
+        .padding()
+        .modelContainer(container)
 }

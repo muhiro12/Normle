@@ -6,6 +6,7 @@
 //
 
 import NormleLibrary
+import SwiftData
 import SwiftUI
 
 struct RestoreView: View {
@@ -42,4 +43,13 @@ struct RestoreView: View {
         }
         .navigationTitle("Restore")
     }
+}
+
+#Preview("Restore - Base") {
+    let container = PreviewData.makeContainer()
+    let record = PreviewData.makeSampleTransformRecord(container: container)
+    return NavigationStack {
+        RestoreView(record: record)
+    }
+    .modelContainer(container)
 }

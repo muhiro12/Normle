@@ -25,6 +25,25 @@ struct SelectableTextEditor: View {
     }
 }
 
+#Preview("SelectableTextEditor - Base") {
+    SelectableTextEditorPreview()
+}
+
+private struct SelectableTextEditorPreview: View {
+    @State private var text = "Select this text to test selection."
+    @State private var selectedText = String()
+
+    var body: some View {
+        SelectableTextEditor(
+            text: $text,
+            selectedText: $selectedText,
+            onCreateMapping: nil
+        )
+        .frame(minHeight: 140)
+        .padding()
+    }
+}
+
 #if os(iOS)
 private struct SelectableTextView: UIViewRepresentable {
     @Binding var text: String

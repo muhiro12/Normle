@@ -57,3 +57,11 @@ struct SettingsView: View {
         }
     }
 }
+
+#Preview("Settings - Base") {
+    let container = PreviewData.makeContainer()
+    return NavigationStack {
+        SettingsView()
+    }
+    .modelContainer(container)
+}

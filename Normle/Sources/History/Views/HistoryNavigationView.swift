@@ -6,6 +6,7 @@
 //
 
 import NormleLibrary
+import SwiftData
 import SwiftUI
 
 struct HistoryNavigationView: View {
@@ -19,4 +20,11 @@ struct HistoryNavigationView: View {
                 }
         }
     }
+}
+
+#Preview("History - Navigation") {
+    let container = PreviewData.makeContainer()
+    PreviewData.seed(container: container)
+    return HistoryNavigationView()
+        .modelContainer(container)
 }

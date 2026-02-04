@@ -57,4 +57,40 @@ enum PreviewData {
             assertionFailure(error.localizedDescription)
         }
     }
+
+    static func makeSampleMappingRule(
+        container: ModelContainer
+    ) -> MappingRule {
+        let context = container.mainContext
+        do {
+            let rule = try MappingRule.create(
+                context: context,
+                date: Date().addingTimeInterval(-1_800),
+                source: "Example",
+                target: "[Masked]",
+                isEnabled: true
+            )
+            try context.save()
+            return rule
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+
+    static func makeSampleTransformRecord(
+        container: ModelContainer
+    ) -> TransformRecord {
+        let context = container.mainContext
+        let record = TransformRecord.create(
+            context: context,
+            sourceText: "alice@example.com",
+            targetText: "[Email 1]"
+        )
+        do {
+            try context.save()
+        } catch {
+            assertionFailure(error.localizedDescription)
+        }
+        return record
+    }
 }

@@ -36,3 +36,16 @@ struct MappingRuleEditor: View {
         }
     }
 }
+
+#Preview("MappingRuleEditor - Base") {
+    MappingRuleEditor(
+        rule: .constant(
+            .init(
+                original: "Example",
+                masked: "[Masked]",
+                kind: .custom
+            )
+        )
+    )
+    .padding()
+}

@@ -6,6 +6,7 @@
 //
 
 import NormleLibrary
+import SwiftData
 import SwiftUI
 
 struct MappingNavigationView: View {
@@ -19,4 +20,11 @@ struct MappingNavigationView: View {
                 }
         }
     }
+}
+
+#Preview("Mapping - Navigation") {
+    let container = PreviewData.makeContainer()
+    PreviewData.seed(container: container)
+    return MappingNavigationView()
+        .modelContainer(container)
 }

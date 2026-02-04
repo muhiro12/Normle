@@ -131,3 +131,26 @@ private extension MappingEditView {
         dismiss()
     }
 }
+
+#Preview("Mapping - New") {
+    let container = PreviewData.makeContainer()
+    return NavigationStack {
+        MappingEditView(
+            rule: nil,
+            isPresented: .constant(true)
+        )
+    }
+    .modelContainer(container)
+}
+
+#Preview("Mapping - Edit") {
+    let container = PreviewData.makeContainer()
+    let rule = PreviewData.makeSampleMappingRule(container: container)
+    return NavigationStack {
+        MappingEditView(
+            rule: rule,
+            isPresented: .constant(true)
+        )
+    }
+    .modelContainer(container)
+}

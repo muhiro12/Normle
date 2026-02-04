@@ -16,3 +16,10 @@ struct StoreSection: View {
         store.buildSubscriptionSection()
     }
 }
+
+#Preview("Store - Section") {
+    List {
+        StoreSection()
+    }
+    .environment(Store())
+}

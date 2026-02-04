@@ -5,6 +5,7 @@
 //  Created by Hiromu Nakano on 2025/11/23.
 //
 
+import StoreKitWrapper
 import SwiftUI
 
 struct StoreNavigationView: View {
@@ -13,4 +14,9 @@ struct StoreNavigationView: View {
             StoreListView()
         }
     }
+}
+
+#Preview("Store - Navigation") {
+    StoreNavigationView()
+        .environment(Store())
 }

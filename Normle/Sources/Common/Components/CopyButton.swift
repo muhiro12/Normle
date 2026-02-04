@@ -27,3 +27,10 @@ struct CopyButton: View {
         }
     }
 }
+
+#Preview("CopyButton - Base") {
+    CopyButton(
+        text: "Sample text"
+    )
+    .padding()
+}

@@ -6,6 +6,7 @@
 //
 
 import NormleLibrary
+import SwiftData
 import SwiftUI
 
 struct HistoryDetailView: View {
@@ -44,4 +45,13 @@ struct HistoryDetailView: View {
         }
         .navigationTitle(record.date.formatted(date: .abbreviated, time: .shortened))
     }
+}
+
+#Preview("History - Detail") {
+    let container = PreviewData.makeContainer()
+    let record = PreviewData.makeSampleTransformRecord(container: container)
+    return NavigationStack {
+        HistoryDetailView(record: record)
+    }
+    .modelContainer(container)
 }

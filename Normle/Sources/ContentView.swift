@@ -8,6 +8,7 @@
 import NormleLibrary
 import StoreKit
 import StoreKitWrapper
+import SwiftData
 import SwiftUI
 
 private enum Tab: Hashable {
@@ -73,4 +74,15 @@ struct ContentView: View {
             }
         }
     }
+}
+
+#Preview("Content - Base") {
+    let container = PreviewData.makeContainer()
+    PreviewData.seed(container: container)
+    let preferencesStore = UserPreferencesStore()
+    let store = Store()
+    return ContentView()
+        .modelContainer(container)
+        .environment(store)
+        .environmentObject(preferencesStore)
 }

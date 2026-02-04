@@ -6,6 +6,7 @@
 //
 
 import NormleLibrary
+import SwiftData
 import SwiftUI
 
 struct MappingDetailView: View {
@@ -48,4 +49,13 @@ struct MappingDetailView: View {
             }
         }
     }
+}
+
+#Preview("Mapping - Detail") {
+    let container = PreviewData.makeContainer()
+    let rule = PreviewData.makeSampleMappingRule(container: container)
+    return NavigationStack {
+        MappingDetailView(rule: rule)
+    }
+    .modelContainer(container)
 }

@@ -15,3 +15,8 @@ struct StoreListView: View {
         .navigationTitle("Subscription")
     }
 }
+#Preview("Store - List") {
+    NavigationStack {
+        StoreListView()
+    }
+}
