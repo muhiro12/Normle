@@ -129,7 +129,17 @@ private struct SelectableTextView: NSViewRepresentable {
         let textView = NSTextView()
         textView.isEditable = true
         textView.isSelectable = true
-        textView.drawsBackground = false
+        textView.isRichText = false
+        textView.importsGraphics = false
+        textView.allowsImageEditing = false
+        textView.textColor = .labelColor
+        textView.insertionPointColor = .labelColor
+        if #available(macOS 15, *) {
+            textView.drawsBackground = false
+        } else {
+            textView.drawsBackground = true
+            textView.backgroundColor = .textBackgroundColor
+        }
         textView.font = .preferredFont(forTextStyle: .body)
         textView.delegate = context.coordinator
         textView.string = text
