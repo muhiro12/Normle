@@ -55,6 +55,7 @@ struct ContentView: View {
                 }
                 .tag(Tab.settings)
         }
+        .liquidGlassButtonStyle()
         .task {
             store.open(
                 groupID: nil,

@@ -21,6 +21,7 @@ struct SelectableTextEditor: View {
             selectedText: $selectedText,
             onCreateMapping: onCreateMapping
         )
+        .liquidGlassEffect()
     }
 }
 

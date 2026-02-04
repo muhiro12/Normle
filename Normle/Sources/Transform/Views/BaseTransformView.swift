@@ -41,6 +41,7 @@ struct BaseTransformView: View {
                         presentMappingFromSelection(text: selectedText)
                     }
                     .frame(minHeight: 160)
+                    .liquidGlassEffect()
                     Button {
                         pasteSourceText()
                     } label: {
@@ -209,6 +210,7 @@ private extension BaseTransformView {
                 TextEditor(text: .constant(resultText))
                     .frame(minHeight: 160)
                     .textSelection(.enabled)
+                    .liquidGlassEffect()
                 CopyButton(text: resultText)
             }
         }

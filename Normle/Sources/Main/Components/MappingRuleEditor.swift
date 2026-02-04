@@ -18,14 +18,14 @@ struct MappingRuleEditor: View {
                 text: $rule.original,
                 axis: .vertical
             )
-            .textFieldStyle(.roundedBorder)
+            .liquidGlassTextFieldStyle()
 
             TextField(
                 "Target text",
                 text: $rule.masked,
                 axis: .vertical
             )
-            .textFieldStyle(.roundedBorder)
+            .liquidGlassTextFieldStyle()
 
             Picker("Kind", selection: $rule.kind) {
                 ForEach(MappingKind.allCases) { kind in

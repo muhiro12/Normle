@@ -18,6 +18,7 @@ struct RestoreView: View {
             Section("AI response to restore") {
                 TextEditor(text: $viewModel.sourceText)
                     .frame(minHeight: 200)
+                    .liquidGlassEffect()
             }
 
             Section {
@@ -34,6 +35,7 @@ struct RestoreView: View {
                     TextEditor(text: .constant(viewModel.restoredText))
                         .frame(minHeight: 200)
                         .textSelection(.enabled)
+                        .liquidGlassEffect()
                     CopyButton(text: viewModel.restoredText)
                 }
             }
