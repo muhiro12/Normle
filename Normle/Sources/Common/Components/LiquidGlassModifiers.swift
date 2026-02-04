@@ -10,7 +10,7 @@ import SwiftUI
 extension View {
     @ViewBuilder
     func liquidGlassButtonStyle() -> some View {
-        if #available(iOS 18, macOS 26, *) {
+        if #available(iOS 26, macOS 26, *) {
             self.buttonStyle(.glass)
         } else {
             self
@@ -19,7 +19,7 @@ extension View {
 
     @ViewBuilder
     func liquidGlassProminentButtonStyle() -> some View {
-        if #available(iOS 18, macOS 26, *) {
+        if #available(iOS 26, macOS 26, *) {
             self.buttonStyle(.glassProminent)
         } else {
             self
@@ -30,7 +30,7 @@ extension View {
     func liquidGlassEffect(
         cornerRadius: CGFloat = 16
     ) -> some View {
-        if #available(iOS 18, macOS 26, *) {
+        if #available(iOS 26, macOS 26, *) {
             self.glassEffect(
                 .regular.interactive(),
                 in: RoundedRectangle(
@@ -45,7 +45,7 @@ extension View {
 
     @ViewBuilder
     func liquidGlassTextFieldStyle() -> some View {
-        if #available(iOS 18, macOS 26, *) {
+        if #available(iOS 26, macOS 26, *) {
             self.textFieldStyle(.automatic)
         } else {
             self.textFieldStyle(.roundedBorder)
