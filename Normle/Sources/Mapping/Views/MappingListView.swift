@@ -206,3 +206,22 @@ private extension MappingListView {
         isShowingAlert = true
     }
 }
+
+#Preview("Mappings - List") {
+    let container = PreviewData.makeContainer()
+    PreviewData.seed(container: container)
+    return NavigationStack {
+        MappingListView()
+    }
+    .modelContainer(container)
+}
+
+#Preview("Mappings - Dark") {
+    let container = PreviewData.makeContainer()
+    PreviewData.seed(container: container)
+    return NavigationStack {
+        MappingListView()
+    }
+    .modelContainer(container)
+    .environment(\.colorScheme, .dark)
+}

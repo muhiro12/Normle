@@ -88,3 +88,22 @@ private extension HistoryListView {
         )
     }
 }
+
+#Preview("History - List") {
+    let container = PreviewData.makeContainer()
+    PreviewData.seed(container: container)
+    return NavigationStack {
+        HistoryListView()
+    }
+    .modelContainer(container)
+}
+
+#Preview("History - Large Type") {
+    let container = PreviewData.makeContainer()
+    PreviewData.seed(container: container)
+    return NavigationStack {
+        HistoryListView()
+    }
+    .modelContainer(container)
+    .environment(\.dynamicTypeSize, .accessibility3)
+}

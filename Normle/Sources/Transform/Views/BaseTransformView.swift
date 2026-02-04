@@ -474,3 +474,26 @@ private extension BaseTransformView {
         }
     }
 }
+
+#Preview("Transforms - Base") {
+    let container = PreviewData.makeContainer()
+    PreviewData.seed(container: container)
+    let preferencesStore = UserPreferencesStore()
+    return NavigationStack {
+        BaseTransformView()
+    }
+    .modelContainer(container)
+    .environmentObject(preferencesStore)
+}
+
+#Preview("Transforms - Dark") {
+    let container = PreviewData.makeContainer()
+    PreviewData.seed(container: container)
+    let preferencesStore = UserPreferencesStore()
+    return NavigationStack {
+        BaseTransformView()
+    }
+    .modelContainer(container)
+    .environmentObject(preferencesStore)
+    .environment(\.colorScheme, .dark)
+}
