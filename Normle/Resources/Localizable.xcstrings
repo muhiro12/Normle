@@ -21,17 +21,6 @@
         }
       }
     },
-    "Alphanumeric Width" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "英数字の全角半角"
-          }
-        }
-      }
-    },
     "Append new" : {
       "localizations" : {
         "ja" : {
@@ -52,45 +41,12 @@
         }
       }
     },
-    "Base64" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Base64"
-          }
-        }
-      }
-    },
-    "Built-in" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "組み込み"
-          }
-        }
-      }
-    },
     "Cancel" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "キャンセル"
-          }
-        }
-      }
-    },
-    "Case" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "大文字/小文字"
           }
         }
       }
@@ -115,17 +71,6 @@
         }
       }
     },
-    "Conflicts with %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次と競合: %@"
-          }
-        }
-      }
-    },
     "Copy" : {
       "localizations" : {
         "ja" : {
@@ -142,6 +87,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "作成"
+          }
+        }
+      }
+    },
+    "Create a mapping to get started." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マッピングを作成して始めましょう。"
           }
         }
       }
@@ -182,6 +137,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カスタム"
+          }
+        }
+      }
+    },
+    "Data" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "データ"
           }
         }
       }
@@ -236,17 +201,6 @@
         }
       }
     },
-    "Digits Width" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "数字の全角半角"
-          }
-        }
-      }
-    },
     "Disabled" : {
       "localizations" : {
         "ja" : {
@@ -273,6 +227,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "画像をドロップするかファイルを選択してください。"
+          }
+        }
+      }
+    },
+    "Drop or choose a QR image to decode." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QR画像をドロップするか選択して読み取ります。"
           }
         }
       }
@@ -307,18 +271,7 @@
         }
       }
     },
-    "Enter text above to see masked output." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "上にテキストを入力するとマスク結果が表示されます。"
-          }
-        }
-      }
-    },
-    "Enter text and run QR Encode." : {
+    "Enter text, then run QR Encode." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -388,23 +341,22 @@
         }
       }
     },
+    "Input" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入力"
+          }
+        }
+      }
+    },
     "Inserted: %d" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "追加: %d"
-          }
-        }
-      }
-    },
-    "Katakana Width" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カタカナの全角半角"
           }
         }
       }
@@ -419,13 +371,12 @@
         }
       }
     },
-    "Manage mappings" : {
-      "extractionState" : "stale",
+    "Manage your subscription and sync preferences." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "マッピングを管理"
+            "value" : "サブスクリプションと同期設定を管理します。"
           }
         }
       }
@@ -470,17 +421,6 @@
         }
       }
     },
-    "Mask email addresses" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "メールアドレスをマスク"
-          }
-        }
-      }
-    },
     "Mask emails" : {
       "localizations" : {
         "ja" : {
@@ -511,17 +451,6 @@
         }
       }
     },
-    "Masking options" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "マスキング設定"
-          }
-        }
-      }
-    },
     "Masking Options" : {
       "localizations" : {
         "ja" : {
@@ -542,6 +471,16 @@
         }
       }
     },
+    "More" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その他"
+          }
+        }
+      }
+    },
     "New Mapping" : {
       "localizations" : {
         "ja" : {
@@ -552,13 +491,42 @@
         }
       }
     },
-    "No manual mappings" : {
-      "extractionState" : "stale",
+    "No History" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "手動マッピングはありません"
+            "value" : "履歴がありません"
+          }
+        }
+      }
+    },
+    "No Mappings" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マッピングがありません"
+          }
+        }
+      }
+    },
+    "No QR Code" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QRコードがありません"
+          }
+        }
+      }
+    },
+    "No Result" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結果がありません"
           }
         }
       }
@@ -603,13 +571,12 @@
         }
       }
     },
-    "Preset" : {
-      "extractionState" : "stale",
+    "Paste or type text to transform. You can also select text to create a mapping." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プリセット"
+            "value" : "テキストを貼り付けるか入力してください。選択範囲からマッピングも作成できます。"
           }
         }
       }
@@ -624,34 +591,12 @@
         }
       }
     },
-    "QR" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "QR"
-          }
-        }
-      }
-    },
-    "QR image" : {
+    "QR Image" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "QR画像"
-          }
-        }
-      }
-    },
-    "QR presets must be selected alone." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "QRプリセットは単独で選択してください。"
           }
         }
       }
@@ -706,23 +651,22 @@
         }
       }
     },
+    "Run a transform to see it here." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変換を実行するとここに表示されます。"
+          }
+        }
+      }
+    },
     "Save" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "保存"
-          }
-        }
-      }
-    },
-    "Save to history" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "履歴に保存"
           }
         }
       }
@@ -807,17 +751,6 @@
         }
       }
     },
-    "Space Width" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "空白の全角半角"
-          }
-        }
-      }
-    },
     "Status" : {
       "localizations" : {
         "ja" : {
@@ -878,6 +811,16 @@
         }
       }
     },
+    "This action cannot be undone." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この操作は取り消せません。"
+          }
+        }
+      }
+    },
     "Total: %d" : {
       "localizations" : {
         "ja" : {
@@ -894,17 +837,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "変換して保存"
-          }
-        }
-      }
-    },
-    "Transform category" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "変換カテゴリ"
           }
         }
       }
@@ -935,17 +867,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更新: %d"
-          }
-        }
-      }
-    },
-    "URL" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "URL"
           }
         }
       }
