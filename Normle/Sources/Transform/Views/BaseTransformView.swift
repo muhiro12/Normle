@@ -33,7 +33,7 @@ struct BaseTransformView: View {
     var body: some View {
         Form {
             if presetSelectionState.selectedPresets.contains(.qrDecode) == false {
-                Section("Source text") {
+                Section {
                     SelectableTextEditor(
                         text: $sourceText,
                         selectedText: $selectedSourceText
@@ -47,11 +47,13 @@ struct BaseTransformView: View {
                     } label: {
                         Label("Paste", systemImage: "doc.on.clipboard")
                     }
+                    .secondaryActionStyle()
                     Button {
                         clearSourceText()
                     } label: {
                         Label("Clear", systemImage: "xmark.circle")
                     }
+                    .secondaryActionStyle()
                     #if os(macOS)
                     Button {
                         presentMappingFromSelection()
@@ -59,10 +61,16 @@ struct BaseTransformView: View {
                         Label("Create mapping from selection", systemImage: "plus")
                     }
                     .disabled(selectedSourceTextValue == nil)
+                    .secondaryActionStyle()
                     #endif
+                } header: {
+                    Text("Input")
+                } footer: {
+                    Text("Paste or type text to transform. You can also select text to create a mapping.")
                 }
+                .listRowInsets(sectionRowInsets)
             } else {
-                Section("QR image") {
+                Section {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(importedImageName ?? String(localized: "Drop an image or select a file."))
                             .foregroundStyle(importedImageName == nil ? .secondary : .primary)
@@ -78,31 +86,66 @@ struct BaseTransformView: View {
                         } label: {
                             Label("Select image", systemImage: "photo.on.rectangle")
                         }
+                        .secondaryActionStyle()
                         if selectedImageData != nil {
                             Button {
                                 clearSelectedImage()
                             } label: {
                                 Label("Clear image", systemImage: "xmark.circle")
                             }
+                            .secondaryActionStyle()
                         }
                     }
+                } header: {
+                    Text("QR Image")
+                } footer: {
+                    Text("Drop or choose a QR image to decode.")
                 }
+                .listRowInsets(sectionRowInsets)
             }
 
             Section("Result") {
                 resultContent
             }
+            .listRowInsets(sectionRowInsets)
 
             Section {
+                #if os(macOS)
+                HStack {
+                    Spacer()
+                    Button {
+                        runTransform()
+                    } label: {
+                        Label("Transform & Save", systemImage: "arrow.triangle.2.circlepath")
+                    }
+                    .disabled(isRunDisabled)
+                    .primaryActionStyle()
+                }
+                #else
                 Button {
                     runTransform()
                 } label: {
                     Label("Transform & Save", systemImage: "arrow.triangle.2.circlepath")
                 }
                 .disabled(isRunDisabled)
+                .primaryActionStyle()
+                #endif
             }
+            .listRowInsets(sectionRowInsets)
         }
         .navigationTitle("Transforms")
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+        #if os(macOS)
+        .listStyle(.inset)
+        .padding(.horizontal, 16)
+        #else
+        .listStyle(.insetGrouped)
+        #endif
+        #if os(iOS)
+        .listRowSpacing(16)
+        #endif
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -169,6 +212,14 @@ struct BaseTransformView: View {
 }
 
 private extension BaseTransformView {
+    var sectionRowInsets: EdgeInsets {
+        #if os(macOS)
+        return .init(top: 16, leading: 24, bottom: 16, trailing: 24)
+        #else
+        return .init(top: 16, leading: 16, bottom: 16, trailing: 16)
+        #endif
+    }
+
     var selectedSourceTextValue: String? {
         let trimmed = selectedSourceText.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
@@ -199,13 +250,19 @@ private extension BaseTransformView {
                     .frame(maxWidth: .infinity)
                 CopyButton(text: sourceText)
             } else {
-                Text("Enter text and run QR Encode.")
-                    .foregroundStyle(.secondary)
+                ContentUnavailableView(
+                    "No QR Code",
+                    systemImage: "qrcode",
+                    description: Text("Enter text, then run QR Encode.")
+                )
             }
         } else {
             if resultText.isEmpty {
-                Text("Select a preset and run transform.")
-                    .foregroundStyle(.secondary)
+                ContentUnavailableView(
+                    "No Result",
+                    systemImage: "sparkles",
+                    description: Text("Select a preset and run transform.")
+                )
             } else {
                 TextEditor(text: .constant(resultText))
                     .frame(minHeight: 160)
@@ -475,18 +532,28 @@ private extension BaseTransformView {
     }
 }
 
-#Preview("Transforms - Base") {
-    let container = PreviewData.makeContainer()
-    PreviewData.seed(container: container)
-    let preferencesStore = UserPreferencesStore()
-    return NavigationStack {
-        BaseTransformView()
+private extension View {
+    @ViewBuilder
+    func secondaryActionStyle() -> some View {
+        #if os(macOS)
+        self.buttonStyle(.borderless)
+        #else
+        self.buttonStyle(.bordered)
+        #endif
     }
-    .modelContainer(container)
-    .environmentObject(preferencesStore)
+
+    @ViewBuilder
+    func primaryActionStyle() -> some View {
+        #if os(macOS)
+        self.buttonStyle(.borderedProminent)
+            .controlSize(.regular)
+        #else
+        self.buttonStyle(.borderedProminent)
+        #endif
+    }
 }
 
-#Preview("Transforms - Dark") {
+#Preview("Transforms") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
     let preferencesStore = UserPreferencesStore()
@@ -495,5 +562,4 @@ private extension BaseTransformView {
     }
     .modelContainer(container)
     .environmentObject(preferencesStore)
-    .environment(\.colorScheme, .dark)
 }
