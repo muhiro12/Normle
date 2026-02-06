@@ -38,43 +38,71 @@ struct MappingListView: View {
 
     var body: some View {
         List {
-            ForEach(rules) { rule in
-                NavigationLink(value: rule) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(rule.target.isEmpty ? String(localized: "Target not set") : rule.target)
-                            .font(.headline)
-                        if rule.isEnabled == false {
-                            Text("Disabled")
+            if rules.isEmpty {
+                ContentUnavailableView(
+                    "No Mappings",
+                    systemImage: "link",
+                    description: Text("Create a mapping to get started.")
+                )
+                .listRowInsets(emptyStateRowInsets)
+            } else {
+                ForEach(rules) { rule in
+                    NavigationLink(value: rule) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(rule.target.isEmpty ? String(localized: "Target not set") : rule.target)
+                                .font(.headline)
+                                .lineLimit(1)
+                            if rule.isEnabled == false {
+                                Text("Disabled")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Text(rule.source.isEmpty ? String(localized: "Source not set") : rule.source)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(2)
+                            Text(rule.date.formatted(date: .abbreviated, time: .shortened))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
-                        Text(rule.source.isEmpty ? String(localized: "Source not set") : rule.source)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        Text(rule.date.formatted(date: .abbreviated, time: .shortened))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
                     }
+                    .listRowInsets(listRowInsets)
                 }
             }
         }
         .navigationTitle("Mappings")
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+        .listRowSpacing(8)
+        #endif
+        #if os(macOS)
+        .listStyle(.inset)
+        .padding(.horizontal, 16)
+        #else
+        .listStyle(.insetGrouped)
+        #endif
         .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                Button {
-                    exportRules()
-                } label: {
-                    Label("Export", systemImage: "square.and.arrow.up")
-                }
-                Button {
-                    isImporting = true
-                } label: {
-                    Label("Import", systemImage: "square.and.arrow.down")
-                }
+            ToolbarItem(placement: .primaryAction) {
                 Button {
                     isPresentingCreate = true
                 } label: {
                     Label("Add", systemImage: "plus")
+                }
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button {
+                        exportRules()
+                    } label: {
+                        Label("Export", systemImage: "square.and.arrow.up")
+                    }
+                    Button {
+                        isImporting = true
+                    } label: {
+                        Label("Import", systemImage: "square.and.arrow.down")
+                    }
+                } label: {
+                    Label("More", systemImage: "ellipsis.circle")
                 }
             }
         }
@@ -137,6 +165,22 @@ struct MappingListView: View {
 }
 
 private extension MappingListView {
+    var listRowInsets: EdgeInsets {
+        #if os(macOS)
+        return .init(top: 16, leading: 24, bottom: 16, trailing: 24)
+        #else
+        return .init(top: 16, leading: 16, bottom: 16, trailing: 16)
+        #endif
+    }
+
+    var emptyStateRowInsets: EdgeInsets {
+        #if os(macOS)
+        return .init(top: 24, leading: 24, bottom: 24, trailing: 24)
+        #else
+        return .init(top: 24, leading: 16, bottom: 24, trailing: 16)
+        #endif
+    }
+
     func exportRules() {
         do {
             let coordinator = MappingRuleFileCoordinator(context: context)
