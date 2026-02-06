@@ -21,7 +21,7 @@ struct SettingsView: View {
 
     var body: some View {
         List {
-            Section("Subscription") {
+            Section {
                 if isSubscribeOn {
                     Toggle("Use iCloud sync", isOn: $isICloudOn)
                 } else {
@@ -31,6 +31,10 @@ struct SettingsView: View {
                         Text("Subscription")
                     }
                 }
+            } header: {
+                Text("Subscription")
+            } footer: {
+                Text("Manage your subscription and sync preferences.")
             }
             Section {
                 Button(role: .destructive) {
@@ -38,9 +42,23 @@ struct SettingsView: View {
                 } label: {
                     Text("Delete all history")
                 }
+            } header: {
+                Text("Data")
+            } footer: {
+                Text("This action cannot be undone.")
             }
         }
         .navigationTitle("Settings")
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+        .listRowSpacing(8)
+        #endif
+        #if os(macOS)
+        .listStyle(.inset)
+        .padding(.horizontal, 16)
+        #else
+        .listStyle(.insetGrouped)
+        #endif
         .confirmationDialog(
             "Delete all history?",
             isPresented: $isDeleteDialogPresented
