@@ -5,6 +5,7 @@
 ## Product
 GoogleService-Info.plist
 Secret.swift
+!Normle/Configurations/Secret.swift
 StoreKitTestCertificate.cer
 Configuration.storekit
 

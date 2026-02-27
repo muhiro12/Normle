@@ -22,19 +22,22 @@ public enum SubscriptionAccessEvaluator {
     public static func evaluate(
         purchasedProductIDs: Set<String>,
         productID: String,
-        isICloudOn: Bool
+        isICloudOn: Bool,
+        grantsPremiumAccessWithoutSubscription: Bool = false
     ) -> SubscriptionAccessState {
         evaluate(
             hasActiveSubscription: purchasedProductIDs.contains(productID),
-            isICloudOn: isICloudOn
+            isICloudOn: isICloudOn,
+            grantsPremiumAccessWithoutSubscription: grantsPremiumAccessWithoutSubscription
         )
     }
 
     public static func evaluate(
         hasActiveSubscription: Bool,
-        isICloudOn: Bool
+        isICloudOn: Bool,
+        grantsPremiumAccessWithoutSubscription: Bool = false
     ) -> SubscriptionAccessState {
-        if hasActiveSubscription {
+        if hasActiveSubscription || grantsPremiumAccessWithoutSubscription {
             return .init(
                 isSubscribeOn: true,
                 isICloudOn: isICloudOn

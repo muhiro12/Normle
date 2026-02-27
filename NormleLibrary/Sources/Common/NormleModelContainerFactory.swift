@@ -7,6 +7,19 @@
 
 import SwiftData
 
+public struct NormleModelContainerCreationResult {
+    public let container: ModelContainer
+    public let isCloudSyncEnabled: Bool
+
+    public init(
+        container: ModelContainer,
+        isCloudSyncEnabled: Bool
+    ) {
+        self.container = container
+        self.isCloudSyncEnabled = isCloudSyncEnabled
+    }
+}
+
 public enum NormleModelContainerFactory {
     public static func make(
         cloudSyncEnabled: Bool
@@ -21,30 +34,46 @@ public enum NormleModelContainerFactory {
         )
     }
 
-    public static func makeInMemory() throws -> ModelContainer {
-        try .init(
-            for: TransformRecord.self,
-            MappingRule.self,
-            Tag.self,
-            configurations: .init(
-                isStoredInMemoryOnly: true
-            )
+    public static func makeWithFallback(
+        cloudSyncEnabled: Bool,
+        onCloudContainerError: (Error) -> Void = { _ in },
+        onLocalContainerError: (Error) -> Void = { _ in }
+    ) -> NormleModelContainerCreationResult {
+        makeWithFallback(
+            cloudSyncEnabled: cloudSyncEnabled,
+            buildContainer: make,
+            onCloudContainerError: onCloudContainerError,
+            onLocalContainerError: onLocalContainerError
         )
     }
 
-    public static func makeWithFallback(
+    static func makeWithFallback(
         cloudSyncEnabled: Bool,
-        onPrimaryError: (Error) -> Void = { _ in }
-    ) -> ModelContainer {
+        buildContainer: (Bool) throws -> ModelContainer,
+        onCloudContainerError: (Error) -> Void = { _ in },
+        onLocalContainerError: (Error) -> Void = { _ in }
+    ) -> NormleModelContainerCreationResult {
         do {
-            return try make(cloudSyncEnabled: cloudSyncEnabled)
+            return .init(
+                container: try buildContainer(cloudSyncEnabled),
+                isCloudSyncEnabled: cloudSyncEnabled
+            )
         } catch {
-            onPrimaryError(error)
-            do {
-                return try makeInMemory()
-            } catch {
-                fatalError(error.localizedDescription)
+            if cloudSyncEnabled {
+                onCloudContainerError(error)
+                do {
+                    return .init(
+                        container: try buildContainer(false),
+                        isCloudSyncEnabled: false
+                    )
+                } catch {
+                    onLocalContainerError(error)
+                    fatalError(error.localizedDescription)
+                }
             }
+
+            onLocalContainerError(error)
+            fatalError(error.localizedDescription)
         }
     }
 }

@@ -3,9 +3,15 @@ import SwiftData
 import Testing
 
 struct NormleModelContainerFactoryTests {
+    private enum ForcedError: Error, Equatable {
+        case cloudContainerUnavailable
+    }
+
     @MainActor
-    @Test func makeInMemoryContainerSupportsPersistence() throws {
-        let container = try NormleModelContainerFactory.makeInMemory()
+    @Test func makeContainerWithoutCloudSyncSupportsPersistence() throws {
+        let container = try NormleModelContainerFactory.make(
+            cloudSyncEnabled: false
+        )
         let context = container.mainContext
         let descriptor = FetchDescriptor<TransformRecord>()
         let baselineCount = try context.fetch(descriptor).count
@@ -22,11 +28,40 @@ struct NormleModelContainerFactoryTests {
     }
 
     @MainActor
-    @Test func makeContainerWithoutCloudSyncSupportsPersistence() throws {
-        let container = try NormleModelContainerFactory.make(
+    @Test func makeWithFallbackDisablesCloudSyncAfterCloudFailure() throws {
+        let localContainer = try NormleModelContainerFactory.make(
             cloudSyncEnabled: false
         )
-        let context = container.mainContext
+        var capturedCloudError: ForcedError?
+
+        let result = NormleModelContainerFactory.makeWithFallback(
+            cloudSyncEnabled: true,
+            buildContainer: { isCloudSyncEnabled in
+                if isCloudSyncEnabled {
+                    throw ForcedError.cloudContainerUnavailable
+                }
+                return localContainer
+            },
+            onCloudContainerError: { error in
+                capturedCloudError = error as? ForcedError
+            },
+            onLocalContainerError: { _ in
+            }
+        )
+
+        #expect(result.isCloudSyncEnabled == false)
+        #expect(capturedCloudError == .cloudContainerUnavailable)
+    }
+
+    @MainActor
+    @Test func makeWithFallbackKeepsCloudSyncStateWhenLocalOnly() throws {
+        let result = NormleModelContainerFactory.makeWithFallback(
+            cloudSyncEnabled: false
+        )
+
+        #expect(result.isCloudSyncEnabled == false)
+
+        let context = result.container.mainContext
         let descriptor = FetchDescriptor<TransformRecord>()
         let baselineCount = try context.fetch(descriptor).count
 

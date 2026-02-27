@@ -6,7 +6,6 @@
 //
 
 import NormleLibrary
-import StoreKit
 import StoreKitWrapper
 import SwiftData
 import SwiftUI
@@ -58,18 +57,28 @@ struct ContentView: View {
         }
         .liquidGlassButtonStyle()
         .task {
+            #if os(macOS)
+            let accessState = SubscriptionAccessEvaluator.evaluate(
+                hasActiveSubscription: false,
+                isICloudOn: isICloudOn,
+                grantsPremiumAccessWithoutSubscription: true
+            )
+            isSubscribeOn = accessState.isSubscribeOn
+            isICloudOn = accessState.isICloudOn
+            #else
             store.open(
                 groupID: nil,
-                productIDs: [StoreProduct.subscription]
+                productIDs: [Secret.productID]
             ) {
                 let accessState = SubscriptionAccessEvaluator.evaluate(
                     purchasedProductIDs: Set($0.map(\.id)),
-                    productID: StoreProduct.subscription,
+                    productID: Secret.productID,
                     isICloudOn: isICloudOn
                 )
                 isSubscribeOn = accessState.isSubscribeOn
                 isICloudOn = accessState.isICloudOn
             }
+            #endif
         }
     }
 }

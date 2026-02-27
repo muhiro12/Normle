@@ -72,8 +72,10 @@ else
 fi
 
 timestamp=$(date +%s)
-result_bundle_path="$results_directory/TestResults_Normle_${timestamp}.xcresult"
+ios_result_bundle_path="$results_directory/TestResults_Normle_iOS_${timestamp}.xcresult"
+mac_result_bundle_path="$results_directory/TestResults_Normle_macOS_${timestamp}.xcresult"
 
+echo "Running Normle iOS build."
 HOME="$local_home_directory" \
 CFFIXED_USER_HOME="$local_home_directory" \
 TMPDIR="$temporary_directory" \
@@ -87,10 +89,33 @@ xcodebuild \
   -scheme "Normle" \
   "${destination[@]}" \
   -derivedDataPath "$derived_data_path" \
-  -resultBundlePath "$result_bundle_path" \
+  -resultBundlePath "$ios_result_bundle_path" \
   -clonedSourcePackagesDirPath "$cloned_source_packages_directory" \
   -packageCachePath "$package_cache_directory" \
   "CLANG_MODULE_CACHE_PATH=$clang_module_cache_directory" \
   build
 
-echo "Finished Normle build. Result bundle: $result_bundle_path"
+echo "Running Normle macOS build."
+HOME="$local_home_directory" \
+CFFIXED_USER_HOME="$local_home_directory" \
+TMPDIR="$temporary_directory" \
+XDG_CACHE_HOME="$cache_directory" \
+CLANG_MODULE_CACHE_PATH="$clang_module_cache_directory" \
+SWIFTPM_MODULECACHE_OVERRIDE="$clang_module_cache_directory" \
+SWIFTPM_CACHE_PATH="$swiftpm_cache_directory" \
+SWIFTPM_CONFIG_PATH="$swiftpm_config_directory" \
+xcodebuild \
+  -project "$project_path" \
+  -scheme "Normle" \
+  -destination "platform=macOS,arch=arm64" \
+  -derivedDataPath "$derived_data_path" \
+  -resultBundlePath "$mac_result_bundle_path" \
+  -clonedSourcePackagesDirPath "$cloned_source_packages_directory" \
+  -packageCachePath "$package_cache_directory" \
+  "CLANG_MODULE_CACHE_PATH=$clang_module_cache_directory" \
+  CODE_SIGNING_ALLOWED=NO \
+  CODE_SIGNING_REQUIRED=NO \
+  build
+
+echo "Finished Normle iOS build. Result bundle: $ios_result_bundle_path"
+echo "Finished Normle macOS build. Result bundle: $mac_result_bundle_path"

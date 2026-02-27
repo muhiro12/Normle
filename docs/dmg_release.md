@@ -7,9 +7,16 @@
 
 Flow:
 
-1. Validate the provided app path and signature.
-2. Create a DMG (`Normle_<version>.dmg`) with `Normle.app` and `/Applications`.
-3. Notarize and staple.
+1. Run release gates:
+   iOS build, macOS build, and `NormleLibrary` tests.
+2. Validate the provided app path and signature.
+3. Create a DMG (`Normle_<version>.dmg`) with `Normle.app` and `/Applications`.
+4. Notarize and staple.
+
+Current policy for direct DMG distribution:
+
+1. macOS builds distributed by DMG treat subscription-gated features as enabled.
+2. iCloud sync remains user-configurable in Settings.
 
 ## One-Time Setup: notarytool Keychain Profile
 
@@ -31,6 +38,7 @@ bash ci_scripts/build_normle_dmg.sh "/path/to/Normle.app"
 ```
 
 The app must already be signed with `Developer ID Application`.
+The script will fail if any pre-release gate fails.
 
 Output file:
 

@@ -21,11 +21,15 @@ struct NormleApp: App {
 
     init() {
         sharedStore = .init()
-        sharedModelContainer = NormleModelContainerFactory.makeWithFallback(
+        let result = NormleModelContainerFactory.makeWithFallback(
             cloudSyncEnabled: isICloudOn
         ) { error in
             assertionFailure(error.localizedDescription)
+        } onLocalContainerError: { error in
+            assertionFailure(error.localizedDescription)
         }
+        sharedModelContainer = result.container
+        isICloudOn = result.isCloudSyncEnabled
     }
 
     var body: some Scene {

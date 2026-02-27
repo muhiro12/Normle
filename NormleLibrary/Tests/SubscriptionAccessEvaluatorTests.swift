@@ -32,4 +32,15 @@ struct SubscriptionAccessEvaluatorTests {
         #expect(state.isSubscribeOn == false)
         #expect(state.isICloudOn == false)
     }
+
+    @Test func evaluateAllowsPremiumWithoutSubscriptionWhenConfigured() {
+        let state = SubscriptionAccessEvaluator.evaluate(
+            hasActiveSubscription: false,
+            isICloudOn: true,
+            grantsPremiumAccessWithoutSubscription: true
+        )
+
+        #expect(state.isSubscribeOn)
+        #expect(state.isICloudOn)
+    }
 }

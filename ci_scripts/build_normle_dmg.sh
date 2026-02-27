@@ -66,6 +66,11 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   fail "This script must run inside a git repository."
 fi
 
+echo "Running release gates before DMG packaging."
+bash ci_scripts/build_normle.sh
+bash ci_scripts/test_normle_library.sh
+echo "Release gates passed."
+
 required_commands=(
   "xcrun"
   "hdiutil"

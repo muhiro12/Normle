@@ -6,7 +6,6 @@
 #  Created by Hiromu Nakano on 2024/03/24.
 #  Copyright © 2024 Hiromu Nakano. All rights reserved.
 
-mkdir -p ../Normle/Configurations ../Watch/Configurations
+mkdir -p ../Normle/Configurations
 echo "$SECRET_BASE64" | base64 -d -o ../Normle/Configurations/Secret.swift
-cp ../Normle/Configurations/Secret.swift ../Watch/Configurations/Secret.swift
 defaults write com.apple.dt.Xcode IDESkipPackagePluginFingerprintValidatation -bool YES
