@@ -21,28 +21,11 @@ struct NormleApp: App {
 
     init() {
         sharedStore = .init()
-        sharedModelContainer = {
-            do {
-                return try .init(
-                    for: TransformRecord.self,
-                    MappingRule.self,
-                    Tag.self,
-                    configurations: .init(
-                        cloudKitDatabase: isICloudOn ? .automatic : .none
-                    )
-                )
-            } catch {
-                assertionFailure(error.localizedDescription)
-                return try! .init(
-                    for: TransformRecord.self,
-                    MappingRule.self,
-                    Tag.self,
-                    configurations: .init(
-                        isStoredInMemoryOnly: true
-                    )
-                )
-            }
-        }()
+        sharedModelContainer = NormleModelContainerFactory.makeWithFallback(
+            cloudSyncEnabled: isICloudOn
+        ) { error in
+            assertionFailure(error.localizedDescription)
+        }
     }
 
     var body: some Scene {

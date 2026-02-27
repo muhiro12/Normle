@@ -183,8 +183,10 @@ private extension MappingListView {
 
     func exportRules() {
         do {
-            let coordinator = MappingRuleFileCoordinator(context: context)
-            exportDocument = try coordinator.exportDocument()
+            let data = try MappingRuleTransferCoordinator.exportData(
+                context: context
+            )
+            exportDocument = .init(data: data)
             isExporting = true
         } catch {
             presentError(message: error.localizedDescription)
@@ -193,8 +195,9 @@ private extension MappingListView {
 
     func prepareImport(url: URL) {
         do {
-            let coordinator = MappingRuleFileCoordinator(context: context)
-            pendingImportData = try coordinator.loadImportData(from: url)
+            pendingImportData = try MappingRuleTransferCoordinator.loadImportData(
+                from: url
+            )
             isChoosingImportPolicy = true
         } catch {
             presentError(message: error.localizedDescription)
@@ -208,9 +211,9 @@ private extension MappingListView {
             return
         }
         do {
-            let coordinator = MappingRuleFileCoordinator(context: context)
-            let result = try coordinator.applyImport(
+            let result = try MappingRuleTransferCoordinator.applyImport(
                 data: data,
+                context: context,
                 policy: policy
             )
             alertTitle = String(localized: "Import completed")

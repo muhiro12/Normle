@@ -274,8 +274,8 @@ private extension BaseTransformView {
     }
 
     func runTransform() {
-        let pipeline = TransformPipeline()
-        let result = pipeline.run(
+        let result = TransformExecutionService.runAndSave(
+            context: context,
             sourceText: sourceText,
             presets: orderedSelectedTransforms,
             maskRules: activeMaskRules,
@@ -291,14 +291,18 @@ private extension BaseTransformView {
             } else {
                 qrImage = nil
             }
-            saveRecord(source: output.recordSourceText, target: output.recordTargetText)
         case .failure(let error):
             qrImage = nil
             resultText = String()
-            if error == .missingImageData {
-                alertMessage = String(localized: "Select an image to decode.")
-            } else {
-                alertMessage = error.localizedDescription
+            switch error {
+            case .pipeline(let pipelineError):
+                if pipelineError == .missingImageData {
+                    alertMessage = String(localized: "Select an image to decode.")
+                } else {
+                    alertMessage = pipelineError.localizedDescription
+                }
+            case .persistence(let persistenceError):
+                alertMessage = persistenceError.localizedDescription
             }
         }
     }
@@ -325,19 +329,6 @@ private extension BaseTransformView {
         resultText = String()
         qrImage = nil
         alertMessage = nil
-    }
-
-    func saveRecord(source: String?, target: String) {
-        do {
-            _ = try TransformRecordService.saveRecord(
-                context: context,
-                sourceText: source,
-                targetText: target,
-                mappings: []
-            )
-        } catch {
-            assertionFailure(error.localizedDescription)
-        }
     }
 
     func handleDrop(providers: [NSItemProvider]) {

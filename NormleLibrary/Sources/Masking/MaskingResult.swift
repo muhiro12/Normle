@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Mapping: Identifiable, Equatable {
+public struct Mapping: Identifiable, Codable, Equatable {
     public let id: UUID
     public let original: String
     public let masked: String

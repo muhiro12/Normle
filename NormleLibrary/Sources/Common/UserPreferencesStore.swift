@@ -6,21 +6,20 @@
 //
 
 import Combine
-import NormleLibrary
 import SwiftUI
 
 @MainActor
-final class UserPreferencesStore: ObservableObject {
+public final class UserPreferencesStore: ObservableObject {
     @AppStorage(.userPreferences)
     private var storedData = Data()
 
-    @Published private(set) var preferences: UserPreferences = .defaults
+    @Published public private(set) var preferences: UserPreferences = .defaults
 
-    init() {
+    public init() {
         preferences = UserPreferences.decode(from: storedData)
     }
 
-    func update(_ mutation: (inout UserPreferences) -> Void) {
+    public func update(_ mutation: (inout UserPreferences) -> Void) {
         var updatedPreferences = preferences
         mutation(&updatedPreferences)
         guard updatedPreferences != preferences else {

@@ -3,7 +3,7 @@ import SwiftData
 import Testing
 
 struct TransformRecordServiceTests {
-    @Test func savingRecordsPersistsSourceAndTargetText() throws {
+    @Test func savingRecordsPersistsSourceTargetAndMappings() throws {
         let context = testContext
         let mapping = Mapping(
             original: "secret",
@@ -30,6 +30,9 @@ struct TransformRecordServiceTests {
         #expect(records.first == first)
         #expect(records.first?.sourceText == "source-1")
         #expect(records.first?.targetText == "masked-1")
+        #expect(records.first?.mappings.count == 1)
+        #expect(records.first?.mappings.first?.original == "secret")
+        #expect(records.first?.mappings.first?.masked == "Alias(1)")
     }
 
     @Test func savingRecordWithNilSourceTextOmitsSourceText() throws {
@@ -52,12 +55,24 @@ struct TransformRecordServiceTests {
 
     @Test func updateRecordUpdatesPersistedText() throws {
         let context = testContext
+        let createdMapping = Mapping(
+            original: "secret-1",
+            masked: "Alias(1)",
+            kind: .other,
+            occurrenceCount: 1
+        )
+        let updatedMapping = Mapping(
+            original: "secret-2",
+            masked: "Alias(2)",
+            kind: .other,
+            occurrenceCount: 2
+        )
 
         let record = try TransformRecordService.saveRecord(
             context: context,
             sourceText: "source-1",
             targetText: "target-1",
-            mappings: []
+            mappings: [createdMapping]
         )
 
         _ = try TransformRecordService.updateRecord(
@@ -65,7 +80,7 @@ struct TransformRecordServiceTests {
             record: record,
             sourceText: "source-2",
             targetText: "target-2",
-            mappings: []
+            mappings: [updatedMapping]
         )
 
         let descriptor = FetchDescriptor<TransformRecord>()
@@ -74,6 +89,9 @@ struct TransformRecordServiceTests {
         #expect(records.count == 1)
         #expect(records.first?.sourceText == "source-2")
         #expect(records.first?.targetText == "target-2")
+        #expect(records.first?.mappings.count == 1)
+        #expect(records.first?.mappings.first?.original == "secret-2")
+        #expect(records.first?.mappings.first?.masked == "Alias(2)")
     }
 
     @Test func deleteRemovesRecord() throws {

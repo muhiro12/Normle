@@ -16,10 +16,9 @@ final class RestoreViewModel {
     func restore(
         with record: TransformRecord
     ) {
-        _ = record
         restoredText = RestoreService.restore(
             text: sourceText,
-            mappings: []
+            mappings: record.restoreMappings
         )
     }
 }

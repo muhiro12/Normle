@@ -35,6 +35,9 @@ struct TransformPipelineTests {
             #expect(output.recordSourceText == "Secret")
             #expect(output.recordTargetText == "ALIAS")
             #expect(output.qrImage == nil)
+            #expect(output.mappings.count == 1)
+            #expect(output.mappings.first?.original == "Secret")
+            #expect(output.mappings.first?.masked == "ALIAS")
         case .failure:
             #expect(false)
         }
@@ -119,6 +122,7 @@ struct TransformPipelineTests {
             #expect(output.qrImage != nil)
             #expect(output.recordSourceText == "hello")
             #expect(output.recordTargetText.isEmpty)
+            #expect(output.mappings.isEmpty)
         case .failure:
             #expect(false)
         }

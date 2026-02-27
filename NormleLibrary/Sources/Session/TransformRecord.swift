@@ -15,6 +15,7 @@ public final class TransformRecord {
     public private(set) var date = Date()
     public private(set) var sourceText: String?
     public private(set) var targetText = String()
+    public private(set) var mappingsData = Data()
 
     @Relationship(deleteRule: .nullify)
     public private(set) var tags: [Tag]?
@@ -25,7 +26,8 @@ public final class TransformRecord {
     public static func create(
         context: ModelContext,
         sourceText: String?,
-        targetText: String
+        targetText: String,
+        mappings: [Mapping] = []
     ) -> TransformRecord {
         let record = TransformRecord()
         context.insert(record)
@@ -33,21 +35,28 @@ public final class TransformRecord {
         record.date = Date()
         record.sourceText = sourceText
         record.targetText = targetText
+        record.mappingsData = encodeMappings(mappings)
 
         return record
     }
 
     public func update(
         sourceText: String?,
-        targetText: String
+        targetText: String,
+        mappings: [Mapping] = []
     ) {
         date = Date()
         self.sourceText = sourceText
         self.targetText = targetText
+        mappingsData = Self.encodeMappings(mappings)
     }
 }
 
 public extension TransformRecord {
+    var mappings: [Mapping] {
+        Self.decodeMappings(from: mappingsData)
+    }
+
     var retainedSourceText: String? {
         guard let sourceText,
               sourceText.isEmpty == false else {
@@ -61,6 +70,19 @@ public extension TransformRecord {
             return "\(targetText.prefix(80))…"
         }
         return targetText
+    }
+}
+
+private extension TransformRecord {
+    static func encodeMappings(_ mappings: [Mapping]) -> Data {
+        (try? JSONEncoder().encode(mappings)) ?? Data()
+    }
+
+    static func decodeMappings(from data: Data) -> [Mapping] {
+        guard data.isEmpty == false else {
+            return []
+        }
+        return (try? JSONDecoder().decode([Mapping].self, from: data)) ?? []
     }
 }
 

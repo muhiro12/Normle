@@ -31,8 +31,13 @@ struct HistoryDetailView: View {
             }
 
             Section("Mappings") {
-                Text("Mappings are not retained in history.")
-                    .foregroundStyle(.secondary)
+                if record.mappings.isEmpty {
+                    Text("No explicit mappings were stored. Restore falls back to source and target text.")
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Stored mappings: \(record.mappings.count)")
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Section {

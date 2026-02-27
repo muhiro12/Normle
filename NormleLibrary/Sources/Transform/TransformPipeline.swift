@@ -27,17 +27,20 @@ public struct TransformPipelineResult {
     public let qrImage: CGImage?
     public let recordSourceText: String?
     public let recordTargetText: String
+    public let mappings: [Mapping]
 
     public init(
         outputText: String,
         qrImage: CGImage?,
         recordSourceText: String?,
-        recordTargetText: String
+        recordTargetText: String,
+        mappings: [Mapping]
     ) {
         self.outputText = outputText
         self.qrImage = qrImage
         self.recordSourceText = recordSourceText
         self.recordTargetText = recordTargetText
+        self.mappings = mappings
     }
 }
 
@@ -59,7 +62,8 @@ public struct TransformPipeline {
                         outputText: String(),
                         qrImage: image,
                         recordSourceText: sourceText,
-                        recordTargetText: String()
+                        recordTargetText: String(),
+                        mappings: []
                     )
                 )
             case .failure(let error):
@@ -78,7 +82,8 @@ public struct TransformPipeline {
                         outputText: output,
                         qrImage: nil,
                         recordSourceText: nil,
-                        recordTargetText: output
+                        recordTargetText: output,
+                        mappings: []
                     )
                 )
             case .failure(let error):
@@ -87,6 +92,7 @@ public struct TransformPipeline {
         }
 
         var outputText = sourceText
+        var mappings = [Mapping]()
         for preset in presets {
             switch preset {
             case .builtIn(let transform):
@@ -94,6 +100,17 @@ public struct TransformPipeline {
                 switch result {
                 case .success(let transformedText):
                     outputText = transformedText
+                    if mappings.isEmpty == false {
+                        switch transformedMappings(
+                            mappings,
+                            using: transform
+                        ) {
+                        case .success(let transformedMappings):
+                            mappings = transformedMappings
+                        case .failure(let error):
+                            return .failure(.baseTransform(error))
+                        }
+                    }
                 case .failure(let error):
                     return .failure(.baseTransform(error))
                 }
@@ -104,6 +121,7 @@ public struct TransformPipeline {
                     options: options
                 )
                 outputText = masked.maskedText
+                mappings = masked.mappings
             }
         }
         return .success(
@@ -111,8 +129,35 @@ public struct TransformPipeline {
                 outputText: outputText,
                 qrImage: nil,
                 recordSourceText: sourceText,
-                recordTargetText: outputText
+                recordTargetText: outputText,
+                mappings: mappings
             )
         )
+    }
+}
+
+private extension TransformPipeline {
+    func transformedMappings(
+        _ mappings: [Mapping],
+        using transform: BaseTransform
+    ) -> Result<[Mapping], BaseTransformError> {
+        var transformedMappings = [Mapping]()
+        for mapping in mappings {
+            switch transform.apply(text: mapping.masked) {
+            case .success(let transformedMaskedText):
+                transformedMappings.append(
+                    .init(
+                        id: mapping.id,
+                        original: mapping.original,
+                        masked: transformedMaskedText,
+                        kind: mapping.kind,
+                        occurrenceCount: mapping.occurrenceCount
+                    )
+                )
+            case .failure(let error):
+                return .failure(error)
+            }
+        }
+        return .success(transformedMappings)
     }
 }

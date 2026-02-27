@@ -14,12 +14,13 @@ public enum TransformRecordService {
         context: ModelContext,
         sourceText: String?,
         targetText: String,
-        mappings _: [Mapping]
+        mappings: [Mapping]
     ) throws -> TransformRecord {
         let record = TransformRecord.create(
             context: context,
             sourceText: sourceText,
-            targetText: targetText
+            targetText: targetText,
+            mappings: mappings
         )
 
         try context.save()
@@ -33,11 +34,12 @@ public enum TransformRecordService {
         record: TransformRecord,
         sourceText: String?,
         targetText: String,
-        mappings _: [Mapping]
+        mappings: [Mapping]
     ) throws -> TransformRecord {
         record.update(
             sourceText: sourceText,
-            targetText: targetText
+            targetText: targetText,
+            mappings: mappings
         )
 
         try context.save()

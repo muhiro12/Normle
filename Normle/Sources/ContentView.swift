@@ -62,11 +62,9 @@ struct ContentView: View {
                 groupID: nil,
                 productIDs: [StoreProduct.subscription]
             ) {
-                let hasActiveSubscription = $0.contains {
-                    $0.id == StoreProduct.subscription
-                }
                 let accessState = SubscriptionAccessEvaluator.evaluate(
-                    hasActiveSubscription: hasActiveSubscription,
+                    purchasedProductIDs: Set($0.map(\.id)),
+                    productID: StoreProduct.subscription,
                     isICloudOn: isICloudOn
                 )
                 isSubscribeOn = accessState.isSubscribeOn
