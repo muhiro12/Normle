@@ -411,16 +411,6 @@
         }
       }
     },
-    "Mappings are not retained in history." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "マッピングは履歴に保持されません。"
-          }
-        }
-      }
-    },
     "Mask emails" : {
       "localizations" : {
         "ja" : {
@@ -487,6 +477,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "新規マッピング"
+          }
+        }
+      }
+    },
+    "No explicit mappings were stored. Restore falls back to source and target text." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "明示的なマッピングは保存されていません。復元時はソーステキストとターゲットテキストをそのまま使用します。"
           }
         }
       }
@@ -757,6 +757,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "状態"
+          }
+        }
+      }
+    },
+    "Stored mappings: %lld" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みマッピング: %lld"
           }
         }
       }
