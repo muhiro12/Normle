@@ -105,6 +105,7 @@ required_commands=(
   "xcodebuild"
   "xcrun"
   "hdiutil"
+  "security"
 )
 
 for required_command in "${required_commands[@]}"; do
@@ -124,7 +125,6 @@ releases_directory="$repository_root/build/releases"
 archives_directory="$releases_directory/archives"
 logs_directory="$releases_directory/logs"
 
-local_home_directory="$repository_root/build/xcodebuild_home"
 cache_directory="$repository_root/build/xcodebuild_cache"
 temporary_directory="$repository_root/build/xcodebuild_tmp"
 clang_module_cache_directory="$cache_directory/clang/ModuleCache"
@@ -134,9 +134,6 @@ swiftpm_cache_directory="$repository_root/build/xcodebuild_swiftpm_cache"
 swiftpm_config_directory="$repository_root/build/xcodebuild_swiftpm_config"
 
 mkdir -p \
-  "$local_home_directory/Library/Caches" \
-  "$local_home_directory/Library/Developer" \
-  "$local_home_directory/Library/Logs" \
   "$cache_directory" \
   "$clang_module_cache_directory" \
   "$package_cache_directory" \
@@ -149,6 +146,11 @@ mkdir -p \
   "$releases_directory" \
   "$archives_directory" \
   "$logs_directory"
+
+identity_output=$(security find-identity -v -p codesigning 2>/dev/null || true)
+if ! grep -Eq '^[[:space:]]*[0-9]+\) [[:xdigit:]]{40} ' <<<"$identity_output"; then
+  fail "No valid code signing identities were found in the current keychain context. Open Xcode once and verify signing, then rerun."
+fi
 
 run_timestamp=$(date +%Y%m%d-%H%M%S)
 archive_path="$archives_directory/Normle-${run_timestamp}.xcarchive"
@@ -167,9 +169,7 @@ cleanup() {
 trap cleanup EXIT
 
 echo "Creating archive: $archive_path"
-if ! HOME="$local_home_directory" \
-  CFFIXED_USER_HOME="$local_home_directory" \
-  TMPDIR="$temporary_directory" \
+if ! TMPDIR="$temporary_directory" \
   XDG_CACHE_HOME="$cache_directory" \
   CLANG_MODULE_CACHE_PATH="$clang_module_cache_directory" \
   SWIFTPM_MODULECACHE_OVERRIDE="$clang_module_cache_directory" \
