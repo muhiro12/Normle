@@ -45,7 +45,7 @@ public final class Tag {
         context: ModelContext,
         name: String,
         type: TagType
-    ) throws -> Tag {
+    ) -> Tag {
         let tag = Tag()
         context.insert(tag)
         tag.name = name

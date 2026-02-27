@@ -33,7 +33,7 @@ struct MappingRuleExportDocument: FileDocument {
 
     func fileWrapper(
         configuration _: WriteConfiguration
-    ) throws -> FileWrapper {
+    ) -> FileWrapper {
         .init(regularFileWithContents: data)
     }
 }

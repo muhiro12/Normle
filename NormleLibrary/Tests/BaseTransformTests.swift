@@ -94,7 +94,7 @@ struct BaseTransformTests {
         }
     }
 
-    @Test func qrDecodeFailsWithNonImageData() throws {
+    @Test func qrDecodeFailsWithNonImageData() {
         guard let imageData = makeSolidPNGData() else {
             Issue.record("Failed to build PNG data for non-QR test")
             return

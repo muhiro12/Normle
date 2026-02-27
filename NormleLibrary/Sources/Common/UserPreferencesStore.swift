@@ -8,6 +8,7 @@
 import Combine
 import SwiftUI
 
+@preconcurrency
 @MainActor
 public final class UserPreferencesStore: ObservableObject {
     @AppStorage(.userPreferences)
