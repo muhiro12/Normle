@@ -20,6 +20,17 @@ struct CompatibilityContractTests {
         #expect(UserPreferences.currentVersion == 1)
     }
 
+    @Test func schemaVersionRemainsStable() {
+        #expect(NormleSchemaV1.versionIdentifier == .init(1, 0, 0))
+        #expect(
+            NormleSchemaV1.models.map { String(describing: $0) }.sorted() == [
+                "MappingRule",
+                "Tag",
+                "TransformRecord"
+            ]
+        )
+    }
+
     @Test func mappingKindRawValuesRemainStable() {
         let expectedRawValues = [
             "person",
@@ -79,6 +90,93 @@ struct CompatibilityContractTests {
         #expect(envelope.rules.count == 1)
         #expect(envelope.rules.first?.source == "source")
         #expect(envelope.rules.first?.target == "target")
+    }
+
+    @Test func userPreferencesDecodeKeepsDefaultsForMissingFields() throws {
+        let payload = """
+        {
+          "version": 1,
+          "maskingPreferences": {
+            "isURLMaskingEnabled": false
+          },
+          "presetSelection": {
+            "caseTransform": "uppercase"
+          }
+        }
+        """
+        let data = try #require(payload.data(using: .utf8))
+
+        let decoded = UserPreferences.decode(from: data)
+
+        #expect(decoded.maskingPreferences.isURLMaskingEnabled == false)
+        #expect(decoded.maskingPreferences.isEmailMaskingEnabled)
+        #expect(decoded.maskingPreferences.isPhoneMaskingEnabled)
+        #expect(decoded.presetSelection.caseTransform == .uppercase)
+        #expect(decoded.presetSelection.isCustomMappingEnabled == false)
+        #expect(decoded.presetSelection.base64Transform == nil)
+    }
+
+    @Test func userPreferencesDecodeIgnoresUnknownTransformRawValue() throws {
+        let payload = """
+        {
+          "version": 1,
+          "maskingPreferences": {
+            "isURLMaskingEnabled": true,
+            "isEmailMaskingEnabled": true,
+            "isPhoneMaskingEnabled": true
+          },
+          "presetSelection": {
+            "caseTransform": "notExistingTransform"
+          }
+        }
+        """
+        let data = try #require(payload.data(using: .utf8))
+
+        let decoded = UserPreferences.decode(from: data)
+
+        #expect(decoded.presetSelection.caseTransform == nil)
+    }
+
+    @Test func mappingDecodeSupportsLegacyKeys() throws {
+        let payload = """
+        {
+          "source": "Alice",
+          "target": "Person A",
+          "kind": "person",
+          "count": 2
+        }
+        """
+        let data = try #require(payload.data(using: .utf8))
+
+        let decoded = try JSONDecoder().decode(Mapping.self, from: data)
+
+        #expect(decoded.original == "Alice")
+        #expect(decoded.masked == "Person A")
+        #expect(decoded.kind == .person)
+        #expect(decoded.occurrenceCount == 2)
+    }
+
+    @Test func mappingEncodeUsesCurrentContractKeys() throws {
+        let mapping = Mapping(
+            id: UUID(uuidString: "11111111-2222-3333-4444-555555555555") ?? .init(),
+            original: "Alice",
+            masked: "Person A",
+            kind: .person,
+            occurrenceCount: 3
+        )
+
+        let data = try JSONEncoder().encode(mapping)
+        let object = try #require(
+            JSONSerialization.jsonObject(
+                with: data
+            ) as? [String: Any]
+        )
+
+        #expect(object["original"] as? String == "Alice")
+        #expect(object["masked"] as? String == "Person A")
+        #expect(object["occurrenceCount"] as? Int == 3)
+        #expect(object["source"] == nil)
+        #expect(object["target"] == nil)
     }
 }
 

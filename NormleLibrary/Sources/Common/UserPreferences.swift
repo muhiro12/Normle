@@ -14,6 +14,12 @@ public struct UserPreferences: Codable, Equatable {
     public var maskingPreferences: MaskingPreferences
     public var presetSelection: PresetSelection
 
+    enum CodingKeys: String, CodingKey {
+        case version
+        case maskingPreferences
+        case presetSelection
+    }
+
     public init(
         version: Int = Self.currentVersion,
         maskingPreferences: MaskingPreferences,
@@ -22,6 +28,28 @@ public struct UserPreferences: Codable, Equatable {
         self.version = version
         self.maskingPreferences = maskingPreferences
         self.presetSelection = presetSelection
+    }
+}
+
+public extension UserPreferences {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        version = try container.decodeIfPresent(Int.self, forKey: .version) ?? Self.currentVersion
+        maskingPreferences = try container.decodeIfPresent(
+            MaskingPreferences.self,
+            forKey: .maskingPreferences
+        ) ?? .defaults
+        presetSelection = try container.decodeIfPresent(
+            PresetSelection.self,
+            forKey: .presetSelection
+        ) ?? .defaults
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(version, forKey: .version)
+        try container.encode(maskingPreferences, forKey: .maskingPreferences)
+        try container.encode(presetSelection, forKey: .presetSelection)
     }
 }
 
@@ -84,6 +112,12 @@ public struct MaskingPreferences: Codable, Equatable {
     public var isEmailMaskingEnabled: Bool
     public var isPhoneMaskingEnabled: Bool
 
+    enum CodingKeys: String, CodingKey {
+        case isURLMaskingEnabled
+        case isEmailMaskingEnabled
+        case isPhoneMaskingEnabled
+    }
+
     public init(
         isURLMaskingEnabled: Bool,
         isEmailMaskingEnabled: Bool,
@@ -92,6 +126,22 @@ public struct MaskingPreferences: Codable, Equatable {
         self.isURLMaskingEnabled = isURLMaskingEnabled
         self.isEmailMaskingEnabled = isEmailMaskingEnabled
         self.isPhoneMaskingEnabled = isPhoneMaskingEnabled
+    }
+}
+
+public extension MaskingPreferences {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        isURLMaskingEnabled = try container.decodeIfPresent(Bool.self, forKey: .isURLMaskingEnabled) ?? true
+        isEmailMaskingEnabled = try container.decodeIfPresent(Bool.self, forKey: .isEmailMaskingEnabled) ?? true
+        isPhoneMaskingEnabled = try container.decodeIfPresent(Bool.self, forKey: .isPhoneMaskingEnabled) ?? true
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(isURLMaskingEnabled, forKey: .isURLMaskingEnabled)
+        try container.encode(isEmailMaskingEnabled, forKey: .isEmailMaskingEnabled)
+        try container.encode(isPhoneMaskingEnabled, forKey: .isPhoneMaskingEnabled)
     }
 }
 
@@ -124,6 +174,18 @@ public struct PresetSelection: Codable, Equatable {
     public var urlTransform: BaseTransform?
     public var qrTransform: BaseTransform?
 
+    enum CodingKeys: String, CodingKey {
+        case isCustomMappingEnabled
+        case caseTransform
+        case alphanumericWidthTransform
+        case spaceWidthTransform
+        case katakanaWidthTransform
+        case digitsWidthTransform
+        case base64Transform
+        case urlTransform
+        case qrTransform
+    }
+
     public init(
         isCustomMappingEnabled: Bool,
         caseTransform: BaseTransform?,
@@ -148,6 +210,34 @@ public struct PresetSelection: Codable, Equatable {
 }
 
 public extension PresetSelection {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        isCustomMappingEnabled = try container.decodeIfPresent(Bool.self, forKey: .isCustomMappingEnabled) ?? false
+        caseTransform = try container.decodeTransform(forKey: .caseTransform)
+        alphanumericWidthTransform = try container.decodeTransform(forKey: .alphanumericWidthTransform)
+        spaceWidthTransform = try container.decodeTransform(forKey: .spaceWidthTransform)
+        katakanaWidthTransform = try container.decodeTransform(forKey: .katakanaWidthTransform)
+        digitsWidthTransform = try container.decodeTransform(forKey: .digitsWidthTransform)
+        base64Transform = try container.decodeTransform(forKey: .base64Transform)
+        urlTransform = try container.decodeTransform(forKey: .urlTransform)
+        qrTransform = try container.decodeTransform(forKey: .qrTransform)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(isCustomMappingEnabled, forKey: .isCustomMappingEnabled)
+        try container.encodeIfPresent(caseTransform, forKey: .caseTransform)
+        try container.encodeIfPresent(alphanumericWidthTransform, forKey: .alphanumericWidthTransform)
+        try container.encodeIfPresent(spaceWidthTransform, forKey: .spaceWidthTransform)
+        try container.encodeIfPresent(katakanaWidthTransform, forKey: .katakanaWidthTransform)
+        try container.encodeIfPresent(digitsWidthTransform, forKey: .digitsWidthTransform)
+        try container.encodeIfPresent(base64Transform, forKey: .base64Transform)
+        try container.encodeIfPresent(urlTransform, forKey: .urlTransform)
+        try container.encodeIfPresent(qrTransform, forKey: .qrTransform)
+    }
+}
+
+public extension PresetSelection {
     static var defaults: PresetSelection {
         .init(
             isCustomMappingEnabled: false,
@@ -160,5 +250,16 @@ public extension PresetSelection {
             urlTransform: nil,
             qrTransform: nil
         )
+    }
+}
+
+private extension KeyedDecodingContainer where Key == PresetSelection.CodingKeys {
+    func decodeTransform(
+        forKey key: Key
+    ) throws -> BaseTransform? {
+        guard let rawValue = try decodeIfPresent(String.self, forKey: key) else {
+            return nil
+        }
+        return BaseTransform(rawValue: rawValue)
     }
 }

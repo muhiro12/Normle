@@ -9,7 +9,7 @@ Flow:
 
 1. Run release gates:
    iOS build, macOS build, and `NormleLibrary` tests.
-2. Validate the provided app path and signature.
+2. Validate the provided app path, signature, and CloudKit entitlements.
 3. Create a DMG (`Normle_<version>.dmg`) with `Normle.app` and `/Applications`.
 4. Notarize and staple.
 

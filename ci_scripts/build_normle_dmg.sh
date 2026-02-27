@@ -106,6 +106,33 @@ if [[ "$app_signing_authority" != Developer\ ID\ Application:* ]]; then
   fail "Exported app is not signed with Developer ID Application. Found: ${app_signing_authority:-unknown}"
 fi
 
+project_entitlements_path="$repository_root/Normle/Normle.entitlements"
+if [[ ! -f "$project_entitlements_path" ]]; then
+  fail "Project entitlements file was not found: $project_entitlements_path"
+fi
+
+expected_cloud_container_id=$(/usr/libexec/PlistBuddy -c "Print :com.apple.developer.icloud-container-identifiers:0" "$project_entitlements_path" 2>/dev/null || true)
+if [[ -z "$expected_cloud_container_id" ]]; then
+  fail "Failed to read expected iCloud container from $project_entitlements_path"
+fi
+
+app_entitlements=$(codesign -d --entitlements :- "$exported_app_path" 2>/dev/null || true)
+if [[ -z "$app_entitlements" ]]; then
+  fail "Failed to read entitlements from exported app."
+fi
+
+if ! grep -q "<key>com.apple.developer.icloud-container-identifiers</key>" <<<"$app_entitlements"; then
+  fail "Exported app entitlements are missing com.apple.developer.icloud-container-identifiers."
+fi
+
+if ! grep -q "<string>${expected_cloud_container_id}</string>" <<<"$app_entitlements"; then
+  fail "Exported app entitlements are missing expected iCloud container: $expected_cloud_container_id"
+fi
+
+if ! grep -q "<string>CloudKit</string>" <<<"$app_entitlements"; then
+  fail "Exported app entitlements are missing CloudKit service."
+fi
+
 releases_directory="$repository_root/release"
 artifacts_directory="$releases_directory/artifacts"
 logs_directory="$releases_directory/logs"

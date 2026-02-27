@@ -25,9 +25,8 @@ public enum NormleModelContainerFactory {
         cloudSyncEnabled: Bool
     ) throws -> ModelContainer {
         try .init(
-            for: TransformRecord.self,
-            MappingRule.self,
-            Tag.self,
+            for: Schema(NormleSchemaV1.models),
+            migrationPlan: NormleSchemaMigrationPlan.self,
             configurations: .init(
                 cloudKitDatabase: cloudSyncEnabled ? .automatic : .none
             )
