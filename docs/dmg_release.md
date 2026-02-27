@@ -2,15 +2,14 @@
 
 ## Overview
 
-Use `ci_scripts/build_normle_dmg.sh` to run this release flow in one command:
+`ci_scripts/build_normle_dmg.sh` builds a release DMG from a pre-exported
+`Normle.app`.
 
-1. `xcodebuild archive` for `Normle` (`Release`, `generic/platform=macOS`)
-2. `xcodebuild -exportArchive` with `method=developer-id`
-3. DMG creation (`Normle.app` + `/Applications` symlink)
-4. Notarization (`notarytool submit --wait`)
-5. Stapling (`stapler staple`)
+Flow:
 
-Artifacts and logs are stored under `build/releases`.
+1. Validate the provided app path and signature.
+2. Create a DMG (`Normle_<version>.dmg`) with `Normle.app` and `/Applications`.
+3. Notarize and staple.
 
 ## One-Time Setup: notarytool Keychain Profile
 
@@ -23,36 +22,17 @@ xcrun notarytool store-credentials "NormleNotary" \
   --password "<APP_SPECIFIC_PASSWORD>"
 ```
 
-Notes:
+## Command
 
-1. `<APP_SPECIFIC_PASSWORD>` is an Apple app-specific password.
-2. If you use another profile name, pass it with `--notary-profile`.
-3. A `Developer ID Application` certificate (with private key) is required for
-   direct distribution.
-
-## Standard Release Command
-
-Run the full production flow (archive + DMG + notarization + staple):
+The command format is fixed:
 
 ```sh
-bash ci_scripts/build_normle_dmg.sh
+bash ci_scripts/build_normle_dmg.sh "/path/to/Normle.app"
 ```
 
-Optional:
+The app must already be signed with `Developer ID Application`.
 
-1. Use a custom Keychain profile:
-
-```sh
-bash ci_scripts/build_normle_dmg.sh --notary-profile "CustomProfile"
-```
-
-1. Skip notarization and stapling for internal validation:
-
-```sh
-bash ci_scripts/build_normle_dmg.sh --skip-notarize
-```
-
-Output DMG name:
+Output file:
 
 ```text
 build/releases/Normle_<CFBundleShortVersionString>.dmg
@@ -62,32 +42,21 @@ The script does not overwrite an existing DMG with the same name.
 
 ## Troubleshooting
 
-### 1. Signing Certificate Is Not Configured
+### 1. App Is Not Signed for Distribution
 
-Symptoms:
+Symptom:
 
-1. `xcodebuild archive` fails with signing or provisioning errors.
-2. `xcodebuild -exportArchive` fails with
-   `No signing certificate "Developer ID Application" found`.
+1. The script fails with `Exported app is not signed with Developer ID Application`.
 
-Checks:
+Fix:
 
-1. Open Xcode signing settings for `Normle` and confirm the correct team and
-   certificate are selected.
-2. Validate local identities:
-
-```sh
-security find-identity -v -p codesigning
-```
-
-3. Confirm that output includes `Developer ID Application: ...`.
+1. Re-export `Normle.app` for direct distribution (Developer ID), then rerun.
 
 ### 2. notarytool Profile Is Not Registered
 
-Symptoms:
+Symptom:
 
-1. The script reports that the Keychain profile was not found.
-2. Log includes `No Keychain password item found for profile`.
+1. Log includes `No Keychain password item found for profile`.
 
 Fix:
 
@@ -98,20 +67,16 @@ xcrun notarytool store-credentials "NormleNotary" \
   --password "<APP_SPECIFIC_PASSWORD>"
 ```
 
-Then rerun:
-
-```sh
-bash ci_scripts/build_normle_dmg.sh
-```
+Then rerun the same command.
 
 ### 3. Notarization Fails
 
-Symptoms:
+Symptom:
 
 1. `notarytool submit --wait` exits with a non-zero status.
 
-Checks:
+Fix:
 
-1. Open the printed notarization log path under `build/releases/logs`.
-2. Fix the reported issue (for example, invalid signature or account access).
-3. Rerun the same script command.
+1. Check the printed notary log under `build/releases/logs`.
+2. Resolve the reported issue.
+3. Rerun the script.
