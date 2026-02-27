@@ -7,6 +7,7 @@ notary_profile="$default_notary_profile"
 skip_notarize=false
 
 archive_log_path=""
+export_log_path=""
 dmg_log_path=""
 notary_log_path=""
 staple_log_path=""
@@ -34,6 +35,10 @@ print_result_summary() {
 
   if [[ -n "$archive_log_path" && -f "$archive_log_path" ]]; then
     echo "Archive log: $archive_log_path"
+  fi
+
+  if [[ -n "$export_log_path" && -f "$export_log_path" ]]; then
+    echo "Export log: $export_log_path"
   fi
 
   if [[ -n "$dmg_log_path" && -f "$dmg_log_path" ]]; then
@@ -106,6 +111,7 @@ required_commands=(
   "xcrun"
   "hdiutil"
   "security"
+  "codesign"
 )
 
 for required_command in "${required_commands[@]}"; do
@@ -119,6 +125,7 @@ if [[ ! -x "/usr/libexec/PlistBuddy" ]]; then
 fi
 
 project_path="Normle.xcodeproj"
+team_id="66PKF55HK5"
 derived_data_path="build/DerivedData"
 results_directory="build"
 releases_directory="$repository_root/build/releases"
@@ -155,14 +162,25 @@ fi
 run_timestamp=$(date +%Y%m%d-%H%M%S)
 archive_path="$archives_directory/Normle-${run_timestamp}.xcarchive"
 archive_log_path="$logs_directory/archive-${run_timestamp}.log"
+export_log_path="$logs_directory/export-${run_timestamp}.log"
 dmg_log_path="$logs_directory/dmg-${run_timestamp}.log"
 notary_log_path="$logs_directory/notary-${run_timestamp}.log"
 staple_log_path="$logs_directory/staple-${run_timestamp}.log"
 staging_directory="$releases_directory/staging-${run_timestamp}"
+export_directory="$releases_directory/export-${run_timestamp}"
+export_options_plist_path="$releases_directory/export-options-${run_timestamp}.plist"
 
 cleanup() {
   if [[ -d "$staging_directory" ]]; then
     rm -rf "$staging_directory"
+  fi
+
+  if [[ -d "$export_directory" ]]; then
+    rm -rf "$export_directory"
+  fi
+
+  if [[ -f "$export_options_plist_path" ]]; then
+    rm -f "$export_options_plist_path"
   fi
 }
 
@@ -204,6 +222,56 @@ if [[ -z "$short_version" || -z "$build_version" ]]; then
   fail "Failed to read CFBundleShortVersionString and CFBundleVersion from $app_info_plist_path"
 fi
 
+cat >"$export_options_plist_path" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>method</key>
+  <string>developer-id</string>
+  <key>signingCertificate</key>
+  <string>Developer ID Application</string>
+  <key>signingStyle</key>
+  <string>automatic</string>
+  <key>teamID</key>
+  <string>$team_id</string>
+  <key>stripSwiftSymbols</key>
+  <true/>
+</dict>
+</plist>
+EOF
+
+mkdir -p "$export_directory"
+
+echo "Exporting archive for Developer ID distribution."
+if ! TMPDIR="$temporary_directory" \
+  XDG_CACHE_HOME="$cache_directory" \
+  xcodebuild \
+    -exportArchive \
+    -archivePath "$archive_path" \
+    -exportPath "$export_directory" \
+    -exportOptionsPlist "$export_options_plist_path" >"$export_log_path" 2>&1; then
+  if grep -q 'No signing certificate "Developer ID Application" found' "$export_log_path"; then
+    echo "Developer ID Application certificate was not found in keychain." >&2
+    echo "Install the certificate and private key, then rerun this script." >&2
+  fi
+  fail "xcodebuild -exportArchive failed. See log: $export_log_path"
+fi
+
+exported_app_path="$export_directory/Normle.app"
+if [[ ! -d "$exported_app_path" ]]; then
+  exported_app_path=$(find "$export_directory" -maxdepth 2 -type d -name "*.app" | head -n 1 || true)
+fi
+
+if [[ -z "$exported_app_path" || ! -d "$exported_app_path" ]]; then
+  fail "Exported app was not found in $export_directory"
+fi
+
+app_signing_authority=$(codesign -dv --verbose=4 "$exported_app_path" 2>&1 | awk -F= '/^Authority=/{print $2; exit}' || true)
+if [[ "$app_signing_authority" != Developer\ ID\ Application:* ]]; then
+  fail "Exported app is not signed with Developer ID Application. Found: ${app_signing_authority:-unknown}"
+fi
+
 final_dmg_base_path="$releases_directory/Normle-${short_version}-${build_version}"
 final_dmg_path="${final_dmg_base_path}.dmg"
 
@@ -212,7 +280,7 @@ if [[ -e "$final_dmg_path" ]]; then
 fi
 
 mkdir -p "$staging_directory"
-cp -R "$archived_app_path" "$staging_directory/Normle.app"
+cp -R "$exported_app_path" "$staging_directory/Normle.app"
 ln -s "/Applications" "$staging_directory/Applications"
 
 echo "Creating DMG: $final_dmg_path"
@@ -244,7 +312,7 @@ if ! xcrun notarytool submit \
   if grep -q "No Keychain password item found for profile" "$notary_log_path"; then
     echo "Notary profile '$notary_profile' was not found in Keychain." >&2
     echo "Create it once, then rerun this script:" >&2
-    echo "xcrun notarytool store-credentials \"$notary_profile\" --apple-id <APPLE_ID> --team-id <TEAM_ID> --password <APP_SPECIFIC_PASSWORD>" >&2
+    echo "xcrun notarytool store-credentials \"$notary_profile\" --apple-id <APPLE_ID> --team-id $team_id --password <APP_SPECIFIC_PASSWORD>" >&2
   else
     echo "Notarization failed. Fix the issue and rerun this script." >&2
   fi

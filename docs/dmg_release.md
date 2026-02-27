@@ -5,9 +5,10 @@
 Use `ci_scripts/build_normle_dmg.sh` to run this release flow in one command:
 
 1. `xcodebuild archive` for `Normle` (`Release`, `generic/platform=macOS`)
-2. DMG creation (`Normle.app` + `/Applications` symlink)
-3. Notarization (`notarytool submit --wait`)
-4. Stapling (`stapler staple`)
+2. `xcodebuild -exportArchive` with `method=developer-id`
+3. DMG creation (`Normle.app` + `/Applications` symlink)
+4. Notarization (`notarytool submit --wait`)
+5. Stapling (`stapler staple`)
 
 Artifacts and logs are stored under `build/releases`.
 
@@ -26,6 +27,8 @@ Notes:
 
 1. `<APP_SPECIFIC_PASSWORD>` is an Apple app-specific password.
 2. If you use another profile name, pass it with `--notary-profile`.
+3. A `Developer ID Application` certificate (with private key) is required for
+   direct distribution.
 
 ## Standard Release Command
 
@@ -64,6 +67,8 @@ The script does not overwrite an existing DMG with the same name.
 Symptoms:
 
 1. `xcodebuild archive` fails with signing or provisioning errors.
+2. `xcodebuild -exportArchive` fails with
+   `No signing certificate "Developer ID Application" found`.
 
 Checks:
 
@@ -74,6 +79,8 @@ Checks:
 ```sh
 security find-identity -v -p codesigning
 ```
+
+3. Confirm that output includes `Developer ID Application: ...`.
 
 ### 2. notarytool Profile Is Not Registered
 
