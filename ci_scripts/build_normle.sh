@@ -17,17 +17,18 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 project_path="Normle.xcodeproj"
-derived_data_path="build/DerivedData"
-results_directory="build"
+ci_directory="$repository_root/build/ci"
+derived_data_path="$ci_directory/DerivedData"
+results_directory="$ci_directory/results"
 
-local_home_directory="$repository_root/build/xcodebuild_home"
-cache_directory="$repository_root/build/xcodebuild_cache"
-temporary_directory="$repository_root/build/xcodebuild_tmp"
+local_home_directory="$ci_directory/home"
+cache_directory="$ci_directory/cache"
+temporary_directory="$ci_directory/tmp"
 clang_module_cache_directory="$cache_directory/clang/ModuleCache"
-package_cache_directory="$repository_root/build/xcodebuild_package_cache"
-cloned_source_packages_directory="$repository_root/build/xcodebuild_source_packages"
-swiftpm_cache_directory="$repository_root/build/xcodebuild_swiftpm_cache"
-swiftpm_config_directory="$repository_root/build/xcodebuild_swiftpm_config"
+package_cache_directory="$ci_directory/package_cache"
+cloned_source_packages_directory="$ci_directory/source_packages"
+swiftpm_cache_directory="$ci_directory/swiftpm_cache"
+swiftpm_config_directory="$ci_directory/swiftpm_config"
 
 mkdir -p \
   "$local_home_directory/Library/Caches" \

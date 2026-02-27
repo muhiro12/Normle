@@ -101,15 +101,16 @@ if [[ "$app_signing_authority" != Developer\ ID\ Application:* ]]; then
   fail "Exported app is not signed with Developer ID Application. Found: ${app_signing_authority:-unknown}"
 fi
 
-releases_directory="$repository_root/build/releases"
+releases_directory="$repository_root/release"
+artifacts_directory="$releases_directory/artifacts"
 logs_directory="$releases_directory/logs"
 run_timestamp=$(date +%Y%m%d-%H%M%S)
 dmg_log_path="$logs_directory/dmg-${run_timestamp}.log"
 notary_log_path="$logs_directory/notary-${run_timestamp}.log"
 staple_log_path="$logs_directory/staple-${run_timestamp}.log"
-staging_directory="$releases_directory/staging-${run_timestamp}"
+staging_directory="$repository_root/build/ci/tmp/dmg-staging-${run_timestamp}"
 
-mkdir -p "$releases_directory" "$logs_directory"
+mkdir -p "$artifacts_directory" "$logs_directory"
 
 cleanup() {
   if [[ -d "$staging_directory" ]]; then
@@ -119,7 +120,7 @@ cleanup() {
 
 trap cleanup EXIT
 
-final_dmg_base_path="$releases_directory/Normle_${short_version}"
+final_dmg_base_path="$artifacts_directory/Normle_${short_version}"
 final_dmg_path="${final_dmg_base_path}.dmg"
 
 if [[ -e "$final_dmg_path" ]]; then

@@ -35,7 +35,7 @@ The app must already be signed with `Developer ID Application`.
 Output file:
 
 ```text
-build/releases/Normle_<CFBundleShortVersionString>.dmg
+release/artifacts/Normle_<CFBundleShortVersionString>.dmg
 ```
 
 The script does not overwrite an existing DMG with the same name.
@@ -77,6 +77,6 @@ Symptom:
 
 Fix:
 
-1. Check the printed notary log under `build/releases/logs`.
+1. Check the printed notary log under `release/logs`.
 2. Resolve the reported issue.
 3. Rerun the script.
