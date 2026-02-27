@@ -216,10 +216,9 @@ if [[ ! -f "$app_info_plist_path" ]]; then
 fi
 
 short_version=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$app_info_plist_path" 2>/dev/null || true)
-build_version=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$app_info_plist_path" 2>/dev/null || true)
 
-if [[ -z "$short_version" || -z "$build_version" ]]; then
-  fail "Failed to read CFBundleShortVersionString and CFBundleVersion from $app_info_plist_path"
+if [[ -z "$short_version" ]]; then
+  fail "Failed to read CFBundleShortVersionString from $app_info_plist_path"
 fi
 
 cat >"$export_options_plist_path" <<EOF
@@ -272,7 +271,7 @@ if [[ "$app_signing_authority" != Developer\ ID\ Application:* ]]; then
   fail "Exported app is not signed with Developer ID Application. Found: ${app_signing_authority:-unknown}"
 fi
 
-final_dmg_base_path="$releases_directory/Normle-${short_version}-${build_version}"
+final_dmg_base_path="$releases_directory/Normle_${short_version}"
 final_dmg_path="${final_dmg_base_path}.dmg"
 
 if [[ -e "$final_dmg_path" ]]; then

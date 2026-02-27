@@ -55,7 +55,7 @@ bash ci_scripts/build_normle_dmg.sh --skip-notarize
 Output DMG name:
 
 ```text
-build/releases/Normle-<CFBundleShortVersionString>-<CFBundleVersion>.dmg
+build/releases/Normle_<CFBundleShortVersionString>.dmg
 ```
 
 The script does not overwrite an existing DMG with the same name.
