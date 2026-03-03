@@ -1,8 +1,17 @@
+//
+//  MaskingServiceTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2025/11/22.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import Testing
 
 struct MaskingServiceTests {
-    @Test func anonymizeAppliesMaskRulesAndAutomaticDetection() {
+    @Test
+    func anonymizeAppliesMaskRulesAndAutomaticDetection() {
         let options = MaskingOptions(
             isURLMaskingEnabled: true,
             isEmailMaskingEnabled: true,
@@ -60,7 +69,8 @@ struct MaskingServiceTests {
         #expect(url?.occurrenceCount == 1)
     }
 
-    @Test func anonymizeSkipsAutomaticMaskingWhenDisabled() {
+    @Test
+    func anonymizeSkipsAutomaticMaskingWhenDisabled() {
         let options = MaskingOptions(
             isURLMaskingEnabled: false,
             isEmailMaskingEnabled: false,
@@ -81,7 +91,8 @@ struct MaskingServiceTests {
         #expect(result.mappings.isEmpty)
     }
 
-    @Test func anonymizeAppliesManualRulesEvenWhenAutomaticDisabled() {
+    @Test
+    func anonymizeAppliesManualRulesEvenWhenAutomaticDisabled() {
         let options = MaskingOptions(
             isURLMaskingEnabled: false,
             isEmailMaskingEnabled: false,

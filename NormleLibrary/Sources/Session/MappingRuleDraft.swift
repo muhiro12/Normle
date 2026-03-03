@@ -1,31 +1,30 @@
 //
 //  MappingRuleDraft.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import Foundation
 import SwiftData
 
-public enum MappingRuleDraftError: LocalizedError, Equatable {
-    case missingSource
-    case missingTarget
-
-    public var errorDescription: String? {
-        switch self {
-        case .missingSource:
-            "Enter a source text."
-        case .missingTarget:
-            "Enter a target text."
-        }
-    }
-}
-
 public struct MappingRuleDraft: Equatable {
     public var sourceText: String
     public var targetText: String
     public var isEnabled: Bool
+
+    public var canSave: Bool {
+        normalizedSourceText.isEmpty == false && normalizedTargetText.isEmpty == false
+    }
+
+    public var normalizedSourceText: String {
+        sourceText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    public var normalizedTargetText: String {
+        targetText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 
     public init(
         sourceText: String = String(),
@@ -41,18 +40,6 @@ public struct MappingRuleDraft: Equatable {
         sourceText = rule.source
         targetText = rule.target
         isEnabled = rule.isEnabled
-    }
-
-    public var canSave: Bool {
-        normalizedSourceText.isEmpty == false && normalizedTargetText.isEmpty == false
-    }
-
-    public var normalizedSourceText: String {
-        sourceText.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-
-    public var normalizedTargetText: String {
-        targetText.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     @discardableResult

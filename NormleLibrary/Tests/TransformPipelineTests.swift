@@ -1,8 +1,17 @@
+//
+//  TransformPipelineTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2026/01/12.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import Testing
 
 struct TransformPipelineTests {
-    @Test func customMappingRunsBeforeBuiltinTransforms() {
+    @Test
+    func customMappingRunsBeforeBuiltinTransforms() {
         let pipeline = TransformPipeline()
         let presets: [TransformPreset] = [
             .customMapping,
@@ -43,7 +52,8 @@ struct TransformPipelineTests {
         }
     }
 
-    @Test func returnsBaseTransformErrorWhenTransformFails() {
+    @Test
+    func returnsBaseTransformErrorWhenTransformFails() {
         let pipeline = TransformPipeline()
         let presets: [TransformPreset] = [
             .builtIn(.base64Decode)
@@ -70,7 +80,8 @@ struct TransformPipelineTests {
         }
     }
 
-    @Test func returnsMissingImageDataWhenQRCodeImageIsAbsent() {
+    @Test
+    func returnsMissingImageDataWhenQRCodeImageIsAbsent() {
         let pipeline = TransformPipeline()
         let presets: [TransformPreset] = [
             .builtIn(.qrDecode)
@@ -97,7 +108,8 @@ struct TransformPipelineTests {
         }
     }
 
-    @Test func returnsQRCodeImageForEncodePreset() {
+    @Test
+    func returnsQRCodeImageForEncodePreset() {
         let pipeline = TransformPipeline()
         let presets: [TransformPreset] = [
             .builtIn(.qrEncode)

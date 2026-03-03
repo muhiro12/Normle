@@ -1,8 +1,17 @@
+//
+//  TransformRecordRestoreTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2026/02/27.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import Testing
 
 struct TransformRecordRestoreTests {
-    @Test func restoreMappingsUsesSavedMappingsWhenAvailable() throws {
+    @Test
+    func restoreMappingsUsesSavedMappingsWhenAvailable() throws {
         let context = testContext
         let mapping = Mapping(
             original: "alice@example.com",
@@ -25,7 +34,8 @@ struct TransformRecordRestoreTests {
         #expect(mappings.first?.masked == "EMAIL(1)")
     }
 
-    @Test func restoreMappingsFallsBackToSourceAndTargetTexts() throws {
+    @Test
+    func restoreMappingsFallsBackToSourceAndTargetTexts() throws {
         let context = testContext
 
         let record = try TransformRecordService.saveRecord(
@@ -42,7 +52,8 @@ struct TransformRecordRestoreTests {
         #expect(mappings.first?.masked == "Email(1)")
     }
 
-    @Test func restoreMappingsIsEmptyWithoutRetainedSourceText() throws {
+    @Test
+    func restoreMappingsIsEmptyWithoutRetainedSourceText() throws {
         let context = testContext
 
         let record = try TransformRecordService.saveRecord(

@@ -1,9 +1,18 @@
+//
+//  TagTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2026/01/06.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import SwiftData
 import Testing
 
 struct TagTests {
-    @Test func createReturnsExistingTagForSameNameAndType() throws {
+    @Test
+    func createReturnsExistingTagForSameNameAndType() throws {
         let context = testContext
 
         let firstTag = try Tag.create(
@@ -23,7 +32,8 @@ struct TagTests {
         #expect(firstTag == secondTag)
     }
 
-    @Test func createSeparatesTagsByType() throws {
+    @Test
+    func createSeparatesTagsByType() throws {
         let context = testContext
 
         let ruleTag = try Tag.create(
@@ -45,7 +55,8 @@ struct TagTests {
         #expect(ruleTag != recordTag)
     }
 
-    @Test func createIgnoringDuplicatesAlwaysInserts() throws {
+    @Test
+    func createIgnoringDuplicatesAlwaysInserts() throws {
         let context = testContext
 
         _ = try Tag.createIgnoringDuplicates(

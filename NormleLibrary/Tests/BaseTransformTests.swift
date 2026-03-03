@@ -1,3 +1,11 @@
+//
+//  BaseTransformTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2025/12/14.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 import CoreGraphics
 import ImageIO
 @testable import NormleLibrary
@@ -5,45 +13,53 @@ import Testing
 import UniformTypeIdentifiers
 
 struct BaseTransformTests {
-    @Test func fullwidthAlphanumericToHalfwidth() throws {
+    @Test
+    func fullwidthAlphanumericToHalfwidth() throws {
         let input = "ＡＢＣ１２３"
         let result = try BaseTransform.fullwidthAlphanumericToHalfwidth.apply(text: input).get()
         #expect(result == "ABC123")
     }
 
-    @Test func halfwidthAlphanumericToFullwidth() throws {
+    @Test
+    func halfwidthAlphanumericToFullwidth() throws {
         let input = "ABC123"
         let result = try BaseTransform.halfwidthAlphanumericToFullwidth.apply(text: input).get()
         #expect(result == "ＡＢＣ１２３")
     }
 
-    @Test func lowercaseAndUppercase() throws {
+    @Test
+    func lowercaseAndUppercase() throws {
         #expect(try BaseTransform.lowercase.apply(text: "AbC").get() == "abc")
         #expect(try BaseTransform.uppercase.apply(text: "AbC").get() == "ABC")
     }
 
-    @Test func digitConversion() throws {
+    @Test
+    func digitConversion() throws {
         #expect(try BaseTransform.fullwidthDigitsToHalfwidth.apply(text: "１２３").get() == "123")
         #expect(try BaseTransform.halfwidthDigitsToFullwidth.apply(text: "123").get() == "１２３")
     }
 
-    @Test func spaceConversion() throws {
+    @Test
+    func spaceConversion() throws {
         #expect(try BaseTransform.fullwidthSpaceToHalfwidth.apply(text: "a　b").get() == "a b")
         #expect(try BaseTransform.halfwidthSpaceToFullwidth.apply(text: "a b").get() == "a　b")
     }
 
-    @Test func katakanaConversion() throws {
+    @Test
+    func katakanaConversion() throws {
         let input = "ｶﾀｶﾅ"
         let result = try BaseTransform.halfwidthKatakanaToFullwidth.apply(text: input).get()
         #expect(result == "カタカナ")
     }
 
-    @Test func base64Encode() throws {
+    @Test
+    func base64Encode() throws {
         let result = try BaseTransform.base64Encode.apply(text: "Normle Masking").get()
         #expect(result == "Tm9ybWxlIE1hc2tpbmc=")
     }
 
-    @Test func base64Decode() throws {
+    @Test
+    func base64Decode() throws {
         let result = try BaseTransform.base64Decode.apply(text: "Tm9ybWxlIE1hc2tpbmc=").get()
         #expect(result == "Normle Masking")
 
@@ -56,13 +72,15 @@ struct BaseTransformTests {
         }
     }
 
-    @Test func urlEncode() throws {
+    @Test
+    func urlEncode() throws {
         let text = "mask me+ please?"
         let result = try BaseTransform.urlEncode.apply(text: text).get()
         #expect(result == "mask%20me%2B%20please%3F")
     }
 
-    @Test func urlDecode() throws {
+    @Test
+    func urlDecode() throws {
         let result = try BaseTransform.urlDecode.apply(text: "mask%20me%2B%20please%3F").get()
         #expect(result == "mask me+ please?")
 
@@ -75,7 +93,8 @@ struct BaseTransformTests {
         }
     }
 
-    @Test func qrEncodeAndDecode() throws {
+    @Test
+    func qrEncodeAndDecode() throws {
         let text = "Normle QR"
         let imageResult = BaseTransform.qrEncode.qrCodeImage(for: text)
         switch imageResult {
@@ -84,17 +103,20 @@ struct BaseTransformTests {
                 Issue.record("Failed to build PNG data for QR")
                 return
             }
-            let decoded = try BaseTransform.qrDecode.apply(
-                text: String(),
-                imageData: imageData
-            ).get()
+            let decoded = try BaseTransform.qrDecode
+                .apply(
+                    text: String(),
+                    imageData: imageData
+                )
+                .get()
             #expect(decoded == text)
         case .failure(let error):
             Issue.record("Failed to generate QR: \(error)")
         }
     }
 
-    @Test func qrDecodeFailsWithNonImageData() {
+    @Test
+    func qrDecodeFailsWithNonImageData() {
         guard let imageData = makeSolidPNGData() else {
             Issue.record("Failed to build PNG data for non-QR test")
             return
@@ -111,7 +133,8 @@ struct BaseTransformTests {
         }
     }
 
-    @Test func qrEncodeApplyReturnsEmptyText() throws {
+    @Test
+    func qrEncodeApplyReturnsEmptyText() throws {
         let result = try BaseTransform.qrEncode.apply(text: String()).get()
         #expect(result.isEmpty)
     }

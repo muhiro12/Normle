@@ -1,22 +1,78 @@
 //
 //  MaskingService.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import Foundation
 
+/// Applies manual and automatic masking rules to text.
 public enum MaskingService {
+    /// Returns the masked text and generated mappings for the given input.
     public static func anonymize(
         text: String,
         maskRules: [MaskingRule],
         options: MaskingOptions
     ) -> MaskingResult {
         var workingText = text
+        var state = AutomaticMaskingState()
+
+        workingText = applyManualMasking(
+            text: workingText,
+            maskRules: maskRules,
+            state: &state
+        )
+
+        if options.isURLMaskingEnabled {
+            workingText = applyAutomaticMasking(
+                in: workingText,
+                kind: .url,
+                pattern: #"(https?|ftp)://[^\s/$.?#].[^\s]*"#,
+                state: &state
+            )
+        }
+
+        if options.isEmailMaskingEnabled {
+            workingText = applyAutomaticMasking(
+                in: workingText,
+                kind: .email,
+                pattern: #"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}"#,
+                state: &state,
+                options: [.caseInsensitive]
+            )
+        }
+
+        if options.isPhoneMaskingEnabled {
+            workingText = applyAutomaticMasking(
+                in: workingText,
+                kind: .phone,
+                pattern: #"(\+\d{1,3}[\s-]?)?(\(?\d{2,4}\)?[\s-]?)?[\d\s-]{7,}"#,
+                state: &state
+            )
+        }
+
+        return .init(
+            maskedText: workingText,
+            mappings: state.mappings
+        )
+    }
+}
+
+private extension MaskingService {
+    struct AutomaticMaskingState {
         var mappings = [Mapping]()
         var generatedMappings = [String: Mapping]()
         var counters = [MappingKind: Int]()
+    }
+
+    static func applyManualMasking(
+        text: String,
+        maskRules: [MaskingRule],
+        state: inout AutomaticMaskingState
+    ) -> String {
+        var workingText = text
 
         maskRules
             .filter {
@@ -40,59 +96,18 @@ public enum MaskingService {
                     kind: rule.kind,
                     occurrenceCount: count
                 )
-                mappings.append(mapping)
-                generatedMappings[rule.original] = mapping
+                state.mappings.append(mapping)
+                state.generatedMappings[rule.original] = mapping
             }
 
-        if options.isURLMaskingEnabled {
-            workingText = applyAutomaticMasking(
-                in: workingText,
-                kind: .url,
-                pattern: #"(https?|ftp)://[^\s/$.?#].[^\s]*"#,
-                mappings: &mappings,
-                generatedMappings: &generatedMappings,
-                counters: &counters
-            )
-        }
-
-        if options.isEmailMaskingEnabled {
-            workingText = applyAutomaticMasking(
-                in: workingText,
-                kind: .email,
-                pattern: #"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}"#,
-                mappings: &mappings,
-                generatedMappings: &generatedMappings,
-                counters: &counters,
-                options: [.caseInsensitive]
-            )
-        }
-
-        if options.isPhoneMaskingEnabled {
-            workingText = applyAutomaticMasking(
-                in: workingText,
-                kind: .phone,
-                pattern: #"(\+\d{1,3}[\s-]?)?(\(?\d{2,4}\)?[\s-]?)?[\d\s-]{7,}"#,
-                mappings: &mappings,
-                generatedMappings: &generatedMappings,
-                counters: &counters
-            )
-        }
-
-        return .init(
-            maskedText: workingText,
-            mappings: mappings
-        )
+        return workingText
     }
-}
 
-private extension MaskingService {
     static func applyAutomaticMasking(
         in text: String,
         kind: MappingKind,
         pattern: String,
-        mappings: inout [Mapping],
-        generatedMappings: inout [String: Mapping],
-        counters: inout [MappingKind: Int],
+        state: inout AutomaticMaskingState,
         options: NSRegularExpression.Options = []
     ) -> String {
         guard let expression = try? NSRegularExpression(
@@ -109,13 +124,18 @@ private extension MaskingService {
         )
         let uniqueMatches = unique(strings: matches)
 
-        uniqueMatches.forEach { original in
-            guard mappings.contains(where: { $0.original == original || $0.masked == original }) == false else {
-                return
+        for original in uniqueMatches {
+            guard state.mappings.contains(
+                where: { mapping in
+                    mapping.original == original || mapping.masked == original
+                }
+            ) == false else {
+                continue
             }
 
-            let existing = generatedMappings[original]
-            let masked = existing?.masked ?? "\(kind.aliasPrefix)(\(counters[kind, default: .zero] + 1))"
+            let existing = state.generatedMappings[original]
+            let masked = existing?.masked ??
+                "\(kind.aliasPrefix)(\(state.counters[kind, default: .zero] + 1))"
 
             let (updatedText, count) = replaceOccurrences(
                 in: workingText,
@@ -124,26 +144,26 @@ private extension MaskingService {
             )
 
             guard count > .zero else {
-                return
+                continue
             }
 
             workingText = updatedText
             if existing == nil {
-                counters[kind, default: .zero] += 1
+                state.counters[kind, default: .zero] += 1
             }
 
             let mapping = Mapping(
-                id: existing?.id ?? UUID(),
                 original: existing?.original ?? original,
                 masked: masked,
                 kind: kind,
-                occurrenceCount: (existing?.occurrenceCount ?? .zero) + count
+                occurrenceCount: (existing?.occurrenceCount ?? .zero) + count,
+                id: existing?.id ?? UUID()
             )
-            mappings.removeAll {
+            state.mappings.removeAll {
                 $0.id == mapping.id
             }
-            mappings.append(mapping)
-            generatedMappings[mapping.original] = mapping
+            state.mappings.append(mapping)
+            state.generatedMappings[mapping.original] = mapping
         }
 
         return workingText

@@ -1,8 +1,9 @@
 //
 //  MaskingRule.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import Foundation
@@ -17,12 +18,12 @@ public struct MaskingRule: Identifiable, Equatable {
     public var isEnabled: Bool
 
     public init(
-        id: String = UUID().uuidString,
         original: String,
         masked: String,
         kind: MappingKind,
         date: Date = Date(),
-        isEnabled: Bool = true
+        isEnabled: Bool = true,
+        id: String = UUID().uuidString
     ) {
         self.id = id
         self.original = original

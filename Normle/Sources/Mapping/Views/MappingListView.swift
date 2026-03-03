@@ -1,8 +1,9 @@
 //
 //  MappingListView.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import NormleLibrary
@@ -26,49 +27,9 @@ struct MappingListView: View {
     @State private var alertMessage = String()
     @State private var isShowingAlert = false
 
-    init() {
-        _rules = Query(
-            FetchDescriptor(
-                sortBy: [
-                    .init(\MappingRule.date, order: .reverse)
-                ]
-            )
-        )
-    }
-
     var body: some View {
         List {
-            if rules.isEmpty {
-                ContentUnavailableView(
-                    "No Mappings",
-                    systemImage: "link",
-                    description: Text("Create a mapping to get started.")
-                )
-                .listRowInsets(emptyStateRowInsets)
-            } else {
-                ForEach(rules) { rule in
-                    NavigationLink(value: rule) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(rule.target.isEmpty ? String(localized: "Target not set") : rule.target)
-                                .font(.headline)
-                                .lineLimit(1)
-                            if rule.isEnabled == false {
-                                Text("Disabled")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Text(rule.source.isEmpty ? String(localized: "Source not set") : rule.source)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(2)
-                            Text(rule.date.formatted(date: .abbreviated, time: .shortened))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .listRowInsets(listRowInsets)
-                }
-            }
+            rulesContent
         }
         .navigationTitle("Mappings")
         #if os(iOS)
@@ -157,14 +118,40 @@ struct MappingListView: View {
             isPresented: $isShowingAlert
         ) {
             Button("OK", role: .cancel) {
+                isShowingAlert = false
             }
         } message: {
             Text(alertMessage)
         }
     }
+
+    init() {
+        _rules = Query(
+            FetchDescriptor(
+                sortBy: [
+                    .init(\MappingRule.date, order: .reverse)
+                ]
+            )
+        )
+    }
 }
 
 private extension MappingListView {
+    @ViewBuilder var rulesContent: some View {
+        if rules.isEmpty {
+            ContentUnavailableView(
+                "No Mappings",
+                systemImage: "link",
+                description: Text("Create a mapping to get started.")
+            )
+            .listRowInsets(emptyStateRowInsets)
+        } else {
+            ForEach(rules) { rule in
+                ruleRow(rule)
+            }
+        }
+    }
+
     var listRowInsets: EdgeInsets {
         #if os(macOS)
         return .init(top: 16, leading: 24, bottom: 16, trailing: 24)
@@ -179,6 +166,29 @@ private extension MappingListView {
         #else
         return .init(top: 24, leading: 16, bottom: 24, trailing: 16)
         #endif
+    }
+
+    func ruleRow(_ rule: MappingRule) -> some View {
+        NavigationLink(value: rule) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(rule.target.isEmpty ? String(localized: "Target not set") : rule.target)
+                    .font(.headline)
+                    .lineLimit(1)
+                if rule.isEnabled == false {
+                    Text("Disabled")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Text(rule.source.isEmpty ? String(localized: "Source not set") : rule.source)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+                Text(rule.date.formatted(date: .abbreviated, time: .shortened))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .listRowInsets(listRowInsets)
     }
 
     func exportRules() {

@@ -1,8 +1,9 @@
 //
-//  NormleSchema.swift
-//
+//  NormleSchemaV1.swift
+//  Normle
 //
 //  Created by Hiromu Nakano on 2026/02/27.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import SwiftData
@@ -18,15 +19,5 @@ public enum NormleSchemaV1: VersionedSchema {
             MappingRule.self,
             Tag.self
         ]
-    }
-}
-
-public enum NormleSchemaMigrationPlan: SchemaMigrationPlan {
-    public static var schemas: [any VersionedSchema.Type] {
-        [NormleSchemaV1.self]
-    }
-
-    public static var stages: [MigrationStage] {
-        []
     }
 }

@@ -1,8 +1,9 @@
 //
-//  LiquidGlassModifiers.swift
-//
+//  ViewExtension.swift
+//  Normle
 //
 //  Created by Hiromu Nakano on 2026/02/04.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import SwiftUI
@@ -50,5 +51,24 @@ extension View {
         } else {
             self.textFieldStyle(.roundedBorder)
         }
+    }
+
+    @ViewBuilder
+    func secondaryActionStyle() -> some View {
+        #if os(macOS)
+        self.buttonStyle(.borderless)
+        #else
+        self.buttonStyle(.bordered)
+        #endif
+    }
+
+    @ViewBuilder
+    func primaryActionStyle() -> some View {
+        #if os(macOS)
+        self.buttonStyle(.borderedProminent)
+            .controlSize(.regular)
+        #else
+        self.buttonStyle(.borderedProminent)
+        #endif
     }
 }

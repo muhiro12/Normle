@@ -1,8 +1,17 @@
+//
+//  MappingRuleDraftTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2026/01/12.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import Testing
 
 struct MappingRuleDraftTests {
-    @Test func canSaveIsFalseWhenSourceIsEmpty() {
+    @Test
+    func canSaveIsFalseWhenSourceIsEmpty() {
         let draft = MappingRuleDraft(
             sourceText: "   ",
             targetText: "Target",
@@ -12,7 +21,8 @@ struct MappingRuleDraftTests {
         #expect(draft.canSave == false)
     }
 
-    @Test func canSaveIsFalseWhenTargetIsEmpty() {
+    @Test
+    func canSaveIsFalseWhenTargetIsEmpty() {
         let draft = MappingRuleDraft(
             sourceText: "Source",
             targetText: "   ",
@@ -22,7 +32,8 @@ struct MappingRuleDraftTests {
         #expect(draft.canSave == false)
     }
 
-    @Test func applyThrowsWhenSourceIsEmpty() {
+    @Test
+    func applyThrowsWhenSourceIsEmpty() {
         let context = testContext
         let draft = MappingRuleDraft(
             sourceText: "   ",
@@ -38,7 +49,8 @@ struct MappingRuleDraftTests {
         }
     }
 
-    @Test func applyThrowsWhenTargetIsEmpty() {
+    @Test
+    func applyThrowsWhenTargetIsEmpty() {
         let context = testContext
         let draft = MappingRuleDraft(
             sourceText: "Source",
@@ -54,7 +66,8 @@ struct MappingRuleDraftTests {
         }
     }
 
-    @Test func applyCreatesRuleWithNormalizedTexts() throws {
+    @Test
+    func applyCreatesRuleWithNormalizedTexts() throws {
         let context = testContext
         let draft = MappingRuleDraft(
             sourceText: "  Source  ",
@@ -72,7 +85,8 @@ struct MappingRuleDraftTests {
         #expect(rule.isEnabled == false)
     }
 
-    @Test func applyUpdatesExistingRule() throws {
+    @Test
+    func applyUpdatesExistingRule() throws {
         let context = testContext
         let rule = try MappingRule.create(
             context: context,

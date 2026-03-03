@@ -1,8 +1,17 @@
+//
+//  SubscriptionAccessEvaluatorTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2026/02/27.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import Testing
 
 struct SubscriptionAccessEvaluatorTests {
-    @Test func evaluateResolvesStateFromPurchasedProductIDs() {
+    @Test
+    func evaluateResolvesStateFromPurchasedProductIDs() {
         let state = SubscriptionAccessEvaluator.evaluate(
             purchasedProductIDs: Set(["com.example.subscription"]),
             productID: "com.example.subscription",
@@ -13,7 +22,8 @@ struct SubscriptionAccessEvaluatorTests {
         #expect(state.isICloudOn)
     }
 
-    @Test func evaluateKeepsICloudFlagWhenSubscriptionIsActive() {
+    @Test
+    func evaluateKeepsICloudFlagWhenSubscriptionIsActive() {
         let state = SubscriptionAccessEvaluator.evaluate(
             hasActiveSubscription: true,
             isICloudOn: true
@@ -23,7 +33,8 @@ struct SubscriptionAccessEvaluatorTests {
         #expect(state.isICloudOn)
     }
 
-    @Test func evaluateDisablesICloudWhenSubscriptionIsInactive() {
+    @Test
+    func evaluateDisablesICloudWhenSubscriptionIsInactive() {
         let state = SubscriptionAccessEvaluator.evaluate(
             hasActiveSubscription: false,
             isICloudOn: true
@@ -33,7 +44,8 @@ struct SubscriptionAccessEvaluatorTests {
         #expect(state.isICloudOn == false)
     }
 
-    @Test func evaluateAllowsPremiumWithoutSubscriptionWhenConfigured() {
+    @Test
+    func evaluateAllowsPremiumWithoutSubscriptionWhenConfigured() {
         let state = SubscriptionAccessEvaluator.evaluate(
             hasActiveSubscription: false,
             isICloudOn: true,

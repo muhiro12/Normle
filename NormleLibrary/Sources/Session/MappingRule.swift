@@ -1,47 +1,40 @@
 //
 //  MappingRule.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import Foundation
 import SwiftData
 
-public enum MappingRuleError: LocalizedError {
-    case duplicateSource
-    case duplicateTarget
-
-    public var errorDescription: String? {
-        switch self {
-        case .duplicateSource:
-            "The source text is already registered."
-        case .duplicateTarget:
-            "The target text is already registered."
-        }
-    }
-}
-
 /// A persisted manual mapping rule configured by the user.
 @Model
 public final class MappingRule {
+    /// The last updated date of the mapping rule.
     public private(set) var date = Date()
+    /// The source text to match.
     public private(set) var source = String()
+    /// The replacement text to apply.
     public private(set) var target = String()
+    /// Indicates whether the rule is active.
     public private(set) var isEnabled = true
 
+    /// Tags associated with the mapping rule.
     @Relationship(deleteRule: .nullify)
-    public private(set) var tags: [Tag]?
+    public private(set) var tags = [Tag]()
 
     private init() {}
 
+    /// Creates a new mapping rule after validating source and target uniqueness.
     @discardableResult
     public static func create(
         context: ModelContext,
-        date: Date = Date(),
         source: String,
         target: String,
-        isEnabled: Bool = true
+        isEnabled: Bool = true,
+        date: Date = Date()
     ) throws -> MappingRule {
         try validateUniqueness(
             context: context,
@@ -61,12 +54,13 @@ public final class MappingRule {
         return rule
     }
 
+    /// Updates the mapping rule after validating source and target uniqueness.
     public func update(
         context: ModelContext,
-        date: Date? = nil,
         source: String,
         target: String,
-        isEnabled: Bool
+        isEnabled: Bool,
+        date: Date? = nil
     ) throws {
         try Self.validateUniqueness(
             context: context,
@@ -85,15 +79,16 @@ public final class MappingRule {
 }
 
 public extension MappingRule {
+    /// Returns the masking rule representation of this mapping rule.
     var maskingRule: MaskingRule {
         let identifier = persistentModelID.base64String
         return .init(
-            id: identifier,
             original: source,
             masked: target,
             kind: .custom,
             date: date,
-            isEnabled: isEnabled
+            isEnabled: isEnabled,
+            id: identifier
         )
     }
 }

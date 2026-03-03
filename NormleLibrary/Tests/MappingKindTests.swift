@@ -1,8 +1,17 @@
+//
+//  MappingKindTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2026/01/06.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import Testing
 
 struct MappingKindTests {
-    @Test func displayNameMatchesExpectedText() {
+    @Test
+    func displayNameMatchesExpectedText() {
         let expectations: [(MappingKind, String)] = [
             (.person, "Person"),
             (.company, "Company"),
@@ -19,7 +28,8 @@ struct MappingKindTests {
         }
     }
 
-    @Test func aliasPrefixMatchesExpectedText() {
+    @Test
+    func aliasPrefixMatchesExpectedText() {
         let expectations: [(MappingKind, String)] = [
             (.person, "Person"),
             (.company, "Client"),

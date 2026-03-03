@@ -1,8 +1,9 @@
 //
 //  BaseTransform.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import CoreImage.CIFilterBuiltins
@@ -66,42 +67,129 @@ public enum BaseTransform: String, CaseIterable, Identifiable, Codable, Sendable
     }
 
     public func apply(text: String, imageData: Data? = nil) -> Result<String, BaseTransformError> {
+        if let transformedText = transformedText(for: text) {
+            return .success(transformedText)
+        }
+
+        if let base64Result = base64Result(for: text) {
+            return base64Result
+        }
+
+        if let urlResult = urlResult(for: text) {
+            return urlResult
+        }
+
+        if let qrResult = qrResult(imageData: imageData) {
+            return qrResult
+        }
+
+        assertionFailure("Unhandled transform: \(self)")
+        return .success(text)
+    }
+}
+
+private extension BaseTransform {
+    func transformedText(for text: String) -> String? {
+        if let transformedText = transformedWidthText(for: text) {
+            return transformedText
+        }
+        if let transformedText = transformedCaseText(for: text) {
+            return transformedText
+        }
+        return transformedDigitText(for: text)
+    }
+
+    func transformedWidthText(for text: String) -> String? {
         switch self {
         case .fullwidthAlphanumericToHalfwidth:
-            return .success(applyingTransform(text, transform: .fullwidthToHalfwidth))
+            return applyingTransform(
+                text,
+                transform: .fullwidthToHalfwidth
+            )
         case .halfwidthAlphanumericToFullwidth:
-            return .success(applyingTransform(text, transform: .fullwidthToHalfwidth, reverse: true))
+            return applyingTransform(
+                text,
+                transform: .fullwidthToHalfwidth,
+                reverse: true
+            )
         case .fullwidthSpaceToHalfwidth:
-            return .success(text.replacingOccurrences(of: "　", with: " "))
+            return text.replacingOccurrences(
+                of: "　",
+                with: " "
+            )
         case .halfwidthSpaceToFullwidth:
-            return .success(text.replacingOccurrences(of: " ", with: "　"))
+            return text.replacingOccurrences(
+                of: " ",
+                with: "　"
+            )
         case .halfwidthKatakanaToFullwidth:
-            return .success(applyingTransform(text, transform: .fullwidthToHalfwidth, reverse: true))
+            return applyingTransform(
+                text,
+                transform: .fullwidthToHalfwidth,
+                reverse: true
+            )
         case .fullwidthKatakanaToHalfwidth:
-            return .success(applyingTransform(text, transform: .fullwidthToHalfwidth))
+            return applyingTransform(
+                text,
+                transform: .fullwidthToHalfwidth
+            )
+        default:
+            return nil
+        }
+    }
+
+    func transformedCaseText(for text: String) -> String? {
+        switch self {
         case .lowercase:
-            return .success(text.lowercased())
+            return text.lowercased()
         case .uppercase:
-            return .success(text.uppercased())
+            return text.uppercased()
+        default:
+            return nil
+        }
+    }
+
+    func transformedDigitText(for text: String) -> String? {
+        switch self {
         case .fullwidthDigitsToHalfwidth:
-            return .success(convertDigits(text, toFullwidth: false))
+            return convertDigits(
+                text,
+                toFullwidth: false
+            )
         case .halfwidthDigitsToFullwidth:
-            return .success(convertDigits(text, toFullwidth: true))
+            return convertDigits(
+                text,
+                toFullwidth: true
+            )
+        default:
+            return nil
+        }
+    }
+
+    func base64Result(for text: String) -> Result<String, BaseTransformError>? {
+        switch self {
         case .base64Encode:
             let data = Data(text.utf8)
             return .success(data.base64EncodedString())
         case .base64Decode:
-            guard let data = Data(base64Encoded: text) else {
-                return .failure(.invalidBase64)
-            }
-            guard let decoded = String(data: data, encoding: .utf8) else {
+            guard let data = Data(base64Encoded: text),
+                  let decoded = String(data: data, encoding: .utf8) else {
                 return .failure(.invalidBase64)
             }
             return .success(decoded)
+        default:
+            return nil
+        }
+    }
+
+    func urlResult(for text: String) -> Result<String, BaseTransformError>? {
+        switch self {
         case .urlEncode:
             var allowedCharacters = CharacterSet.urlQueryAllowed
             allowedCharacters.remove(charactersIn: "+?")
-            guard let encoded = text.addingPercentEncoding(withAllowedCharacters: allowedCharacters) else {
+            guard let encoded = text.addingPercentEncoding(
+                withAllowedCharacters: allowedCharacters
+            ) else {
                 return .failure(.invalidURL)
             }
             return .success(encoded)
@@ -110,6 +198,13 @@ public enum BaseTransform: String, CaseIterable, Identifiable, Codable, Sendable
                 return .failure(.invalidURL)
             }
             return .success(decoded)
+        default:
+            return nil
+        }
+    }
+
+    func qrResult(imageData: Data?) -> Result<String, BaseTransformError>? {
+        switch self {
         case .qrEncode:
             // targetText is intentionally empty for QR encode; QR image is generated at call site.
             return .success(String())
@@ -119,31 +214,11 @@ public enum BaseTransform: String, CaseIterable, Identifiable, Codable, Sendable
                 return .failure(.qrNotDetected)
             }
             return .success(decoded)
+        default:
+            return nil
         }
     }
-}
 
-public enum BaseTransformError: LocalizedError, Equatable {
-    case invalidBase64
-    case invalidURL
-    case qrNotDetected
-    case qrGenerationFailed
-
-    public var errorDescription: String? {
-        switch self {
-        case .invalidBase64:
-            "Failed to decode Base64 text."
-        case .invalidURL:
-            "Failed to process URL text."
-        case .qrNotDetected:
-            "Failed to detect a QR code."
-        case .qrGenerationFailed:
-            "Failed to generate a QR code."
-        }
-    }
-}
-
-private extension BaseTransform {
     func applyingTransform(
         _ text: String,
         transform: StringTransform,
@@ -218,6 +293,7 @@ private extension BaseTransform {
 }
 
 public extension BaseTransform {
+    /// Generates a QR code image for the provided text when supported by the transform.
     func qrCodeImage(for text: String) -> Result<CGImage, BaseTransformError> {
         guard let image = makeQRCodeImage(for: text) else {
             return .failure(.qrGenerationFailed)

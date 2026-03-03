@@ -1,26 +1,16 @@
 //
 //  NormleModelContainerFactory.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2026/02/27.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import SwiftData
 
-public struct NormleModelContainerCreationResult {
-    public let container: ModelContainer
-    public let isCloudSyncEnabled: Bool
-
-    public init(
-        container: ModelContainer,
-        isCloudSyncEnabled: Bool
-    ) {
-        self.container = container
-        self.isCloudSyncEnabled = isCloudSyncEnabled
-    }
-}
-
+/// Builds SwiftData model containers for the app.
 public enum NormleModelContainerFactory {
+    /// Creates a model container with the requested cloud sync setting.
     public static func make(
         cloudSyncEnabled: Bool
     ) throws -> ModelContainer {
@@ -33,6 +23,7 @@ public enum NormleModelContainerFactory {
         )
     }
 
+    /// Creates a model container and falls back to local storage if cloud setup fails.
     public static func makeWithFallback(
         cloudSyncEnabled: Bool,
         onCloudContainerError: (Error) -> Void = { _ in },

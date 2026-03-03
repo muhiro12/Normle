@@ -1,8 +1,17 @@
+//
+//  TransformPresetSelectionStateTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2026/01/12.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import Testing
 
 struct TransformPresetSelectionStateTests {
-    @Test func applyPresetSelectionWithQRCodeOverridesOtherSelections() {
+    @Test
+    func applyPresetSelectionWithQRCodeOverridesOtherSelections() {
         var state = TransformPresetSelectionState()
         let selection = PresetSelection(
             isCustomMappingEnabled: true,
@@ -21,7 +30,8 @@ struct TransformPresetSelectionStateTests {
         #expect(state.selectedPresets == [.builtIn(.qrEncode)])
     }
 
-    @Test func updateCustomSelectionClearsQRCode() {
+    @Test
+    func updateCustomSelectionClearsQRCode() {
         var state = TransformPresetSelectionState(
             selectedPresets: [.builtIn(.qrEncode)]
         )
@@ -33,7 +43,8 @@ struct TransformPresetSelectionStateTests {
         #expect(state.selectedPresets.contains(.builtIn(.qrDecode)) == false)
     }
 
-    @Test func updateGroupSelectionKeepsOnlyQRCodePreset() {
+    @Test
+    func updateGroupSelectionKeepsOnlyQRCodePreset() {
         var state = TransformPresetSelectionState(
             selectedPresets: [.customMapping, .builtIn(.lowercase)]
         )
@@ -46,7 +57,8 @@ struct TransformPresetSelectionStateTests {
         #expect(state.selectedPresets == [.builtIn(.qrDecode)])
     }
 
-    @Test func presetSelectionReflectsSelectedPresets() {
+    @Test
+    func presetSelectionReflectsSelectedPresets() {
         let state = TransformPresetSelectionState(
             selectedPresets: [.customMapping, .builtIn(.lowercase), .builtIn(.urlEncode)]
         )
@@ -59,7 +71,8 @@ struct TransformPresetSelectionStateTests {
         #expect(selection.qrTransform == nil)
     }
 
-    @Test func isGroupDisabledDependsOnQRCodeSelection() {
+    @Test
+    func isGroupDisabledDependsOnQRCodeSelection() {
         var state = TransformPresetSelectionState()
 
         #expect(state.isGroupDisabled(.qrGroup) == false)

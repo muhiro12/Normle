@@ -1,9 +1,18 @@
+//
+//  TransformRecordServiceTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2025/11/22.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import SwiftData
 import Testing
 
 struct TransformRecordServiceTests {
-    @Test func savingRecordsPersistsSourceTargetAndMappings() throws {
+    @Test
+    func savingRecordsPersistsSourceTargetAndMappings() throws {
         let context = testContext
         let mapping = Mapping(
             original: "secret",
@@ -35,7 +44,8 @@ struct TransformRecordServiceTests {
         #expect(records.first?.mappings.first?.masked == "Alias(1)")
     }
 
-    @Test func savingRecordWithNilSourceTextOmitsSourceText() throws {
+    @Test
+    func savingRecordWithNilSourceTextOmitsSourceText() throws {
         let context = testContext
 
         _ = try TransformRecordService.saveRecord(
@@ -53,7 +63,8 @@ struct TransformRecordServiceTests {
         #expect(records.first?.targetText == "masked-1")
     }
 
-    @Test func updateRecordUpdatesPersistedText() throws {
+    @Test
+    func updateRecordUpdatesPersistedText() throws {
         let context = testContext
         let createdMapping = Mapping(
             original: "secret-1",
@@ -94,7 +105,8 @@ struct TransformRecordServiceTests {
         #expect(records.first?.mappings.first?.masked == "Alias(2)")
     }
 
-    @Test func deleteRemovesRecord() throws {
+    @Test
+    func deleteRemovesRecord() throws {
         let context = testContext
 
         let record = try TransformRecordService.saveRecord(
@@ -115,7 +127,8 @@ struct TransformRecordServiceTests {
         #expect(records.isEmpty)
     }
 
-    @Test func deleteAllRemovesAllRecords() throws {
+    @Test
+    func deleteAllRemovesAllRecords() throws {
         let context = testContext
 
         _ = try TransformRecordService.saveRecord(

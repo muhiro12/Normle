@@ -1,8 +1,17 @@
+//
+//  RestoreServiceTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2025/11/22.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import Testing
 
 struct RestoreServiceTests {
-    @Test func restoreRevertsMaskedText() {
+    @Test
+    func restoreRevertsMaskedText() {
         let mappings = [
             Mapping(
                 original: "A株式会社",

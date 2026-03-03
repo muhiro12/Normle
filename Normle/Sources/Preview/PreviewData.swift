@@ -3,6 +3,7 @@
 //  Normle
 //
 //  Created by Hiromu Nakano on 2026/02/04.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import NormleLibrary
@@ -30,17 +31,17 @@ enum PreviewData {
         do {
             try MappingRule.create(
                 context: context,
-                date: Date().addingTimeInterval(-3_600),
                 source: "alice@example.com",
                 target: "[Email 1]",
-                isEnabled: true
+                isEnabled: true,
+                date: Date().addingTimeInterval(-3_600)
             )
             try MappingRule.create(
                 context: context,
-                date: Date().addingTimeInterval(-7_200),
                 source: "Tokyo",
                 target: "[City]",
-                isEnabled: false
+                isEnabled: false,
+                date: Date().addingTimeInterval(-7_200)
             )
             _ = TransformRecord.create(
                 context: context,
@@ -65,10 +66,10 @@ enum PreviewData {
         do {
             let rule = try MappingRule.create(
                 context: context,
-                date: Date().addingTimeInterval(-1_800),
                 source: "Example",
                 target: "[Masked]",
-                isEnabled: true
+                isEnabled: true,
+                date: Date().addingTimeInterval(-1_800)
             )
             try context.save()
             return rule

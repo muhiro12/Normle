@@ -1,9 +1,18 @@
+//
+//  MappingRuleTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2025/12/14.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 import Foundation
 @testable import NormleLibrary
 import Testing
 
 struct MappingRuleTests {
-    @Test func createRejectsDuplicateSource() throws {
+    @Test
+    func createRejectsDuplicateSource() throws {
         let context = testContext
 
         _ = try MappingRule.create(
@@ -21,7 +30,8 @@ struct MappingRuleTests {
         }
     }
 
-    @Test func updateRejectsDuplicateTarget() throws {
+    @Test
+    func updateRejectsDuplicateTarget() throws {
         let context = testContext
 
         _ = try MappingRule.create(
@@ -45,25 +55,26 @@ struct MappingRuleTests {
         }
     }
 
-    @Test func updateAppliesDateAndStatus() throws {
+    @Test
+    func updateAppliesDateAndStatus() throws {
         let context = testContext
         let originalDate = Date(timeIntervalSince1970: 1_700_000_000)
         let updatedDate = Date(timeIntervalSince1970: 1_700_000_100)
 
         let rule = try MappingRule.create(
             context: context,
-            date: originalDate,
             source: "Alpha",
             target: "Alpha-Target",
-            isEnabled: true
+            isEnabled: true,
+            date: originalDate
         )
 
         try rule.update(
             context: context,
-            date: updatedDate,
             source: "Alpha Updated",
             target: "Alpha-Target Updated",
-            isEnabled: false
+            isEnabled: false,
+            date: updatedDate
         )
 
         #expect(rule.date == updatedDate)
@@ -72,24 +83,25 @@ struct MappingRuleTests {
         #expect(rule.isEnabled == false)
     }
 
-    @Test func updateKeepsDateWhenNil() throws {
+    @Test
+    func updateKeepsDateWhenNil() throws {
         let context = testContext
         let originalDate = Date(timeIntervalSince1970: 1_700_000_000)
 
         let rule = try MappingRule.create(
             context: context,
-            date: originalDate,
             source: "Beta",
             target: "Beta-Target",
-            isEnabled: true
+            isEnabled: true,
+            date: originalDate
         )
 
         try rule.update(
             context: context,
-            date: nil,
             source: "Beta Updated",
             target: "Beta-Target Updated",
-            isEnabled: true
+            isEnabled: true,
+            date: nil
         )
 
         #expect(rule.date == originalDate)

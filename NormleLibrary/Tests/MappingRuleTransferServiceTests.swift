@@ -1,9 +1,18 @@
+//
+//  MappingRuleTransferServiceTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2025/12/14.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import SwiftData
 import Testing
 
 struct MappingRuleTransferServiceTests {
-    @Test func exportAndReplaceImport() throws {
+    @Test
+    func exportAndReplaceImport() throws {
         let context = try makeContext()
 
         try MappingRule.create(
@@ -30,7 +39,8 @@ struct MappingRuleTransferServiceTests {
         #expect(fetched.first?.target == "Alias")
     }
 
-    @Test func mergeUpdatesExistingRule() throws {
+    @Test
+    func mergeUpdatesExistingRule() throws {
         let context = try makeContext()
 
         try MappingRule.create(
@@ -62,7 +72,8 @@ struct MappingRuleTransferServiceTests {
         #expect(fetched.first?.target == "NewAlias")
     }
 
-    @Test func appendCreatesNewIDsWhenDuplicated() throws {
+    @Test
+    func appendCreatesNewIDsWhenDuplicated() throws {
         let context = try makeContext()
 
         try MappingRule.create(
@@ -95,7 +106,8 @@ struct MappingRuleTransferServiceTests {
         #expect(fetched.contains { $0.source == "New" && $0.target == "NewAlias" })
     }
 
-    @Test func importHandlesLegacyFieldNames() throws {
+    @Test
+    func importHandlesLegacyFieldNames() throws {
         let context = try makeContext()
         let payload = """
         {
@@ -132,7 +144,8 @@ struct MappingRuleTransferServiceTests {
         #expect(fetched.first?.target == "Alias")
     }
 
-    @Test func summaryLinesReturnInsertedUpdatedTotalInOrder() {
+    @Test
+    func summaryLinesReturnInsertedUpdatedTotalInOrder() {
         let result = MappingRuleTransferService.ImportResult(
             insertedCount: 2,
             updatedCount: 1,

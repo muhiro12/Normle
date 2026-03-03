@@ -1,20 +1,15 @@
 //
 //  TransformPresetSelectionState.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import Foundation
 
 public struct TransformPresetSelectionState: Equatable {
     public var selectedPresets: Set<TransformPreset> = []
-
-    public init(
-        selectedPresets: Set<TransformPreset> = []
-    ) {
-        self.selectedPresets = selectedPresets
-    }
 
     public var transformGroups: [TransformGroup] {
         TransformGroup.allGroups
@@ -40,6 +35,12 @@ public struct TransformPresetSelectionState: Equatable {
 
     public var isCustomDisabled: Bool {
         isQRSelected
+    }
+
+    public init(
+        selectedPresets: Set<TransformPreset> = []
+    ) {
+        self.selectedPresets = selectedPresets
     }
 
     public func isGroupDisabled(_ group: TransformGroup) -> Bool {
@@ -131,10 +132,8 @@ public struct TransformPresetSelectionState: Equatable {
     }
 
     public func selectedPreset(in group: TransformGroup) -> TransformPreset? {
-        for option in group.options {
-            if selectedPresets.contains(option) {
-                return option
-            }
+        for option in group.options where selectedPresets.contains(option) {
+            return option
         }
         return nil
     }
@@ -162,156 +161,4 @@ public struct TransformPresetSelectionState: Equatable {
         }
         return nil
     }
-}
-
-public enum TransformPreset: Hashable, Identifiable, Sendable {
-    case builtIn(BaseTransform)
-    case customMapping
-
-    public static var qrEncode: Self {
-        .builtIn(.qrEncode)
-    }
-
-    public static var qrDecode: Self {
-        .builtIn(.qrDecode)
-    }
-
-    public var id: String {
-        switch self {
-        case .builtIn(let transform):
-            return "builtIn_\(transform.id)"
-        case .customMapping:
-            return "customMapping"
-        }
-    }
-
-    public var title: String {
-        switch self {
-        case .builtIn(let transform):
-            return transform.title
-        case .customMapping:
-            return String(localized: "Custom")
-        }
-    }
-
-    public var isQRCodeOnly: Bool {
-        switch self {
-        case .builtIn(let transform):
-            return transform == .qrEncode || transform == .qrDecode
-        case .customMapping:
-            return false
-        }
-    }
-
-    public static var allCases: [Self] {
-        let builtIns: [Self] = BaseTransform.allCases.map { transform in
-            .builtIn(transform) as Self
-        }
-        return [
-            .customMapping
-        ] + builtIns
-    }
-}
-
-public struct TransformGroup: Identifiable, Equatable, Sendable {
-    public let id: String
-    public let title: String
-    public let options: [TransformPreset]
-    public let isQRCodeGroup: Bool
-
-    public init(
-        title: String,
-        options: [TransformPreset],
-        isQRCodeGroup: Bool
-    ) {
-        self.id = title
-        self.title = title
-        self.options = options
-        self.isQRCodeGroup = isQRCodeGroup
-    }
-}
-
-public extension TransformGroup {
-    static let caseGroup: TransformGroup = .init(
-        title: String(localized: "Case"),
-        options: [
-            .builtIn(.lowercase),
-            .builtIn(.uppercase)
-        ],
-        isQRCodeGroup: false
-    )
-
-    static let alphanumericWidthGroup: TransformGroup = .init(
-        title: String(localized: "Alphanumeric Width"),
-        options: [
-            .builtIn(.fullwidthAlphanumericToHalfwidth),
-            .builtIn(.halfwidthAlphanumericToFullwidth)
-        ],
-        isQRCodeGroup: false
-    )
-
-    static let spaceWidthGroup: TransformGroup = .init(
-        title: String(localized: "Space Width"),
-        options: [
-            .builtIn(.fullwidthSpaceToHalfwidth),
-            .builtIn(.halfwidthSpaceToFullwidth)
-        ],
-        isQRCodeGroup: false
-    )
-
-    static let katakanaWidthGroup: TransformGroup = .init(
-        title: String(localized: "Katakana Width"),
-        options: [
-            .builtIn(.halfwidthKatakanaToFullwidth),
-            .builtIn(.fullwidthKatakanaToHalfwidth)
-        ],
-        isQRCodeGroup: false
-    )
-
-    static let digitsWidthGroup: TransformGroup = .init(
-        title: String(localized: "Digits Width"),
-        options: [
-            .builtIn(.fullwidthDigitsToHalfwidth),
-            .builtIn(.halfwidthDigitsToFullwidth)
-        ],
-        isQRCodeGroup: false
-    )
-
-    static let base64Group: TransformGroup = .init(
-        title: String(localized: "Base64"),
-        options: [
-            .builtIn(.base64Encode),
-            .builtIn(.base64Decode)
-        ],
-        isQRCodeGroup: false
-    )
-
-    static let urlGroup: TransformGroup = .init(
-        title: String(localized: "URL"),
-        options: [
-            .builtIn(.urlEncode),
-            .builtIn(.urlDecode)
-        ],
-        isQRCodeGroup: false
-    )
-
-    static let qrGroup: TransformGroup = .init(
-        title: String(localized: "QR"),
-        options: [
-            .builtIn(.qrEncode),
-            .builtIn(.qrDecode)
-        ],
-        isQRCodeGroup: true
-    )
-
-    static let allGroups: [TransformGroup] = [
-        caseGroup,
-        alphanumericWidthGroup,
-        spaceWidthGroup,
-        katakanaWidthGroup,
-        digitsWidthGroup,
-        base64Group,
-        urlGroup,
-        qrGroup
-    ]
 }

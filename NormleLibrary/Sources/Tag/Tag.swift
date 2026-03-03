@@ -1,8 +1,9 @@
 //
 //  Tag.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import Foundation
@@ -11,7 +12,9 @@ import SwiftData
 /// A lightweight tag that annotates mask rules or records.
 @Model
 public final class Tag {
+    /// The display name of the tag.
     public private(set) var name = String()
+    /// The raw tag type identifier persisted in storage.
     public private(set) var typeID = TagType.maskRule.rawValue
 
     private init() {}
@@ -55,6 +58,7 @@ public final class Tag {
 }
 
 public extension Tag {
+    /// The typed tag category resolved from the stored raw value.
     var type: TagType? {
         TagType(rawValue: typeID)
     }

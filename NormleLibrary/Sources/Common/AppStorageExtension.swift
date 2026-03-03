@@ -1,29 +1,20 @@
 //
-//  AppStorageKey.swift
-//
+//  AppStorageExtension.swift
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import SwiftUI
 
-public enum BoolAppStorageKey: String {
-    case isSubscribeOn = "m5k3I8s9"
-    case isICloudOn = "c1o9U2d4"
-    case isURLMaskingEnabled = "f3R8q1L0"
-    case isEmailMaskingEnabled = "K9m4T2s7"
-    case isPhoneMaskingEnabled = "p6V1x8N3"
-}
-
-public enum DataAppStorageKey: String {
-    case userPreferences = "U9r3E7p2"
-}
-
 public extension AppStorage {
+    /// Creates a Boolean app storage value for the given key.
     init(_ key: BoolAppStorageKey) where Value == Bool {
         self.init(wrappedValue: false, key.rawValue)
     }
 
+    /// Creates a Boolean app storage value with the provided default value.
     init(
         wrappedValue: Value,
         _ key: BoolAppStorageKey
@@ -34,10 +25,12 @@ public extension AppStorage {
         )
     }
 
+    /// Creates a data app storage value for the given key.
     init(_ key: DataAppStorageKey) where Value == Data {
         self.init(wrappedValue: Data(), key.rawValue)
     }
 
+    /// Creates a data app storage value with the provided default value.
     init(
         wrappedValue: Value,
         _ key: DataAppStorageKey

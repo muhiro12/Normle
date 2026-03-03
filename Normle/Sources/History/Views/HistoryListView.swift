@@ -1,8 +1,9 @@
 //
 //  HistoryListView.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import NormleLibrary
@@ -18,19 +19,6 @@ struct HistoryListView: View {
     @State private var isDeleteDialogPresented = false
 
     private var selection: Binding<TransformRecord?>
-
-    init(
-        selection: Binding<TransformRecord?> = .constant(nil)
-    ) {
-        self.selection = selection
-        _records = Query(
-            FetchDescriptor(
-                sortBy: [
-                    .init(\.date, order: .reverse)
-                ]
-            )
-        )
-    }
 
     var body: some View {
         List(selection: selection) {
@@ -95,10 +83,24 @@ struct HistoryListView: View {
                 Text("Delete")
             }
             Button(role: .cancel) {
+                isDeleteDialogPresented = false
             } label: {
                 Text("Cancel")
             }
         }
+    }
+
+    init(
+        selection: Binding<TransformRecord?> = .constant(nil)
+    ) {
+        self.selection = selection
+        _records = Query(
+            FetchDescriptor(
+                sortBy: [
+                    .init(\.date, order: .reverse)
+                ]
+            )
+        )
     }
 }
 

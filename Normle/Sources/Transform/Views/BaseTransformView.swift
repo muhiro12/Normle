@@ -1,8 +1,9 @@
 //
 //  BaseTransformView.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import NormleLibrary
@@ -11,6 +12,23 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct BaseTransformView: View {
+    private enum Layout {
+        static let horizontalPadding = 16.0
+        static let listRowSpacing = 16.0
+        static let iOSRowInsets = EdgeInsets(
+            top: 16,
+            leading: 16,
+            bottom: 16,
+            trailing: 16
+        )
+        static let macOSRowInsets = EdgeInsets(
+            top: 16,
+            leading: 24,
+            bottom: 16,
+            trailing: 24
+        )
+    }
+
     @Environment(\.modelContext)
     private var context
     @EnvironmentObject private var preferencesStore: UserPreferencesStore
@@ -29,109 +47,11 @@ struct BaseTransformView: View {
     @State private var selectedSourceText = String()
     @State private var isPresentingMappingCreation = false
     @State private var pendingSourceForMapping = String()
-
     var body: some View {
         Form {
-            if presetSelectionState.selectedPresets.contains(.qrDecode) == false {
-                Section {
-                    SelectableTextEditor(
-                        text: $sourceText,
-                        selectedText: $selectedSourceText
-                    ) { selectedText in
-                        presentMappingFromSelection(text: selectedText)
-                    }
-                    .frame(minHeight: 160)
-                    .liquidGlassEffect()
-                    Button {
-                        pasteSourceText()
-                    } label: {
-                        Label("Paste", systemImage: "doc.on.clipboard")
-                    }
-                    .secondaryActionStyle()
-                    Button {
-                        clearSourceText()
-                    } label: {
-                        Label("Clear", systemImage: "xmark.circle")
-                    }
-                    .secondaryActionStyle()
-                    #if os(macOS)
-                    Button {
-                        presentMappingFromSelection()
-                    } label: {
-                        Label("Create mapping from selection", systemImage: "plus")
-                    }
-                    .disabled(selectedSourceTextValue == nil)
-                    .secondaryActionStyle()
-                    #endif
-                } header: {
-                    Text("Input")
-                } footer: {
-                    Text("Paste or type text to transform. You can also select text to create a mapping.")
-                }
-                .listRowInsets(sectionRowInsets)
-            } else {
-                Section {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(importedImageName ?? String(localized: "Drop an image or select a file."))
-                            .foregroundStyle(importedImageName == nil ? .secondary : .primary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .contentShape(Rectangle())
-                            .onDrop(of: [UTType.image.identifier], isTargeted: nil) { providers in
-                                handleDrop(providers: providers)
-                                return true
-                            }
-
-                        Button {
-                            isImporterPresented = true
-                        } label: {
-                            Label("Select image", systemImage: "photo.on.rectangle")
-                        }
-                        .secondaryActionStyle()
-                        if selectedImageData != nil {
-                            Button {
-                                clearSelectedImage()
-                            } label: {
-                                Label("Clear image", systemImage: "xmark.circle")
-                            }
-                            .secondaryActionStyle()
-                        }
-                    }
-                } header: {
-                    Text("QR Image")
-                } footer: {
-                    Text("Drop or choose a QR image to decode.")
-                }
-                .listRowInsets(sectionRowInsets)
-            }
-
-            Section("Result") {
-                resultContent
-            }
-            .listRowInsets(sectionRowInsets)
-
-            Section {
-                #if os(macOS)
-                HStack {
-                    Spacer()
-                    Button {
-                        runTransform()
-                    } label: {
-                        Label("Transform & Save", systemImage: "arrow.triangle.2.circlepath")
-                    }
-                    .disabled(isRunDisabled)
-                    .primaryActionStyle()
-                }
-                #else
-                Button {
-                    runTransform()
-                } label: {
-                    Label("Transform & Save", systemImage: "arrow.triangle.2.circlepath")
-                }
-                .disabled(isRunDisabled)
-                .primaryActionStyle()
-                #endif
-            }
-            .listRowInsets(sectionRowInsets)
+            inputSection
+            resultSection
+            actionSection
         }
         .navigationTitle("Transforms")
         #if os(iOS)
@@ -139,12 +59,12 @@ struct BaseTransformView: View {
         #endif
         #if os(macOS)
         .listStyle(.inset)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, Layout.horizontalPadding)
         #else
         .listStyle(.insetGrouped)
         #endif
         #if os(iOS)
-        .listRowSpacing(16)
+        .listRowSpacing(Layout.listRowSpacing)
         #endif
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -159,13 +79,7 @@ struct BaseTransformView: View {
             presetSelectionSheet
         }
         .sheet(isPresented: $isPresentingMappingCreation) {
-            NavigationStack {
-                MappingEditView(
-                    rule: nil,
-                    isPresented: $isPresentingMappingCreation,
-                    prefilledSource: pendingSourceForMapping
-                )
-            }
+            mappingCreationSheet
         }
         .task {
             applyPresetSelection(preferencesStore.preferences.presetSelection)
@@ -186,6 +100,7 @@ struct BaseTransformView: View {
             presenting: alertMessage
         ) { _ in
             Button("OK", role: .cancel) {
+                alertMessage = nil
             }
         } message: { message in
             Text(message)
@@ -194,37 +109,90 @@ struct BaseTransformView: View {
             isPresented: $isImporterPresented,
             allowedContentTypes: [.image]
         ) { result in
-            switch result {
-            case .success(let url):
-                do {
-                    let data = try Data(contentsOf: url)
-                    selectedImageData = data
-                    importedImageName = url.lastPathComponent
-                    resultText = String()
-                } catch {
-                    alertMessage = error.localizedDescription
-                }
-            case .failure(let error):
-                alertMessage = error.localizedDescription
-            }
+            handleImageImport(result)
         }
     }
 }
-
 private extension BaseTransformView {
+    var orderedSelectedTransforms: [TransformPreset] {
+        presetSelectionState.orderedSelectedPresets
+    }
+    var presetSelectionSheet: some View {
+        BaseTransformViewPresetSheet(
+            isPresented: $isPresetSelectorPresented,
+            transformGroups: transformGroups,
+            isCustomDisabled: isCustomDisabled,
+            isGroupDisabled: isGroupDisabled(group:),
+            customSelectionBinding: customSelectionBinding(),
+            groupSelectionBinding: groupSelectionBinding(for:),
+            maskingToggleBinding: maskingToggleBinding(_:)
+        )
+    }
+    var isCustomDisabled: Bool {
+        presetSelectionState.isCustomDisabled
+    }
+    var activeMaskRules: [MaskingRule] {
+        mappingRules
+            .filter(\.isEnabled)
+            .map(\.maskingRule)
+    }
+    var transformGroups: [TransformGroup] {
+        presetSelectionState.transformGroups
+    }
+    var inputSection: some View {
+        BaseTransformInputSection(
+            isQRCodeInput: presetSelectionState.selectedPresets.contains(.qrDecode),
+            sourceText: $sourceText,
+            selectedSourceText: $selectedSourceText,
+            importedImageName: importedImageName,
+            isImporterPresented: $isImporterPresented,
+            hasSelectedImage: selectedImageData != nil,
+            canCreateMappingFromSelection: selectedSourceTextValue != nil,
+            sectionRowInsets: sectionRowInsets,
+            createMappingFromSelection: presentMappingFromSelection(text:),
+            createMappingFromCurrentSelection: presentMappingFromSelection,
+            pasteSourceText: pasteSourceText,
+            clearSourceText: clearSourceText,
+            clearSelectedImage: clearSelectedImage,
+            handleDrop: handleDrop(providers:)
+        )
+    }
+    var resultSection: some View {
+        BaseTransformResultSection(
+            isQREncode: presetSelectionState.selectedPresets.contains(.qrEncode),
+            resultText: resultText,
+            qrImage: qrImage,
+            sourceText: sourceText,
+            sectionRowInsets: sectionRowInsets
+        )
+    }
+    var actionSection: some View {
+        BaseTransformActionSection(
+            isDisabled: isRunDisabled,
+            sectionRowInsets: sectionRowInsets,
+            runTransform: runTransform
+        )
+    }
+    var mappingCreationSheet: some View {
+        NavigationStack {
+            MappingEditView(
+                rule: nil,
+                isPresented: $isPresentingMappingCreation,
+                prefilledSource: pendingSourceForMapping
+            )
+        }
+    }
     var sectionRowInsets: EdgeInsets {
         #if os(macOS)
-        return .init(top: 16, leading: 24, bottom: 16, trailing: 24)
+        return Layout.macOSRowInsets
         #else
-        return .init(top: 16, leading: 16, bottom: 16, trailing: 16)
+        return Layout.iOSRowInsets
         #endif
     }
-
     var selectedSourceTextValue: String? {
         let trimmed = selectedSourceText.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
     }
-
     var isRunDisabled: Bool {
         if presetSelectionState.selectedPresets.isEmpty {
             return true
@@ -237,45 +205,98 @@ private extension BaseTransformView {
         }
         return sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
-
-    @ViewBuilder
-    var resultContent: some View {
-        if presetSelectionState.selectedPresets.contains(.qrEncode) {
-            if let qrImage {
-                qrImage
-                    .resizable()
-                    .interpolation(.none)
-                    .scaledToFit()
-                    .frame(maxWidth: 240, maxHeight: 240)
-                    .frame(maxWidth: .infinity)
-                CopyButton(text: sourceText)
-            } else {
-                ContentUnavailableView(
-                    "No QR Code",
-                    systemImage: "qrcode",
-                    description: Text("Enter text, then run QR Encode.")
+}
+private extension BaseTransformView {
+    func customSelectionBinding() -> Binding<Bool> {
+        Binding(
+            get: {
+                presetSelectionState.selectedPresets.contains(.customMapping)
+            },
+            set: { isSelected in
+                updateCustomSelection(isSelected: isSelected)
+            }
+        )
+    }
+    func groupSelectionBinding(for group: TransformGroup) -> Binding<TransformPreset?> {
+        Binding(
+            get: {
+                presetSelectionState.selectedPreset(in: group)
+            },
+            set: { selectedPreset in
+                updateGroupSelection(
+                    group: group,
+                    selectedPreset: selectedPreset
                 )
             }
-        } else {
-            if resultText.isEmpty {
-                ContentUnavailableView(
-                    "No Result",
-                    systemImage: "sparkles",
-                    description: Text("Select a preset and run transform.")
-                )
-            } else {
-                TextEditor(text: .constant(resultText))
-                    .frame(minHeight: 160)
-                    .textSelection(.enabled)
-                    .liquidGlassEffect()
-                CopyButton(text: resultText)
+        )
+    }
+    func updateCustomSelection(isSelected: Bool) {
+        presetSelectionState.updateCustomSelection(isSelected: isSelected)
+        syncPresetSelection()
+        resetSelectionState()
+    }
+    func updateGroupSelection(
+        group: TransformGroup,
+        selectedPreset: TransformPreset?
+    ) {
+        presetSelectionState.updateGroupSelection(
+            group: group,
+            selectedPreset: selectedPreset
+        )
+        syncPresetSelection()
+        resetSelectionState()
+    }
+    func isGroupDisabled(group: TransformGroup) -> Bool {
+        presetSelectionState.isGroupDisabled(group)
+    }
+    func resetSelectionState() {
+        resultText = String()
+        qrImage = nil
+        alertMessage = nil
+    }
+    func presentMappingFromSelection() {
+        guard let selectedSourceTextValue else {
+            return
+        }
+        pendingSourceForMapping = selectedSourceTextValue
+        isPresentingMappingCreation = true
+    }
+    func presentMappingFromSelection(text: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.isEmpty == false else {
+            return
+        }
+        pendingSourceForMapping = trimmed
+        isPresentingMappingCreation = true
+    }
+    func maskingOptions() -> MaskingOptions {
+        preferencesStore.preferences.maskingPreferences.maskingOptions
+    }
+    func maskingToggleBinding(
+        _ keyPath: WritableKeyPath<MaskingPreferences, Bool>
+    ) -> Binding<Bool> {
+        Binding(
+            get: {
+                preferencesStore.preferences.maskingPreferences[keyPath: keyPath]
+            },
+            set: { newValue in
+                preferencesStore.update { preferences in
+                    preferences.maskingPreferences[keyPath: keyPath] = newValue
+                }
             }
+        )
+    }
+    func applyPresetSelection(_ selection: PresetSelection) {
+        presetSelectionState.applyPresetSelection(selection)
+    }
+    func syncPresetSelection() {
+        let selection = presetSelectionState.presetSelection()
+        preferencesStore.update { preferences in
+            preferences.presetSelection = selection
         }
     }
-
     func runTransform() {
-        let result = TransformExecutionService.runAndSave(
-            context: context,
+        let result = TransformExecutionService(context: context).runAndSave(
             sourceText: sourceText,
             presets: orderedSelectedTransforms,
             maskRules: activeMaskRules,
@@ -306,7 +327,6 @@ private extension BaseTransformView {
             }
         }
     }
-
     func pasteSourceText() {
         guard let pastedText = ClipboardService.pasteText() else {
             return
@@ -315,14 +335,12 @@ private extension BaseTransformView {
         resultText = String()
         qrImage = nil
     }
-
     func clearSourceText() {
         sourceText = String()
         resultText = String()
         qrImage = nil
         alertMessage = nil
     }
-
     func clearSelectedImage() {
         selectedImageData = nil
         importedImageName = nil
@@ -330,7 +348,6 @@ private extension BaseTransformView {
         qrImage = nil
         alertMessage = nil
     }
-
     func handleDrop(providers: [NSItemProvider]) {
         guard let provider = providers.first(where: { provider in
             provider.hasItemConformingToTypeIdentifier(UTType.image.identifier)
@@ -349,208 +366,19 @@ private extension BaseTransformView {
             }
         }
     }
-}
-
-private extension BaseTransformView {
-    var orderedSelectedTransforms: [TransformPreset] {
-        presetSelectionState.orderedSelectedPresets
-    }
-
-    var presetSelectionSheet: some View {
-        NavigationStack {
-            Form {
-                Section("Masking Options") {
-                    Toggle(isOn: maskingToggleBinding(\.isURLMaskingEnabled)) {
-                        Text("Mask URLs")
-                    }
-                    Toggle(isOn: maskingToggleBinding(\.isEmailMaskingEnabled)) {
-                        Text("Mask emails")
-                    }
-                    Toggle(isOn: maskingToggleBinding(\.isPhoneMaskingEnabled)) {
-                        Text("Mask phone numbers")
-                    }
-                }
-
-                Section("Custom") {
-                    Picker("Custom", selection: customSelectionBinding()) {
-                        Text("None")
-                            .tag(false)
-                        Text(TransformPreset.customMapping.title)
-                            .tag(true)
-                    }
-                    .pickerStyle(.segmented)
-                    .disabled(isCustomDisabled)
-                    Text("Applied first.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                ForEach(transformGroups) { group in
-                    Section(group.title) {
-                        Picker(group.title, selection: groupSelectionBinding(for: group)) {
-                            Text("None")
-                                .tag(Optional<TransformPreset>.none)
-                            ForEach(group.options) { option in
-                                Text(option.title)
-                                    .tag(TransformPreset?.some(option))
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .disabled(isGroupDisabled(group: group))
-                    }
-                }
+    func handleImageImport(_ result: Result<URL, Error>) {
+        switch result {
+        case .success(let url):
+            do {
+                let data = try Data(contentsOf: url)
+                selectedImageData = data
+                importedImageName = url.lastPathComponent
+                resultText = String()
+            } catch {
+                alertMessage = error.localizedDescription
             }
-            .navigationTitle("Presets")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        isPresetSelectorPresented = false
-                    }
-                }
-            }
+        case .failure(let error):
+            alertMessage = error.localizedDescription
         }
     }
-
-    func customSelectionBinding() -> Binding<Bool> {
-        Binding(
-            get: {
-                presetSelectionState.selectedPresets.contains(.customMapping)
-            },
-            set: { isSelected in
-                updateCustomSelection(isSelected: isSelected)
-            }
-        )
-    }
-
-    func groupSelectionBinding(for group: TransformGroup) -> Binding<TransformPreset?> {
-        Binding(
-            get: {
-                presetSelectionState.selectedPreset(in: group)
-            },
-            set: { selectedPreset in
-                updateGroupSelection(group: group, selectedPreset: selectedPreset)
-            }
-        )
-    }
-
-    func updateCustomSelection(isSelected: Bool) {
-        presetSelectionState.updateCustomSelection(isSelected: isSelected)
-        syncPresetSelection()
-        resetSelectionState()
-    }
-
-    func updateGroupSelection(
-        group: TransformGroup,
-        selectedPreset: TransformPreset?
-    ) {
-        presetSelectionState.updateGroupSelection(
-            group: group,
-            selectedPreset: selectedPreset
-        )
-        syncPresetSelection()
-        resetSelectionState()
-    }
-
-    var isCustomDisabled: Bool {
-        presetSelectionState.isCustomDisabled
-    }
-
-    func isGroupDisabled(group: TransformGroup) -> Bool {
-        presetSelectionState.isGroupDisabled(group)
-    }
-
-    func resetSelectionState() {
-        resultText = String()
-        qrImage = nil
-        alertMessage = nil
-    }
-
-    func presentMappingFromSelection() {
-        guard let selectedSourceTextValue else {
-            return
-        }
-        pendingSourceForMapping = selectedSourceTextValue
-        isPresentingMappingCreation = true
-    }
-
-    func presentMappingFromSelection(text: String) {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmed.isEmpty == false else {
-            return
-        }
-        pendingSourceForMapping = trimmed
-        isPresentingMappingCreation = true
-    }
-
-    var activeMaskRules: [MaskingRule] {
-        mappingRules
-            .filter(\.isEnabled)
-            .map(\.maskingRule)
-    }
-
-    func maskingOptions() -> MaskingOptions {
-        preferencesStore.preferences.maskingPreferences.maskingOptions
-    }
-
-    func maskingToggleBinding(
-        _ keyPath: WritableKeyPath<MaskingPreferences, Bool>
-    ) -> Binding<Bool> {
-        Binding(
-            get: {
-                preferencesStore.preferences.maskingPreferences[keyPath: keyPath]
-            },
-            set: { newValue in
-                preferencesStore.update { preferences in
-                    preferences.maskingPreferences[keyPath: keyPath] = newValue
-                }
-            }
-        )
-    }
-
-    var transformGroups: [TransformGroup] {
-        presetSelectionState.transformGroups
-    }
-
-    func applyPresetSelection(_ selection: PresetSelection) {
-        presetSelectionState.applyPresetSelection(selection)
-    }
-
-    func syncPresetSelection() {
-        let selection = presetSelectionState.presetSelection()
-        preferencesStore.update { preferences in
-            preferences.presetSelection = selection
-        }
-    }
-}
-
-private extension View {
-    @ViewBuilder
-    func secondaryActionStyle() -> some View {
-        #if os(macOS)
-        self.buttonStyle(.borderless)
-        #else
-        self.buttonStyle(.bordered)
-        #endif
-    }
-
-    @ViewBuilder
-    func primaryActionStyle() -> some View {
-        #if os(macOS)
-        self.buttonStyle(.borderedProminent)
-            .controlSize(.regular)
-        #else
-        self.buttonStyle(.borderedProminent)
-        #endif
-    }
-}
-
-#Preview("Transforms") {
-    let container = PreviewData.makeContainer()
-    PreviewData.seed(container: container)
-    let preferencesStore = UserPreferencesStore()
-    return NavigationStack {
-        BaseTransformView()
-    }
-    .modelContainer(container)
-    .environmentObject(preferencesStore)
 }

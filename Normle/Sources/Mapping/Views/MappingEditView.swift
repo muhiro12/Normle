@@ -1,8 +1,9 @@
 //
 //  MappingEditView.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import NormleLibrary
@@ -21,24 +22,6 @@ struct MappingEditView: View {
 
     @State private var draft = MappingRuleDraft()
     @State private var alertMessage: String?
-
-    init(
-        rule: MappingRule?,
-        isPresented: Binding<Bool>,
-        prefilledSource: String = String(),
-        prefilledTarget: String = String(),
-        prefilledIsEnabled: Bool = true
-    ) {
-        self.rule = rule
-        _isPresented = isPresented
-        _draft = .init(
-            initialValue: .init(
-                sourceText: prefilledSource,
-                targetText: prefilledTarget,
-                isEnabled: prefilledIsEnabled
-            )
-        )
-    }
 
     var body: some View {
         Form {
@@ -87,8 +70,27 @@ struct MappingEditView: View {
             )
         ) {
             Button("OK", role: .cancel) {
+                alertMessage = nil
             }
         }
+    }
+
+    init(
+        rule: MappingRule?,
+        isPresented: Binding<Bool>,
+        prefilledSource: String = String(),
+        prefilledTarget: String = String(),
+        prefilledIsEnabled: Bool = true
+    ) {
+        self.rule = rule
+        _isPresented = isPresented
+        _draft = .init(
+            initialValue: .init(
+                sourceText: prefilledSource,
+                targetText: prefilledTarget,
+                isEnabled: prefilledIsEnabled
+            )
+        )
     }
 }
 

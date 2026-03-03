@@ -1,14 +1,17 @@
 //
 //  TransformRecordService.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import Foundation
 import SwiftData
 
+/// Persists transform records created by the transform pipeline.
 public enum TransformRecordService {
+    /// Saves a new transform record and persists the model context.
     @discardableResult
     public static func saveRecord(
         context: ModelContext,
@@ -28,6 +31,7 @@ public enum TransformRecordService {
         return record
     }
 
+    /// Updates an existing transform record and persists the model context.
     @discardableResult
     public static func updateRecord(
         context: ModelContext,
@@ -47,6 +51,7 @@ public enum TransformRecordService {
         return record
     }
 
+    /// Deletes all transform records from the model context.
     public static func deleteAll(
         context: ModelContext
     ) throws {
@@ -55,6 +60,7 @@ public enum TransformRecordService {
         try context.save()
     }
 
+    /// Deletes a specific transform record from the model context.
     public static func delete(
         context: ModelContext,
         record: TransformRecord

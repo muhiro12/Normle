@@ -1,24 +1,14 @@
 //
 //  SubscriptionAccessEvaluator.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-public struct SubscriptionAccessState {
-    public let isSubscribeOn: Bool
-    public let isICloudOn: Bool
-
-    public init(
-        isSubscribeOn: Bool,
-        isICloudOn: Bool
-    ) {
-        self.isSubscribeOn = isSubscribeOn
-        self.isICloudOn = isICloudOn
-    }
-}
-
+/// Resolves premium access and iCloud availability from subscription state.
 public enum SubscriptionAccessEvaluator {
+    /// Evaluates access using the set of purchased product identifiers.
     public static func evaluate(
         purchasedProductIDs: Set<String>,
         productID: String,
@@ -32,6 +22,7 @@ public enum SubscriptionAccessEvaluator {
         )
     }
 
+    /// Evaluates access using a precomputed subscription flag.
     public static func evaluate(
         hasActiveSubscription: Bool,
         isICloudOn: Bool,

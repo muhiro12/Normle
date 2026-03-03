@@ -1,52 +1,20 @@
 //
 //  TransformPipeline.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import CoreGraphics
 import Foundation
 
-public enum TransformPipelineError: LocalizedError, Equatable {
-    case missingImageData
-    case baseTransform(BaseTransformError)
-
-    public var errorDescription: String? {
-        switch self {
-        case .missingImageData:
-            "Select an image to decode."
-        case .baseTransform(let error):
-            error.errorDescription
-        }
-    }
-}
-
-public struct TransformPipelineResult {
-    public let outputText: String
-    public let qrImage: CGImage?
-    public let recordSourceText: String?
-    public let recordTargetText: String
-    public let mappings: [Mapping]
-
-    public init(
-        outputText: String,
-        qrImage: CGImage?,
-        recordSourceText: String?,
-        recordTargetText: String,
-        mappings: [Mapping]
-    ) {
-        self.outputText = outputText
-        self.qrImage = qrImage
-        self.recordSourceText = recordSourceText
-        self.recordTargetText = recordTargetText
-        self.mappings = mappings
-    }
-}
-
+/// Applies the selected transform presets to source text.
 public struct TransformPipeline {
+    /// Creates a transform pipeline.
     public init() {}
 
+    /// Runs the selected presets and returns either a pipeline result or an error.
     public func run(
         sourceText: String,
         presets: [TransformPreset],
@@ -54,6 +22,34 @@ public struct TransformPipeline {
         options: MaskingOptions,
         imageData: Data?
     ) -> Result<TransformPipelineResult, TransformPipelineError> {
+        if let qrResult = qrResultIfNeeded(
+            sourceText: sourceText,
+            presets: presets,
+            imageData: imageData
+        ) {
+            return qrResult
+        }
+
+        return runStandardPresets(
+            sourceText: sourceText,
+            presets: presets,
+            maskRules: maskRules,
+            options: options
+        )
+    }
+}
+
+private extension TransformPipeline {
+    struct TransformState {
+        var outputText: String
+        var mappings: [Mapping]
+    }
+
+    func qrResultIfNeeded(
+        sourceText: String,
+        presets: [TransformPreset],
+        imageData: Data?
+    ) -> Result<TransformPipelineResult, TransformPipelineError>? {
         if presets.contains(.qrEncode) {
             switch BaseTransform.qrEncode.qrCodeImage(for: sourceText) {
             case .success(let image):
@@ -75,7 +71,11 @@ public struct TransformPipeline {
             guard let imageData else {
                 return .failure(.missingImageData)
             }
-            switch BaseTransform.qrDecode.apply(text: String(), imageData: imageData) {
+
+            switch BaseTransform.qrDecode.apply(
+                text: String(),
+                imageData: imageData
+            ) {
             case .success(let output):
                 return .success(
                     .init(
@@ -91,52 +91,83 @@ public struct TransformPipeline {
             }
         }
 
-        var outputText = sourceText
-        var mappings = [Mapping]()
+        return nil
+    }
+
+    func runStandardPresets(
+        sourceText: String,
+        presets: [TransformPreset],
+        maskRules: [MaskingRule],
+        options: MaskingOptions
+    ) -> Result<TransformPipelineResult, TransformPipelineError> {
+        var state = TransformState(
+            outputText: sourceText,
+            mappings: []
+        )
+
         for preset in presets {
             switch preset {
             case .builtIn(let transform):
-                let result = transform.apply(text: outputText)
-                switch result {
-                case .success(let transformedText):
-                    outputText = transformedText
-                    if mappings.isEmpty == false {
-                        switch transformedMappings(
-                            mappings,
-                            using: transform
-                        ) {
-                        case .success(let transformedMappings):
-                            mappings = transformedMappings
-                        case .failure(let error):
-                            return .failure(.baseTransform(error))
-                        }
-                    }
+                switch applyBuiltInTransform(
+                    transform,
+                    state: state
+                ) {
+                case .success(let updatedState):
+                    state = updatedState
                 case .failure(let error):
-                    return .failure(.baseTransform(error))
+                    return .failure(error)
                 }
             case .customMapping:
                 let masked = MaskingService.anonymize(
-                    text: outputText,
+                    text: state.outputText,
                     maskRules: maskRules,
                     options: options
                 )
-                outputText = masked.maskedText
-                mappings = masked.mappings
+                state.outputText = masked.maskedText
+                state.mappings = masked.mappings
             }
         }
+
         return .success(
             .init(
-                outputText: outputText,
+                outputText: state.outputText,
                 qrImage: nil,
                 recordSourceText: sourceText,
-                recordTargetText: outputText,
-                mappings: mappings
+                recordTargetText: state.outputText,
+                mappings: state.mappings
             )
         )
     }
-}
 
-private extension TransformPipeline {
+    func applyBuiltInTransform(
+        _ transform: BaseTransform,
+        state: TransformState
+    ) -> Result<TransformState, TransformPipelineError> {
+        switch transform.apply(text: state.outputText) {
+        case .success(let transformedText):
+            var updatedState = TransformState(
+                outputText: transformedText,
+                mappings: state.mappings
+            )
+            guard state.mappings.isEmpty == false else {
+                return .success(updatedState)
+            }
+
+            switch transformedMappings(
+                state.mappings,
+                using: transform
+            ) {
+            case .success(let transformedMappings):
+                updatedState.mappings = transformedMappings
+                return .success(updatedState)
+            case .failure(let error):
+                return .failure(.baseTransform(error))
+            }
+        case .failure(let error):
+            return .failure(.baseTransform(error))
+        }
+    }
+
     func transformedMappings(
         _ mappings: [Mapping],
         using transform: BaseTransform
@@ -147,11 +178,11 @@ private extension TransformPipeline {
             case .success(let transformedMaskedText):
                 transformedMappings.append(
                     .init(
-                        id: mapping.id,
                         original: mapping.original,
                         masked: transformedMaskedText,
                         kind: mapping.kind,
-                        occurrenceCount: mapping.occurrenceCount
+                        occurrenceCount: mapping.occurrenceCount,
+                        id: mapping.id
                     )
                 )
             case .failure(let error):

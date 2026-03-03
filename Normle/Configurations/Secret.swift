@@ -3,6 +3,7 @@
 //  Normle
 //
 //  Created by Hiromu Nakano on 2026/02/27.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 enum Secret {

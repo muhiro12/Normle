@@ -1,10 +1,19 @@
+//
+//  CompatibilityContractTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2026/02/27.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 import Foundation
 @testable import NormleLibrary
 import SwiftData
 import Testing
 
 struct CompatibilityContractTests {
-    @Test func boolAppStorageKeysRemainStable() {
+    @Test
+    func boolAppStorageKeysRemainStable() {
         #expect(BoolAppStorageKey.isSubscribeOn.rawValue == "m5k3I8s9")
         #expect(BoolAppStorageKey.isICloudOn.rawValue == "c1o9U2d4")
         #expect(BoolAppStorageKey.isURLMaskingEnabled.rawValue == "f3R8q1L0")
@@ -12,15 +21,18 @@ struct CompatibilityContractTests {
         #expect(BoolAppStorageKey.isPhoneMaskingEnabled.rawValue == "p6V1x8N3")
     }
 
-    @Test func dataAppStorageKeysRemainStable() {
+    @Test
+    func dataAppStorageKeysRemainStable() {
         #expect(DataAppStorageKey.userPreferences.rawValue == "U9r3E7p2")
     }
 
-    @Test func userPreferencesVersionRemainsStable() {
+    @Test
+    func userPreferencesVersionRemainsStable() {
         #expect(UserPreferences.currentVersion == 1)
     }
 
-    @Test func schemaVersionRemainsStable() {
+    @Test
+    func schemaVersionRemainsStable() {
         #expect(NormleSchemaV1.versionIdentifier == .init(1, 0, 0))
         #expect(
             NormleSchemaV1.models.map { String(describing: $0) }.sorted() == [
@@ -31,7 +43,8 @@ struct CompatibilityContractTests {
         )
     }
 
-    @Test func mappingKindRawValuesRemainStable() {
+    @Test
+    func mappingKindRawValuesRemainStable() {
         let expectedRawValues = [
             "person",
             "company",
@@ -45,12 +58,14 @@ struct CompatibilityContractTests {
         #expect(MappingKind.allCases.map(\.rawValue) == expectedRawValues)
     }
 
-    @Test func tagTypeRawValuesRemainStable() {
+    @Test
+    func tagTypeRawValuesRemainStable() {
         #expect(TagType.maskRule.rawValue == "5f4c06c9")
         #expect(TagType.maskRecord.rawValue == "c2b7a1e8")
     }
 
-    @Test func baseTransformRawValuesRemainStable() {
+    @Test
+    func baseTransformRawValuesRemainStable() {
         let expectedRawValues = [
             "fullwidthAlphanumericToHalfwidth",
             "halfwidthAlphanumericToFullwidth",
@@ -72,7 +87,8 @@ struct CompatibilityContractTests {
         #expect(BaseTransform.allCases.map(\.rawValue) == expectedRawValues)
     }
 
-    @Test func mappingRuleTransferExportVersionRemainsStable() throws {
+    @Test
+    func mappingRuleTransferExportVersionRemainsStable() throws {
         let context = try makeContext()
         try MappingRule.create(
             context: context,
@@ -92,7 +108,8 @@ struct CompatibilityContractTests {
         #expect(envelope.rules.first?.target == "target")
     }
 
-    @Test func userPreferencesDecodeKeepsDefaultsForMissingFields() throws {
+    @Test
+    func userPreferencesDecodeKeepsDefaultsForMissingFields() throws {
         let payload = """
         {
           "version": 1,
@@ -116,7 +133,8 @@ struct CompatibilityContractTests {
         #expect(decoded.presetSelection.base64Transform == nil)
     }
 
-    @Test func userPreferencesDecodeIgnoresUnknownTransformRawValue() throws {
+    @Test
+    func userPreferencesDecodeIgnoresUnknownTransformRawValue() throws {
         let payload = """
         {
           "version": 1,
@@ -137,7 +155,8 @@ struct CompatibilityContractTests {
         #expect(decoded.presetSelection.caseTransform == nil)
     }
 
-    @Test func mappingDecodeSupportsLegacyKeys() throws {
+    @Test
+    func mappingDecodeSupportsLegacyKeys() throws {
         let payload = """
         {
           "source": "Alice",
@@ -156,13 +175,14 @@ struct CompatibilityContractTests {
         #expect(decoded.occurrenceCount == 2)
     }
 
-    @Test func mappingEncodeUsesCurrentContractKeys() throws {
+    @Test
+    func mappingEncodeUsesCurrentContractKeys() throws {
         let mapping = Mapping(
-            id: UUID(uuidString: "11111111-2222-3333-4444-555555555555") ?? .init(),
             original: "Alice",
             masked: "Person A",
             kind: .person,
-            occurrenceCount: 3
+            occurrenceCount: 3,
+            id: UUID(uuidString: "11111111-2222-3333-4444-555555555555") ?? .init()
         )
 
         let data = try JSONEncoder().encode(mapping)

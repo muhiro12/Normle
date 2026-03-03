@@ -1,8 +1,9 @@
 //
 //  ContentView.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import NormleLibrary
@@ -10,14 +11,14 @@ import StoreKitWrapper
 import SwiftData
 import SwiftUI
 
-private enum Tab: Hashable {
-    case transforms
-    case mappings
-    case history
-    case settings
-}
-
 struct ContentView: View {
+    private enum Tab: Hashable {
+        case transforms
+        case mappings
+        case history
+        case settings
+    }
+
     @Environment(Store.self)
     private var store
 

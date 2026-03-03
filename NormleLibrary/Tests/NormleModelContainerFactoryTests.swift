@@ -1,3 +1,11 @@
+//
+//  NormleModelContainerFactoryTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2026/02/27.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import SwiftData
 import Testing
@@ -8,7 +16,8 @@ struct NormleModelContainerFactoryTests {
     }
 
     @MainActor
-    @Test func makeContainerWithoutCloudSyncSupportsPersistence() throws {
+    @Test
+    func makeContainerWithoutCloudSyncSupportsPersistence() throws {
         let container = try NormleModelContainerFactory.make(
             cloudSyncEnabled: false
         )
@@ -28,7 +37,8 @@ struct NormleModelContainerFactoryTests {
     }
 
     @MainActor
-    @Test func makeWithFallbackDisablesCloudSyncAfterCloudFailure() throws {
+    @Test
+    func makeWithFallbackDisablesCloudSyncAfterCloudFailure() throws {
         let localContainer = try NormleModelContainerFactory.make(
             cloudSyncEnabled: false
         )
@@ -54,7 +64,8 @@ struct NormleModelContainerFactoryTests {
     }
 
     @MainActor
-    @Test func makeWithFallbackKeepsCloudSyncStateWhenLocalOnly() throws {
+    @Test
+    func makeWithFallbackKeepsCloudSyncStateWhenLocalOnly() throws {
         let result = NormleModelContainerFactory.makeWithFallback(
             cloudSyncEnabled: false
         )

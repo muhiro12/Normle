@@ -1,25 +1,36 @@
 //
 //  MappingRuleTransferService.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import Foundation
 import SwiftData
 
+/// Imports and exports collections of mapping rules.
 public enum MappingRuleTransferService {
+    /// Describes how imported rules should be merged with existing rules.
     public enum ImportPolicy {
+        /// Replaces all existing rules with the imported rules.
         case replaceAll
+        /// Updates matching rules and inserts non-matching rules.
         case mergeExisting
+        /// Inserts imported rules without attempting to match existing rules.
         case appendNew
     }
 
+    /// Summarizes the result of an import operation.
     public struct ImportResult {
+        /// The number of newly inserted rules.
         public let insertedCount: Int
+        /// The number of existing rules updated during import.
         public let updatedCount: Int
+        /// The total number of rules after import completes.
         public let totalCount: Int
 
+        /// Returns summary lines built from the import counters.
         public func summaryLines(
             insertedText: (Int) -> String,
             updatedText: (Int) -> String,
@@ -34,11 +45,6 @@ public enum MappingRuleTransferService {
     }
 
     private struct Payload: Codable {
-        let date: Date
-        let source: String
-        let target: String
-        let isEnabled: Bool
-
         enum CodingKeys: String, CodingKey {
             case date
             case source
@@ -47,6 +53,11 @@ public enum MappingRuleTransferService {
             case original
             case masked
         }
+
+        let date: Date
+        let source: String
+        let target: String
+        let isEnabled: Bool
 
         init(
             date: Date,
@@ -61,23 +72,45 @@ public enum MappingRuleTransferService {
         }
 
         init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            date = try container.decode(Date.self, forKey: .date)
-            if let decodedSource = try container.decodeIfPresent(String.self, forKey: .source) {
+            let container = try decoder.container(
+                keyedBy: CodingKeys.self
+            )
+            date = try container.decode(
+                Date.self,
+                forKey: .date
+            )
+            if let decodedSource = try container.decodeIfPresent(
+                String.self,
+                forKey: .source
+            ) {
                 source = decodedSource
             } else {
-                source = try container.decode(String.self, forKey: .original)
+                source = try container.decode(
+                    String.self,
+                    forKey: .original
+                )
             }
-            if let decodedTarget = try container.decodeIfPresent(String.self, forKey: .target) {
+            if let decodedTarget = try container.decodeIfPresent(
+                String.self,
+                forKey: .target
+            ) {
                 target = decodedTarget
             } else {
-                target = try container.decode(String.self, forKey: .masked)
+                target = try container.decode(
+                    String.self,
+                    forKey: .masked
+                )
             }
-            isEnabled = try container.decode(Bool.self, forKey: .isEnabled)
+            isEnabled = try container.decode(
+                Bool.self,
+                forKey: .isEnabled
+            )
         }
 
         func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
+            var container = encoder.container(
+                keyedBy: CodingKeys.self
+            )
             try container.encode(date, forKey: .date)
             try container.encode(source, forKey: .source)
             try container.encode(target, forKey: .target)
@@ -91,13 +124,17 @@ public enum MappingRuleTransferService {
         let rules: [Payload]
     }
 
+    /// Errors that can occur while importing transfer data.
     public enum TransferError: Error {
+        /// The imported data uses an unsupported transfer version.
         case unsupportedVersion
+        /// The imported data is empty.
         case missingData
     }
 }
 
 public extension MappingRuleTransferService {
+    /// Exports all mapping rules from the provided model context.
     static func exportData(
         context: ModelContext
     ) throws -> Data {
@@ -110,6 +147,7 @@ public extension MappingRuleTransferService {
         return try exportData(rules: rules)
     }
 
+    /// Exports the provided mapping rules to transfer data.
     static func exportData(
         rules: [MappingRule]
     ) throws -> Data {
@@ -134,97 +172,160 @@ public extension MappingRuleTransferService {
         return try encoder.encode(transfer)
     }
 
+    /// Imports mapping rules from transfer data using the selected policy.
     @discardableResult
     static func importData(
         _ data: Data,
         context: ModelContext,
         policy: ImportPolicy
     ) throws -> ImportResult {
+        let transfer = try decodeTransfer(from: data)
+        let existing = try fetchRules(context: context)
+        let counts = try importRules(
+            transfer.rules,
+            existing: existing,
+            policy: policy,
+            context: context
+        )
+        try context.save()
+        return .init(
+            insertedCount: counts.insertedCount,
+            updatedCount: counts.updatedCount,
+            totalCount: try fetchRules(context: context).count
+        )
+    }
+}
+
+private extension MappingRuleTransferService {
+    private struct ImportCounts {
+        var insertedCount = 0
+        var updatedCount = 0
+    }
+
+    private static func decodeTransfer(from data: Data) throws -> Transfer {
         guard data.isEmpty == false else {
             throw TransferError.missingData
         }
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let transfer = try decoder.decode(Transfer.self, from: data)
+        let transfer = try decoder.decode(
+            Transfer.self,
+            from: data
+        )
 
         guard [1, 2].contains(transfer.version) else {
             throw TransferError.unsupportedVersion
         }
 
-        let existing = try context.fetch(
-            FetchDescriptor<MappingRule>()
-        )
+        return transfer
+    }
 
-        var insertedCount = 0
-        var updatedCount = 0
+    private static func fetchRules(context: ModelContext) throws -> [MappingRule] {
+        try context.fetch(FetchDescriptor<MappingRule>())
+    }
 
+    private static func importRules(
+        _ payloads: [Payload],
+        existing: [MappingRule],
+        policy: ImportPolicy,
+        context: ModelContext
+    ) throws -> ImportCounts {
         switch policy {
         case .replaceAll:
-            existing.forEach(context.delete)
-            for payload in transfer.rules {
-                try insert(
-                    payload: payload,
-                    context: context
-                )
-                insertedCount += 1
-            }
+            return try replaceAll(
+                payloads,
+                existing: existing,
+                context: context
+            )
         case .mergeExisting:
-            for payload in transfer.rules {
-                if let match = existing.first(where: {
-                    $0.source == payload.source ||
-                        $0.target == payload.target
-                }) {
-                    try apply(
-                        payload: payload,
-                        to: match,
-                        context: context
-                    )
-                    updatedCount += 1
-                    continue
-                }
-
-                try insert(
-                    payload: payload,
-                    context: context
-                )
-                insertedCount += 1
-            }
+            return try mergeExisting(
+                payloads,
+                existing: existing,
+                context: context
+            )
         case .appendNew:
-            for payload in transfer.rules {
-                try insert(
+            return try appendNew(
+                payloads,
+                context: context
+            )
+        }
+    }
+
+    private static func replaceAll(
+        _ payloads: [Payload],
+        existing: [MappingRule],
+        context: ModelContext
+    ) throws -> ImportCounts {
+        existing.forEach(context.delete)
+
+        var counts = ImportCounts()
+        for payload in payloads {
+            try insert(
+                payload: payload,
+                context: context
+            )
+            counts.insertedCount += 1
+        }
+        return counts
+    }
+
+    private static func mergeExisting(
+        _ payloads: [Payload],
+        existing: [MappingRule],
+        context: ModelContext
+    ) throws -> ImportCounts {
+        var counts = ImportCounts()
+
+        for payload in payloads {
+            if let match = existing.first(where: { rule in
+                rule.source == payload.source ||
+                    rule.target == payload.target
+            }) {
+                try apply(
                     payload: payload,
+                    to: match,
                     context: context
                 )
-                insertedCount += 1
+                counts.updatedCount += 1
+                continue
             }
+
+            try insert(
+                payload: payload,
+                context: context
+            )
+            counts.insertedCount += 1
         }
 
-        try context.save()
-
-        let totalCount = try context.fetch(
-            FetchDescriptor<MappingRule>()
-        ).count
-
-        return .init(
-            insertedCount: insertedCount,
-            updatedCount: updatedCount,
-            totalCount: totalCount
-        )
+        return counts
     }
-}
 
-private extension MappingRuleTransferService {
+    private static func appendNew(
+        _ payloads: [Payload],
+        context: ModelContext
+    ) throws -> ImportCounts {
+        var counts = ImportCounts()
+        for payload in payloads {
+            try insert(
+                payload: payload,
+                context: context
+            )
+            counts.insertedCount += 1
+        }
+        return counts
+    }
+
     private static func insert(
         payload: Payload,
         context: ModelContext
     ) throws {
         try MappingRule.create(
             context: context,
-            date: payload.date,
             source: payload.source,
             target: payload.target,
-            isEnabled: payload.isEnabled
+            isEnabled: payload.isEnabled,
+            date: payload.date
         )
     }
 
@@ -235,10 +336,10 @@ private extension MappingRuleTransferService {
     ) throws {
         try rule.update(
             context: context,
-            date: payload.date,
             source: payload.source,
             target: payload.target,
-            isEnabled: payload.isEnabled
+            isEnabled: payload.isEnabled,
+            date: payload.date
         )
     }
 }

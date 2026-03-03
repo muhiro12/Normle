@@ -1,9 +1,18 @@
+//
+//  TransformExecutionServiceTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2026/02/27.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 @testable import NormleLibrary
 import SwiftData
 import Testing
 
 struct TransformExecutionServiceTests {
-    @Test func runAndSavePersistsRecordWithMappings() throws {
+    @Test
+    func runAndSavePersistsRecordWithMappings() throws {
         let context = testContext
         let presets: [TransformPreset] = [
             .customMapping,
@@ -22,8 +31,7 @@ struct TransformExecutionServiceTests {
             isPhoneMaskingEnabled: false
         )
 
-        let result = TransformExecutionService.runAndSave(
-            context: context,
+        let result = TransformExecutionService(context: context).runAndSave(
             sourceText: "Secret",
             presets: presets,
             maskRules: maskRules,
@@ -44,10 +52,10 @@ struct TransformExecutionServiceTests {
         }
     }
 
-    @Test func runAndSaveReturnsPipelineError() {
+    @Test
+    func runAndSaveReturnsPipelineError() {
         let context = testContext
-        let result = TransformExecutionService.runAndSave(
-            context: context,
+        let result = TransformExecutionService(context: context).runAndSave(
             sourceText: String(),
             presets: [.builtIn(.qrDecode)],
             maskRules: [],

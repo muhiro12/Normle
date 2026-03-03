@@ -1,30 +1,25 @@
 //
 //  TransformExecutionService.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2026/02/27.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import Foundation
 import SwiftData
 
-public enum TransformExecutionError: LocalizedError {
-    case pipeline(TransformPipelineError)
-    case persistence(Error)
+/// Runs a transform pipeline and persists successful results.
+public struct TransformExecutionService {
+    private let context: ModelContext
 
-    public var errorDescription: String? {
-        switch self {
-        case .pipeline(let error):
-            error.errorDescription
-        case .persistence(let error):
-            error.localizedDescription
-        }
+    /// Creates a transform execution service for the provided model context.
+    public init(context: ModelContext) {
+        self.context = context
     }
-}
 
-public enum TransformExecutionService {
-    public static func runAndSave(
-        context: ModelContext,
+    /// Runs the pipeline and saves the resulting transform record on success.
+    public func runAndSave(
         sourceText: String,
         presets: [TransformPreset],
         maskRules: [MaskingRule],

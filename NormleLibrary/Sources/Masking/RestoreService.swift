@@ -1,13 +1,16 @@
 //
 //  RestoreService.swift
-//
+//  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import Foundation
 
+/// Restores masked text back to its original values using recorded mappings.
 public enum RestoreService {
+    /// Replaces masked values in the given text with their original values.
     public static func restore(
         text: String,
         mappings: [Mapping]

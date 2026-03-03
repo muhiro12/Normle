@@ -1,9 +1,18 @@
+//
+//  MappingRuleTransferCoordinatorTests.swift
+//  Normle
+//
+//  Created by Hiromu Nakano on 2026/02/27.
+//  Copyright © 2026 Hiromu Nakano. All rights reserved.
+//
+
 import Foundation
 @testable import NormleLibrary
 import Testing
 
 struct MappingRuleTransferCoordinatorTests {
-    @Test func exportDataReturnsEncodedRules() throws {
+    @Test
+    func exportDataReturnsEncodedRules() throws {
         let context = testContext
         _ = try MappingRule.create(
             context: context,
@@ -20,7 +29,8 @@ struct MappingRuleTransferCoordinatorTests {
         #expect(data.isEmpty == false)
     }
 
-    @Test func loadImportDataReadsFileContents() throws {
+    @Test
+    func loadImportDataReadsFileContents() throws {
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString)
             .appendingPathExtension("json")
