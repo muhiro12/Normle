@@ -25,8 +25,6 @@ local_home_directory="$ci_directory/home"
 cache_directory="$ci_directory/cache"
 temporary_directory="$ci_directory/tmp"
 clang_module_cache_directory="$cache_directory/clang/ModuleCache"
-package_cache_directory="$ci_directory/package_cache"
-cloned_source_packages_directory="$ci_directory/source_packages"
 swiftpm_cache_directory="$ci_directory/swiftpm_cache"
 swiftpm_config_directory="$ci_directory/swiftpm_config"
 
@@ -36,8 +34,6 @@ mkdir -p \
   "$local_home_directory/Library/Logs" \
   "$cache_directory" \
   "$clang_module_cache_directory" \
-  "$package_cache_directory" \
-  "$cloned_source_packages_directory" \
   "$swiftpm_cache_directory" \
   "$swiftpm_config_directory" \
   "$temporary_directory"
@@ -86,11 +82,10 @@ xcodebuild \
   -project "$project_path" \
   -scheme "NormleLibrary" \
   "${destination[@]}" \
+  -skipPackagePluginValidation \
   -parallel-testing-enabled NO \
   -derivedDataPath "$derived_data_path" \
   -resultBundlePath "$result_bundle_path" \
-  -clonedSourcePackagesDirPath "$cloned_source_packages_directory" \
-  -packageCachePath "$package_cache_directory" \
   "CLANG_MODULE_CACHE_PATH=$clang_module_cache_directory" \
   test
 

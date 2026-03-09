@@ -87,10 +87,10 @@ struct ContentView: View {
 #Preview("Content - Base") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
-    let preferencesStore = UserPreferencesStore()
-    let store = Store()
-    return ContentView()
-        .modelContainer(container)
-        .environment(store)
-        .environmentObject(preferencesStore)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.rootView(
+        ContentView(),
+        applyRuntimeBootstrap: false
+    )
+    .environment(Store())
 }

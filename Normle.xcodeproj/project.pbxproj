@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AD1F9A012F30B00100C260B2 /* MHPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A032F30B00100C260B2 /* MHPlatform */; };
 		AD0D68CA2ED1AC1100C260B2 /* StoreKitWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = AD0D68C92ED1AC1100C260B2 /* StoreKitWrapper */; };
 		ADF11DA72ED15BC4006B7FE1 /* NormleLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */; };
 /* End PBXBuildFile section */
@@ -42,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD1F9A012F30B00100C260B2 /* MHPlatform in Frameworks */,
 				ADF11DA72ED15BC4006B7FE1 /* NormleLibrary in Frameworks */,
 				AD0D68CA2ED1AC1100C260B2 /* StoreKitWrapper in Frameworks */,
 			);
@@ -87,6 +89,7 @@
 			);
 			name = Normle;
 			packageProductDependencies = (
+				AD1F9A032F30B00100C260B2 /* MHPlatform */,
 				ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */,
 				AD0D68C92ED1AC1100C260B2 /* StoreKitWrapper */,
 			);
@@ -121,6 +124,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				ADF11DA52ED15BC4006B7FE1 /* XCLocalSwiftPackageReference "NormleLibrary" */,
+				AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */,
 				AD0D68C82ED1AC1000C260B2 /* XCRemoteSwiftPackageReference "StoreKitWrapper" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -425,6 +429,14 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/muhiro12/MHPlatform.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		AD0D68C82ED1AC1000C260B2 /* XCRemoteSwiftPackageReference "StoreKitWrapper" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/muhiro12/StoreKitWrapper";
@@ -436,6 +448,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		AD1F9A032F30B00100C260B2 /* MHPlatform */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
+			productName = MHPlatform;
+		};
 		AD0D68C92ED1AC1100C260B2 /* StoreKitWrapper */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = AD0D68C82ED1AC1000C260B2 /* XCRemoteSwiftPackageReference "StoreKitWrapper" */;
