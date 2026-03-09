@@ -1,5 +1,5 @@
 //
-//  TransformsHomeView.swift
+//  TransformNavigationView.swift
 //  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
@@ -10,20 +10,20 @@ import NormleLibrary
 import SwiftData
 import SwiftUI
 
-struct TransformsHomeView: View {
+struct TransformNavigationView: View {
     var body: some View {
-        BaseTransformView()
-            .navigationTitle("Transforms")
+        NavigationStack {
+            BaseTransformView()
+                .navigationTitle("Transforms")
+        }
     }
 }
 
-#Preview("Transforms - Home") {
+#Preview("Transforms - Navigation") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
     let preferencesStore = UserPreferencesStore()
-    return NavigationStack {
-        TransformsHomeView()
-    }
-    .modelContainer(container)
-    .environmentObject(preferencesStore)
+    return TransformNavigationView()
+        .modelContainer(container)
+        .environmentObject(preferencesStore)
 }

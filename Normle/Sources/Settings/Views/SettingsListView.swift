@@ -1,5 +1,5 @@
 //
-//  SettingsView.swift
+//  SettingsListView.swift
 //  Normle
 //
 //  Created by Hiromu Nakano on 2025/11/23.
@@ -10,7 +10,7 @@ import NormleLibrary
 import SwiftData
 import SwiftUI
 
-struct SettingsView: View {
+struct SettingsListView: View {
     @Environment(\.modelContext)
     private var context
     @AppStorage(.isSubscribeOn)
@@ -78,7 +78,7 @@ struct SettingsView: View {
     }
 }
 
-private extension SettingsView {
+private extension SettingsListView {
     func deleteAllHistory() {
         do {
             try TransformRecordService.deleteAll(
@@ -93,7 +93,7 @@ private extension SettingsView {
 #Preview("Settings - Base") {
     let container = PreviewData.makeContainer()
     return NavigationStack {
-        SettingsView()
+        SettingsListView()
     }
     .modelContainer(container)
 }

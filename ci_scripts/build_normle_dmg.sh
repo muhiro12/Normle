@@ -106,7 +106,7 @@ if [[ "$app_signing_authority" != Developer\ ID\ Application:* ]]; then
   fail "Exported app is not signed with Developer ID Application. Found: ${app_signing_authority:-unknown}"
 fi
 
-project_entitlements_path="$repository_root/Normle/Normle.entitlements"
+project_entitlements_path="$repository_root/Normle/Configurations/Normle.entitlements"
 if [[ ! -f "$project_entitlements_path" ]]; then
   fail "Project entitlements file was not found: $project_entitlements_path"
 fi

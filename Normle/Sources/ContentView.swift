@@ -29,13 +29,11 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selection) {
-            NavigationStack {
-                TransformsHomeView()
-            }
-            .tabItem {
-                Label("Transforms", systemImage: "arrow.triangle.2.circlepath")
-            }
-            .tag(Tab.transforms)
+            TransformNavigationView()
+                .tabItem {
+                    Label("Transforms", systemImage: "arrow.triangle.2.circlepath")
+                }
+                .tag(Tab.transforms)
 
             MappingNavigationView()
                 .tabItem {
