@@ -6,7 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHPlatform
+import MHAppRuntimeCore
 import NormleLibrary
 import SwiftUI
 
@@ -94,8 +94,5 @@ struct ContentView: View {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
     let assembly = NormleAppAssembly.preview(container: container)
-    return assembly.rootView(
-        ContentView(),
-        applyRuntimeBootstrap: false
-    )
+    return assembly.previewRootView(ContentView())
 }

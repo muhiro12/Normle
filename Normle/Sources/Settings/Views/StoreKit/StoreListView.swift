@@ -19,10 +19,9 @@ struct StoreListView: View {
 #Preview("Store - List") {
     let assembly = NormleAppAssembly.preview()
 
-    return assembly.rootView(
+    return assembly.previewRootView(
         NavigationStack {
             StoreListView()
-        },
-        applyRuntimeBootstrap: false
+        }
     )
 }

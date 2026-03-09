@@ -6,8 +6,10 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHPlatform
+import MHAppRuntimeCore
+import MHPreferences
 import NormleLibrary
+import StoreKitWrapper
 import SwiftData
 import SwiftUI
 
@@ -50,34 +52,62 @@ struct NormleAppAssembly {
 
     @ViewBuilder
     func rootView<Content: View>(
-        _ content: Content,
-        applyRuntimeBootstrap: Bool = true
+        _ content: Content
     ) -> some View {
-        if applyRuntimeBootstrap {
-            content
-                .modelContainer(modelContainer)
-                .environmentObject(preferencesStore)
-                .mhAppRuntimeBootstrap(bootstrap)
-        } else {
-            content
-                .modelContainer(modelContainer)
-                .environmentObject(preferencesStore)
-                .environment(bootstrap.runtime)
-        }
+        content
+            .modelContainer(modelContainer)
+            .environmentObject(preferencesStore)
+            .mhAppRuntimeBootstrap(bootstrap)
+    }
+
+    func previewRootView<Content: View>(
+        _ content: Content
+    ) -> some View {
+        content
+            .modelContainer(modelContainer)
+            .environmentObject(preferencesStore)
+            .mhAppRuntimeEnvironment(bootstrap)
     }
 }
 
 private extension NormleAppAssembly {
     static func makeBootstrap() -> MHAppRuntimeBootstrap {
         .init(
-            configuration: .init(
-                subscriptionProductIDs: [Secret.productID],
-                subscriptionGroupID: nil,
-                nativeAdUnitID: nil,
-                preferencesSuiteName: nil,
-                showsLicenses: false
-            ),
+            runtime: makeRuntime(),
             lifecyclePlan: .empty
         )
+    }
+
+    static func makeRuntime() -> MHAppRuntime {
+        let configuration = MHAppConfiguration(
+            subscriptionProductIDs: [Secret.productID],
+            subscriptionGroupID: nil,
+            nativeAdUnitID: nil,
+            preferencesSuiteName: nil,
+            showsLicenses: false
+        )
+        let store = Store()
+
+        return .init(
+            configuration: configuration,
+            preferenceStore: .init(),
+            startStore: { purchasedProductIDsDidSet in
+                store.open(
+                    groupID: configuration.subscriptionGroupID,
+                    productIDs: configuration.subscriptionProductIDs
+                ) { products in
+                    purchasedProductIDsDidSet(
+                        Set(products.map(\.id))
+                    )
+                }
+            },
+            subscriptionSectionViewBuilder: {
+                AnyView(store.buildSubscriptionSection())
+            },
+            startAds: nil,
+            nativeAdViewBuilder: nil
+        ) {
+            AnyView(EmptyView())
+        }
     }
 }

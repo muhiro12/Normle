@@ -6,7 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHPlatform
+import MHAppRuntimeCore
 import SwiftUI
 
 struct StoreSection: View {
@@ -21,10 +21,9 @@ struct StoreSection: View {
 #Preview("Store - Section") {
     let assembly = NormleAppAssembly.preview()
 
-    return assembly.rootView(
+    return assembly.previewRootView(
         List {
             StoreSection()
-        },
-        applyRuntimeBootstrap: false
+        }
     )
 }
