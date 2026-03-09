@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		AD1F9A012F30B00100C260B2 /* MHPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A032F30B00100C260B2 /* MHPlatform */; };
-		AD0D68CA2ED1AC1100C260B2 /* StoreKitWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = AD0D68C92ED1AC1100C260B2 /* StoreKitWrapper */; };
 		ADF11DA72ED15BC4006B7FE1 /* NormleLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */; };
 /* End PBXBuildFile section */
 
@@ -45,7 +44,6 @@
 			files = (
 				AD1F9A012F30B00100C260B2 /* MHPlatform in Frameworks */,
 				ADF11DA72ED15BC4006B7FE1 /* NormleLibrary in Frameworks */,
-				AD0D68CA2ED1AC1100C260B2 /* StoreKitWrapper in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,7 +89,6 @@
 			packageProductDependencies = (
 				AD1F9A032F30B00100C260B2 /* MHPlatform */,
 				ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */,
-				AD0D68C92ED1AC1100C260B2 /* StoreKitWrapper */,
 			);
 			productName = Normle;
 			productReference = ADD34ED32ED1566900CB9DE2 /* Normle.app */;
@@ -125,7 +122,6 @@
 			packageReferences = (
 				ADF11DA52ED15BC4006B7FE1 /* XCLocalSwiftPackageReference "NormleLibrary" */,
 				AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */,
-				AD0D68C82ED1AC1000C260B2 /* XCRemoteSwiftPackageReference "StoreKitWrapper" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = ADD34ED42ED1566900CB9DE2 /* Products */;
@@ -437,14 +433,6 @@
 				kind = branch;
 			};
 		};
-		AD0D68C82ED1AC1000C260B2 /* XCRemoteSwiftPackageReference "StoreKitWrapper" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/muhiro12/StoreKitWrapper";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -452,11 +440,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
 			productName = MHPlatform;
-		};
-		AD0D68C92ED1AC1100C260B2 /* StoreKitWrapper */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AD0D68C82ED1AC1000C260B2 /* XCRemoteSwiftPackageReference "StoreKitWrapper" */;
-			productName = StoreKitWrapper;
 		};
 		ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */ = {
 			isa = XCSwiftPackageProductDependency;

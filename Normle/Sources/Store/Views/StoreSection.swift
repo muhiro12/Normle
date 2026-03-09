@@ -6,21 +6,25 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import StoreKitWrapper
+import MHPlatform
 import SwiftUI
 
 struct StoreSection: View {
-    @Environment(Store.self)
-    private var store
+    @Environment(MHAppRuntime.self)
+    private var runtime
 
     var body: some View {
-        store.buildSubscriptionSection()
+        runtime.subscriptionSectionView()
     }
 }
 
 #Preview("Store - Section") {
-    List {
-        StoreSection()
-    }
-    .environment(Store())
+    let assembly = NormleAppAssembly.preview()
+
+    return assembly.rootView(
+        List {
+            StoreSection()
+        },
+        applyRuntimeBootstrap: false
+    )
 }

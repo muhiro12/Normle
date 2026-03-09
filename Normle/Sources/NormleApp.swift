@@ -7,7 +7,6 @@
 //
 
 import NormleLibrary
-import StoreKitWrapper
 import SwiftUI
 
 @main
@@ -16,7 +15,6 @@ struct NormleApp: App {
     private var isICloudOn
 
     private let assembly: NormleAppAssembly
-    private let sharedStore: Store
 
     var body: some Scene {
         WindowGroup {
@@ -24,12 +22,10 @@ struct NormleApp: App {
                 ContentView()
                     .id(isICloudOn)
             )
-            .environment(sharedStore)
         }
     }
 
     init() {
-        sharedStore = .init()
         assembly = .live()
         isICloudOn = assembly.isCloudSyncEnabled
     }

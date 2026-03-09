@@ -6,9 +6,8 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHPlatform
 import NormleLibrary
-import StoreKitWrapper
-import SwiftData
 import SwiftUI
 
 struct ContentView: View {
@@ -19,8 +18,8 @@ struct ContentView: View {
         case settings
     }
 
-    @Environment(Store.self)
-    private var store
+    @Environment(MHAppRuntime.self)
+    private var runtime
 
     @AppStorage(.isSubscribeOn)
     private var isSubscribeOn
@@ -57,30 +56,39 @@ struct ContentView: View {
                 .tag(Tab.settings)
         }
         .liquidGlassButtonStyle()
-        .task {
-            #if os(macOS)
-            let accessState = SubscriptionAccessEvaluator.evaluate(
+        .task(id: runtime.premiumStatus) {
+            synchronizeSubscriptionAccess()
+        }
+    }
+
+    private func synchronizeSubscriptionAccess() {
+        #if os(macOS)
+        applyAccessState(
+            SubscriptionAccessEvaluator.evaluate(
                 hasActiveSubscription: false,
                 isICloudOn: isICloudOn,
                 grantsPremiumAccessWithoutSubscription: true
             )
-            isSubscribeOn = accessState.isSubscribeOn
-            isICloudOn = accessState.isICloudOn
-            #else
-            store.open(
-                groupID: nil,
-                productIDs: [Secret.productID]
-            ) {
-                let accessState = SubscriptionAccessEvaluator.evaluate(
-                    purchasedProductIDs: Set($0.map(\.id)),
-                    productID: Secret.productID,
-                    isICloudOn: isICloudOn
-                )
-                isSubscribeOn = accessState.isSubscribeOn
-                isICloudOn = accessState.isICloudOn
-            }
-            #endif
+        )
+        #else
+        guard runtime.premiumStatus != .unknown else {
+            return
         }
+
+        applyAccessState(
+            SubscriptionAccessEvaluator.evaluate(
+                hasActiveSubscription: runtime.premiumStatus == .active,
+                isICloudOn: isICloudOn
+            )
+        )
+        #endif
+    }
+
+    private func applyAccessState(
+        _ accessState: SubscriptionAccessState
+    ) {
+        isSubscribeOn = accessState.isSubscribeOn
+        isICloudOn = accessState.isICloudOn
     }
 }
 
@@ -92,5 +100,4 @@ struct ContentView: View {
         ContentView(),
         applyRuntimeBootstrap: false
     )
-    .environment(Store())
 }

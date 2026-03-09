@@ -6,7 +6,6 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import StoreKitWrapper
 import SwiftUI
 
 struct StoreNavigationView: View {
@@ -18,6 +17,10 @@ struct StoreNavigationView: View {
 }
 
 #Preview("Store - Navigation") {
-    StoreNavigationView()
-        .environment(Store())
+    let assembly = NormleAppAssembly.preview()
+
+    return assembly.rootView(
+        StoreNavigationView(),
+        applyRuntimeBootstrap: false
+    )
 }
