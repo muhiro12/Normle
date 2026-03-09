@@ -52,8 +52,13 @@ private extension HistoryDetailView {
                 Text("No explicit mappings were stored. Restore falls back to source and target text.")
                     .foregroundStyle(.secondary)
             } else {
-                Text("Stored mappings: \(record.mappings.count)")
-                    .foregroundStyle(.secondary)
+                Text(
+                    String.localizedStringWithFormat(
+                        String(localized: "Stored mappings: %lld"),
+                        record.mappings.count
+                    )
+                )
+                .foregroundStyle(.secondary)
             }
         }
     }
