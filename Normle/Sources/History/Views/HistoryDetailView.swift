@@ -9,6 +9,7 @@
 import NormleLibrary
 import SwiftData
 import SwiftUI
+import TipKit
 
 struct HistoryDetailView: View {
     let record: TransformRecord
@@ -21,6 +22,9 @@ struct HistoryDetailView: View {
             restoreSection
         }
         .navigationTitle(record.date.formatted(date: .abbreviated, time: .shortened))
+        .task {
+            markHistoryRecordOpened()
+        }
     }
 }
 
@@ -70,7 +74,13 @@ private extension HistoryDetailView {
             } label: {
                 Label("Restore with this record", systemImage: "arrow.uturn.backward")
             }
+            .popoverTip(HistoryRestoreTip())
         }
+    }
+
+    func markHistoryRecordOpened() {
+        NormleTipManager.donate(NormleTipEvents.didOpenHistoryRecord)
+        HistoryListTip().invalidate(reason: .actionPerformed)
     }
 }
 

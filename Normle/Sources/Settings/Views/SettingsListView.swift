@@ -9,6 +9,7 @@
 import NormleLibrary
 import SwiftData
 import SwiftUI
+import TipKit
 
 struct SettingsListView: View {
     @Environment(\.modelContext)
@@ -19,18 +20,24 @@ struct SettingsListView: View {
     private var isICloudOn
 
     @State private var isDeleteDialogPresented = false
+    @State private var alertTitle = String()
+    @State private var alertMessage = String()
+    @State private var isShowingAlert = false
+    @State private var tipsRefreshID: UUID = .init()
 
     var body: some View {
         List {
             Section {
                 if isSubscribeOn {
                     Toggle("Use iCloud sync", isOn: $isICloudOn)
+                        .popoverTip(isICloudOn ? nil : ICloudSyncTip())
                 } else {
                     NavigationLink {
                         StoreNavigationView()
                     } label: {
                         Text("Subscription")
                     }
+                    .popoverTip(SubscriptionSyncTip())
                 }
             } header: {
                 Text("Subscription")
@@ -48,7 +55,14 @@ struct SettingsListView: View {
             } footer: {
                 Text("This action cannot be undone.")
             }
+
+            Section("Help") {
+                Button("Show tips again") {
+                    resetTips()
+                }
+            }
         }
+        .id(tipsRefreshID)
         .navigationTitle("Settings")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -75,6 +89,16 @@ struct SettingsListView: View {
                 Text("Cancel")
             }
         }
+        .alert(
+            alertTitle,
+            isPresented: $isShowingAlert
+        ) {
+            Button("OK", role: .cancel) {
+                isShowingAlert = false
+            }
+        } message: {
+            Text(alertMessage)
+        }
     }
 }
 
@@ -86,6 +110,20 @@ private extension SettingsListView {
             )
         } catch {
             assertionFailure(error.localizedDescription)
+        }
+    }
+
+    func resetTips() {
+        do {
+            try NormleTipManager.reset()
+            tipsRefreshID = .init()
+            alertTitle = String(localized: "Tips reset")
+            alertMessage = String(localized: "Tips will appear again as you move through the app.")
+            isShowingAlert = true
+        } catch {
+            alertTitle = String(localized: "Error")
+            alertMessage = error.localizedDescription
+            isShowingAlert = true
         }
     }
 }

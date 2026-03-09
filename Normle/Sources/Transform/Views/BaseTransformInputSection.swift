@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import TipKit
 import UniformTypeIdentifiers
 
 struct BaseTransformInputSection: View {
@@ -40,6 +41,9 @@ struct BaseTransformInputSection: View {
 
     var sourceTextSection: some View {
         Section {
+            TipView(TransformSelectionMappingTip())
+                .tipViewStyle(.miniTip)
+
             SelectableTextEditor(
                 text: $sourceText,
                 selectedText: $selectedSourceText

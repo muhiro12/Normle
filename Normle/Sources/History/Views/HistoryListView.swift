@@ -9,6 +9,7 @@
 import NormleLibrary
 import SwiftData
 import SwiftUI
+import TipKit
 
 struct HistoryListView: View {
     @Environment(\.modelContext)
@@ -30,6 +31,10 @@ struct HistoryListView: View {
                 )
                 .listRowInsets(emptyStateRowInsets)
             } else {
+                TipView(HistoryListTip())
+                    .tipViewStyle(.miniTip)
+                    .listRowInsets(listRowInsets)
+
                 ForEach(records) { record in
                     NavigationLink(value: record) {
                         HistoryRowView(record: record)

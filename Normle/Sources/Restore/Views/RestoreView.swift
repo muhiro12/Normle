@@ -9,6 +9,7 @@
 import NormleLibrary
 import SwiftData
 import SwiftUI
+import TipKit
 
 struct RestoreView: View {
     let record: TransformRecord
@@ -43,6 +44,16 @@ struct RestoreView: View {
             }
         }
         .navigationTitle("Restore")
+        .task {
+            markRestoreOpened()
+        }
+    }
+}
+
+private extension RestoreView {
+    func markRestoreOpened() {
+        NormleTipManager.donate(NormleTipEvents.didOpenRestoreView)
+        HistoryRestoreTip().invalidate(reason: .actionPerformed)
     }
 }
 

@@ -28,5 +28,6 @@ struct NormleApp: App {
     init() {
         assembly = .live()
         isICloudOn = assembly.isCloudSyncEnabled
+        NormleTipManager.configure()
     }
 }

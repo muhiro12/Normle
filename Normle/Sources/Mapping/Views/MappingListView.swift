@@ -9,6 +9,7 @@
 import NormleLibrary
 import SwiftData
 import SwiftUI
+import TipKit
 import UniformTypeIdentifiers
 
 struct MappingListView: View {
@@ -45,10 +46,11 @@ struct MappingListView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    isPresentingCreate = true
+                    presentCreate()
                 } label: {
                     Label("Add", systemImage: "plus")
                 }
+                .popoverTip(rules.isEmpty ? MappingAddTip() : nil)
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
@@ -189,6 +191,12 @@ private extension MappingListView {
             }
         }
         .listRowInsets(listRowInsets)
+    }
+
+    func presentCreate() {
+        NormleTipManager.donate(NormleTipEvents.didStartMappingCreation)
+        MappingAddTip().invalidate(reason: .actionPerformed)
+        isPresentingCreate = true
     }
 
     func exportRules() {

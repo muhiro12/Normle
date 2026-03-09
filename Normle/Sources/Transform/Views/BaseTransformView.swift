@@ -9,6 +9,7 @@
 import NormleLibrary
 import SwiftData
 import SwiftUI
+import TipKit
 import UniformTypeIdentifiers
 
 struct BaseTransformView: View {
@@ -69,10 +70,11 @@ struct BaseTransformView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    isPresetSelectorPresented = true
+                    openPresetSelector()
                 } label: {
                     Label("Presets", systemImage: "slider.horizontal.3")
                 }
+                .popoverTip(TransformPresetTip())
             }
         }
         .sheet(isPresented: $isPresetSelectorPresented) {
@@ -235,6 +237,11 @@ private extension BaseTransformView {
         syncPresetSelection()
         resetSelectionState()
     }
+    func openPresetSelector() {
+        NormleTipManager.donate(NormleTipEvents.didOpenPresetSelector)
+        TransformPresetTip().invalidate(reason: .actionPerformed)
+        isPresetSelectorPresented = true
+    }
     func updateGroupSelection(
         group: TransformGroup,
         selectedPreset: TransformPreset?
@@ -254,20 +261,26 @@ private extension BaseTransformView {
         qrImage = nil
         alertMessage = nil
     }
+    func startMappingCreation(prefilledSource: String) {
+        pendingSourceForMapping = prefilledSource
+        NormleTipManager.donate(NormleTipEvents.didStartMappingFromSelection)
+        NormleTipManager.donate(NormleTipEvents.didStartMappingCreation)
+        TransformSelectionMappingTip().invalidate(reason: .actionPerformed)
+        MappingAddTip().invalidate(reason: .actionPerformed)
+        isPresentingMappingCreation = true
+    }
     func presentMappingFromSelection() {
         guard let selectedSourceTextValue else {
             return
         }
-        pendingSourceForMapping = selectedSourceTextValue
-        isPresentingMappingCreation = true
+        startMappingCreation(prefilledSource: selectedSourceTextValue)
     }
     func presentMappingFromSelection(text: String) {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.isEmpty == false else {
             return
         }
-        pendingSourceForMapping = trimmed
-        isPresentingMappingCreation = true
+        startMappingCreation(prefilledSource: trimmed)
     }
     func maskingOptions() -> MaskingOptions {
         preferencesStore.preferences.maskingPreferences.maskingOptions
