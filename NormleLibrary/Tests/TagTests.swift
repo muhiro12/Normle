@@ -59,12 +59,12 @@ struct TagTests {
     func createIgnoringDuplicatesAlwaysInserts() throws {
         let context = testContext
 
-        _ = try Tag.createIgnoringDuplicates(
+        _ = Tag.createIgnoringDuplicates(
             context: context,
             name: "Transient",
             type: .maskRule
         )
-        _ = try Tag.createIgnoringDuplicates(
+        _ = Tag.createIgnoringDuplicates(
             context: context,
             name: "Transient",
             type: .maskRule

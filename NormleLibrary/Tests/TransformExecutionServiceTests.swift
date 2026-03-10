@@ -39,17 +39,17 @@ struct TransformExecutionServiceTests {
             imageData: nil
         )
 
-        switch result {
-        case .success(let output):
-            #expect(output.outputText == "ALIAS")
-
-            let records = try context.fetch(FetchDescriptor<TransformRecord>())
-            #expect(records.count == 1)
-            #expect(records.first?.targetText == "ALIAS")
-            #expect(records.first?.mappings.first?.masked == "ALIAS")
-        case .failure:
-            #expect(false)
+        guard case let .success(output) = result else {
+            Issue.record("Expected transform execution to succeed.")
+            return
         }
+
+        #expect(output.outputText == "ALIAS")
+
+        let records = try context.fetch(FetchDescriptor<TransformRecord>())
+        #expect(records.count == 1)
+        #expect(records.first?.targetText == "ALIAS")
+        #expect(records.first?.mappings.first?.masked == "ALIAS")
     }
 
     @Test
@@ -67,16 +67,16 @@ struct TransformExecutionServiceTests {
             imageData: nil
         )
 
-        switch result {
-        case .success:
-            #expect(false)
-        case .failure(let error):
-            switch error {
-            case .pipeline(let pipelineError):
-                #expect(pipelineError == .missingImageData)
-            case .persistence:
-                #expect(false)
-            }
+        guard case let .failure(error) = result else {
+            Issue.record("Expected transform execution to fail.")
+            return
         }
+
+        guard case let .pipeline(pipelineError) = error else {
+            Issue.record("Expected a pipeline error.")
+            return
+        }
+
+        #expect(pipelineError == .missingImageData)
     }
 }

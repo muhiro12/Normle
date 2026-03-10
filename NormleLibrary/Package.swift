@@ -42,6 +42,12 @@ let package = Package(
             path: "Tests",
             exclude: [
                 "NormleLibrary.xctestplan"
+            ],
+            linkerSettings: [
+                .linkedFramework(
+                    "AppIntents",
+                    .when(platforms: [.iOS, .macOS])
+                )
             ]
         )
     ],

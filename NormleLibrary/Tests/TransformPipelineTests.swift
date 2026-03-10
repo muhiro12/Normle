@@ -38,18 +38,18 @@ struct TransformPipelineTests {
             imageData: nil
         )
 
-        switch result {
-        case .success(let output):
-            #expect(output.outputText == "ALIAS")
-            #expect(output.recordSourceText == "Secret")
-            #expect(output.recordTargetText == "ALIAS")
-            #expect(output.qrImage == nil)
-            #expect(output.mappings.count == 1)
-            #expect(output.mappings.first?.original == "Secret")
-            #expect(output.mappings.first?.masked == "ALIAS")
-        case .failure:
-            #expect(false)
+        guard case let .success(output) = result else {
+            Issue.record("Expected transform pipeline to succeed.")
+            return
         }
+
+        #expect(output.outputText == "ALIAS")
+        #expect(output.recordSourceText == "Secret")
+        #expect(output.recordTargetText == "ALIAS")
+        #expect(output.qrImage == nil)
+        #expect(output.mappings.count == 1)
+        #expect(output.mappings.first?.original == "Secret")
+        #expect(output.mappings.first?.masked == "ALIAS")
     }
 
     @Test
@@ -72,12 +72,12 @@ struct TransformPipelineTests {
             imageData: nil
         )
 
-        switch result {
-        case .success:
-            #expect(false)
-        case .failure(let error):
-            #expect(error == .baseTransform(.invalidBase64))
+        guard case let .failure(error) = result else {
+            Issue.record("Expected base64 decode to fail.")
+            return
         }
+
+        #expect(error == .baseTransform(.invalidBase64))
     }
 
     @Test
@@ -100,12 +100,12 @@ struct TransformPipelineTests {
             imageData: nil
         )
 
-        switch result {
-        case .success:
-            #expect(false)
-        case .failure(let error):
-            #expect(error == .missingImageData)
+        guard case let .failure(error) = result else {
+            Issue.record("Expected QR decode without image data to fail.")
+            return
         }
+
+        #expect(error == .missingImageData)
     }
 
     @Test
@@ -128,15 +128,15 @@ struct TransformPipelineTests {
             imageData: nil
         )
 
-        switch result {
-        case .success(let output):
-            #expect(output.outputText.isEmpty)
-            #expect(output.qrImage != nil)
-            #expect(output.recordSourceText == "hello")
-            #expect(output.recordTargetText.isEmpty)
-            #expect(output.mappings.isEmpty)
-        case .failure:
-            #expect(false)
+        guard case let .success(output) = result else {
+            Issue.record("Expected QR encode preset to succeed.")
+            return
         }
+
+        #expect(output.outputText.isEmpty)
+        #expect(output.qrImage != nil)
+        #expect(output.recordSourceText == "hello")
+        #expect(output.recordTargetText.isEmpty)
+        #expect(output.mappings.isEmpty)
     }
 }
