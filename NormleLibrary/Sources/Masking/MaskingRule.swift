@@ -9,7 +9,7 @@
 import Foundation
 import SwiftData
 
-public struct MaskingRule: Identifiable, Equatable {
+public struct MaskingRule: Identifiable, Equatable, Sendable {
     public let id: String
     public var original: String
     public var masked: String

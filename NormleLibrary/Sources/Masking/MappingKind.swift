@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum MappingKind: String, Codable, CaseIterable, Identifiable {
+public enum MappingKind: String, Codable, CaseIterable, Identifiable, Sendable {
     case person
     case company
     case project

@@ -36,12 +36,16 @@ struct MappingEditView: View {
             }
             Section {
                 Button(saveTitle) {
-                    save()
+                    Task {
+                        await save()
+                    }
                 }
                 .disabled(draft.canSave == false)
                 if rule != nil {
                     Button("Delete", role: .destructive) {
-                        delete()
+                        Task {
+                            await delete()
+                        }
                     }
                 }
             }
@@ -110,11 +114,13 @@ private extension MappingEditView {
         draft = .init(rule: rule)
     }
 
-    func save() {
+    @MainActor
+    func save() async {
         do {
-            _ = try draft.apply(
+            try await NormleMutationWorkflow.saveMapping(
                 context: context,
-                to: rule
+                draft: draft,
+                rule: rule
             )
         } catch {
             alertMessage = error.localizedDescription
@@ -124,11 +130,22 @@ private extension MappingEditView {
         dismiss()
     }
 
-    func delete() {
+    @MainActor
+    func delete() async {
         guard let rule else {
             return
         }
-        context.delete(rule)
+
+        do {
+            try await NormleMutationWorkflow.deleteMapping(
+                context: context,
+                rule: rule
+            )
+        } catch {
+            alertMessage = error.localizedDescription
+            return
+        }
+
         isPresented = false
         dismiss()
     }
@@ -136,23 +153,27 @@ private extension MappingEditView {
 
 #Preview("Mapping - New") {
     let container = PreviewData.makeContainer()
-    return NavigationStack {
-        MappingEditView(
-            rule: nil,
-            isPresented: .constant(true)
-        )
-    }
-    .modelContainer(container)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        NavigationStack {
+            MappingEditView(
+                rule: nil,
+                isPresented: .constant(true)
+            )
+        }
+    )
 }
 
 #Preview("Mapping - Edit") {
     let container = PreviewData.makeContainer()
     let rule = PreviewData.makeSampleMappingRule(container: container)
-    return NavigationStack {
-        MappingEditView(
-            rule: rule,
-            isPresented: .constant(true)
-        )
-    }
-    .modelContainer(container)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        NavigationStack {
+            MappingEditView(
+                rule: rule,
+                isPresented: .constant(true)
+            )
+        }
+    )
 }

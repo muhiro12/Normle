@@ -261,8 +261,26 @@ private extension MappingListView {
         guard let data = pendingImportData else {
             return
         }
+
+        Task {
+            await applyImport(
+                data: data,
+                policy: policy
+            )
+        }
+    }
+
+    @MainActor
+    func applyImport(
+        data: Data,
+        policy: MappingRuleTransferService.ImportPolicy
+    ) async {
+        defer {
+            pendingImportData = nil
+        }
+
         do {
-            let result = try MappingRuleTransferCoordinator.applyImport(
+            let result = try await NormleMutationWorkflow.importMappings(
                 data: data,
                 context: context,
                 policy: policy
@@ -293,7 +311,6 @@ private extension MappingListView {
         } catch {
             presentError(message: error.localizedDescription)
         }
-        pendingImportData = nil
     }
 
     func presentError(
@@ -308,18 +325,22 @@ private extension MappingListView {
 #Preview("Mappings - List") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
-    return NavigationStack {
-        MappingListView()
-    }
-    .modelContainer(container)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        NavigationStack {
+            MappingListView()
+        }
+    )
 }
 
 #Preview("Mappings - Dark") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
-    return NavigationStack {
-        MappingListView()
-    }
-    .modelContainer(container)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        NavigationStack {
+            MappingListView()
+        }
+    )
     .environment(\.colorScheme, .dark)
 }

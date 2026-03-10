@@ -19,11 +19,17 @@ struct CompatibilityContractTests {
         #expect(BoolAppStorageKey.isURLMaskingEnabled.rawValue == "f3R8q1L0")
         #expect(BoolAppStorageKey.isEmailMaskingEnabled.rawValue == "K9m4T2s7")
         #expect(BoolAppStorageKey.isPhoneMaskingEnabled.rawValue == "p6V1x8N3")
+        #expect(BoolAppStorageKey.isSubscribeOn.preferenceKey.storageKey == "m5k3I8s9")
+        #expect(BoolAppStorageKey.isICloudOn.preferenceKey.storageKey == "c1o9U2d4")
+        #expect(BoolAppStorageKey.isURLMaskingEnabled.preferenceKey.storageKey == "f3R8q1L0")
+        #expect(BoolAppStorageKey.isEmailMaskingEnabled.preferenceKey.storageKey == "K9m4T2s7")
+        #expect(BoolAppStorageKey.isPhoneMaskingEnabled.preferenceKey.storageKey == "p6V1x8N3")
     }
 
     @Test
     func dataAppStorageKeysRemainStable() {
         #expect(DataAppStorageKey.userPreferences.rawValue == "U9r3E7p2")
+        #expect(DataAppStorageKey.userPreferences.preferenceKey.storageKey == "U9r3E7p2")
     }
 
     @Test

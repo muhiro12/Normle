@@ -54,35 +54,7 @@ struct HistoryListView: View {
 
     var body: some View {
         List(selection: selection) {
-            if records.isEmpty {
-                ContentUnavailableView(
-                    "No History",
-                    systemImage: "clock.arrow.circlepath",
-                    description: Text("Run a transform to see it here.")
-                )
-                .listRowInsets(emptyStateRowInsets)
-            } else {
-                TipView(HistoryListTip())
-                    .tipViewStyle(.miniTip)
-                    .listRowInsets(listRowInsets)
-
-                ForEach(records) { record in
-                    NavigationLink(value: record) {
-                        HistoryRowView(record: record)
-                    }
-                    .listRowInsets(listRowInsets)
-                    .swipeActions {
-                        Button(role: .destructive) {
-                            delete(record: record)
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                    }
-                }
-                .onDelete { offsets in
-                    offsets.map { records[$0] }.forEach(delete(record:))
-                }
-            }
+            historyContent
         }
         .navigationTitle("History")
         #if os(iOS)
@@ -114,7 +86,9 @@ struct HistoryListView: View {
             isPresented: $isDeleteDialogPresented
         ) {
             Button(role: .destructive) {
-                deleteAll()
+                Task {
+                    await deleteAll()
+                }
             } label: {
                 Text("Delete")
             }
@@ -141,6 +115,26 @@ struct HistoryListView: View {
 }
 
 private extension HistoryListView {
+    @ViewBuilder var historyContent: some View {
+        if records.isEmpty {
+            ContentUnavailableView(
+                "No History",
+                systemImage: "clock.arrow.circlepath",
+                description: Text("Run a transform to see it here.")
+            )
+            .listRowInsets(emptyStateRowInsets)
+        } else {
+            TipView(HistoryListTip())
+                .tipViewStyle(.miniTip)
+                .listRowInsets(listRowInsets)
+
+            ForEach(records) { record in
+                historyRow(record: record)
+            }
+            .onDelete(perform: deleteRecords)
+        }
+    }
+
     var listRowInsets: EdgeInsets {
         #if os(macOS)
         return Layout.macOSRowInsets
@@ -157,11 +151,37 @@ private extension HistoryListView {
         #endif
     }
 
+    func historyRow(record: TransformRecord) -> some View {
+        NavigationLink(value: record) {
+            HistoryRowView(record: record)
+        }
+        .listRowInsets(listRowInsets)
+        .swipeActions {
+            Button(role: .destructive) {
+                Task {
+                    await delete(record: record)
+                }
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+    }
+
+    func deleteRecords(at offsets: IndexSet) {
+        let targets = offsets.map { records[$0] }
+        Task {
+            for record in targets {
+                await delete(record: record)
+            }
+        }
+    }
+
+    @MainActor
     func delete(
         record: TransformRecord
-    ) {
+    ) async {
         do {
-            try TransformRecordService.delete(
+            try await NormleMutationWorkflow.deleteHistory(
                 context: context,
                 record: record
             )
@@ -170,9 +190,10 @@ private extension HistoryListView {
         }
     }
 
-    func deleteAll() {
+    @MainActor
+    func deleteAll() async {
         do {
-            try TransformRecordService.deleteAll(
+            try await NormleMutationWorkflow.deleteAllHistory(
                 context: context
             )
         } catch {
@@ -184,18 +205,22 @@ private extension HistoryListView {
 #Preview("History - List") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
-    return NavigationStack {
-        HistoryListView()
-    }
-    .modelContainer(container)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        NavigationStack {
+            HistoryListView()
+        }
+    )
 }
 
 #Preview("History - Large Type") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
-    return NavigationStack {
-        HistoryListView()
-    }
-    .modelContainer(container)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        NavigationStack {
+            HistoryListView()
+        }
+    )
     .environment(\.dynamicTypeSize, .accessibility3)
 }

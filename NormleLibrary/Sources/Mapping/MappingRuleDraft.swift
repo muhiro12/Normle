@@ -9,7 +9,7 @@
 import Foundation
 import SwiftData
 
-public struct MappingRuleDraft: Equatable {
+public struct MappingRuleDraft: Equatable, Sendable {
     public var sourceText: String
     public var targetText: String
     public var isEnabled: Bool

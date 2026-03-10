@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct MaskingOptions: Equatable {
+public struct MaskingOptions: Equatable, Sendable {
     public var isURLMaskingEnabled: Bool
     public var isEmailMaskingEnabled: Bool
     public var isPhoneMaskingEnabled: Bool

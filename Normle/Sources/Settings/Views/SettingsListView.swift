@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHPreferences
 import NormleLibrary
 import SwiftData
 import SwiftUI
@@ -19,9 +20,9 @@ struct SettingsListView: View {
 
     @Environment(\.modelContext)
     private var context
-    @AppStorage(.isSubscribeOn)
+    @AppStorage(BoolAppStorageKey.isSubscribeOn)
     private var isSubscribeOn
-    @AppStorage(.isICloudOn)
+    @AppStorage(BoolAppStorageKey.isICloudOn)
     private var isICloudOn
 
     @State private var isDeleteDialogPresented = false
@@ -120,12 +121,8 @@ private extension SettingsListView {
     }
 
     func deleteAllHistory() {
-        do {
-            try TransformRecordService.deleteAll(
-                context: context
-            )
-        } catch {
-            assertionFailure(error.localizedDescription)
+        Task {
+            await deleteAllHistoryTask()
         }
     }
 
@@ -142,12 +139,25 @@ private extension SettingsListView {
             isShowingAlert = true
         }
     }
+
+    @MainActor
+    func deleteAllHistoryTask() async {
+        do {
+            try await NormleMutationWorkflow.deleteAllHistory(
+                context: context
+            )
+        } catch {
+            assertionFailure(error.localizedDescription)
+        }
+    }
 }
 
 #Preview("Settings - Base") {
     let container = PreviewData.makeContainer()
-    return NavigationStack {
-        SettingsListView()
-    }
-    .modelContainer(container)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        NavigationStack {
+            SettingsListView()
+        }
+    )
 }

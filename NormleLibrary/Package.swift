@@ -17,12 +17,14 @@ let package = Package(
         )
     ],
     dependencies: [
+        .package(url: "https://github.com/muhiro12/MHPlatform.git", branch: "main"),
         .package(url: "https://github.com/muhiro12/SwiftUtilities", "1.0.0"..<"2.0.0")
     ],
     targets: [
         .target(
             name: "NormleLibrary",
             dependencies: [
+                .product(name: "MHPreferences", package: "MHPlatform"),
                 .product(name: "SwiftUtilities", package: "SwiftUtilities")
             ],
             path: ".",

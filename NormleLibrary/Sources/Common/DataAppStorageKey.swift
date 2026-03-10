@@ -6,6 +6,12 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHPreferences
+
 public enum DataAppStorageKey: String {
     case userPreferences = "U9r3E7p2"
+
+    public var preferenceKey: MHCodablePreferenceKey<UserPreferences> {
+        .init(storageKey: rawValue)
+    }
 }

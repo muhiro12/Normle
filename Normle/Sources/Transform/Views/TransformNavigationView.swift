@@ -22,8 +22,6 @@ struct TransformNavigationView: View {
 #Preview("Transforms - Navigation") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
-    let preferencesStore = UserPreferencesStore()
-    return TransformNavigationView()
-        .modelContainer(container)
-        .environmentObject(preferencesStore)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(TransformNavigationView())
 }

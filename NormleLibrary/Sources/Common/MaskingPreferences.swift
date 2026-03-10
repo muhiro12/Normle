@@ -7,7 +7,7 @@
 //
 
 /// Stores the persisted automatic masking preferences.
-public struct MaskingPreferences: Codable, Equatable {
+public struct MaskingPreferences: Codable, Equatable, Sendable {
     enum CodingKeys: String, CodingKey {
         case isURLMaskingEnabled
         case isEmailMaskingEnabled

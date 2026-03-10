@@ -6,25 +6,22 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHAppRuntimeCore
 import MHPreferences
 import NormleLibrary
-import StoreKitWrapper
 import SwiftData
 import SwiftUI
 
 @MainActor
 struct NormleAppAssembly {
-    let modelContainer: ModelContainer
-    let preferencesStore: UserPreferencesStore
-    let bootstrap: MHAppRuntimeBootstrap
+    let platformEnvironment: NormlePlatformEnvironment
     let isCloudSyncEnabled: Bool
 
     static func live() -> Self {
+        let isCloudSyncEnabled = MHPreferenceStore().bool(
+            for: BoolAppStorageKey.isICloudOn.preferenceKey
+        )
         let result = NormleModelContainerFactory.makeWithFallback(
-            cloudSyncEnabled: UserDefaults.standard.bool(
-                forKey: BoolAppStorageKey.isICloudOn.rawValue
-            ),
+            cloudSyncEnabled: isCloudSyncEnabled,
             onCloudContainerError: { error in
                 assertionFailure(error.localizedDescription)
             },
@@ -34,9 +31,9 @@ struct NormleAppAssembly {
         )
 
         return .init(
-            modelContainer: result.container,
-            preferencesStore: .init(),
-            bootstrap: makeBootstrap(),
+            platformEnvironment: NormlePlatformEnvironmentFactory.make(
+                modelContainer: result.container
+            ),
             isCloudSyncEnabled: result.isCloudSyncEnabled
         )
     }
@@ -45,9 +42,9 @@ struct NormleAppAssembly {
         container: ModelContainer = PreviewData.makeContainer()
     ) -> Self {
         .init(
-            modelContainer: container,
-            preferencesStore: .init(),
-            bootstrap: makeBootstrap(),
+            platformEnvironment: NormlePlatformEnvironmentFactory.makePreview(
+                modelContainer: container
+            ),
             isCloudSyncEnabled: false
         )
     }
@@ -56,62 +53,12 @@ struct NormleAppAssembly {
     func rootView<Content: View>(
         _ content: Content
     ) -> some View {
-        content
-            .modelContainer(modelContainer)
-            .environmentObject(preferencesStore)
-            .mhAppRuntimeBootstrap(bootstrap)
+        content.normlePlatformEnvironment(platformEnvironment)
     }
 
     func previewRootView<Content: View>(
         _ content: Content
     ) -> some View {
-        content
-            .modelContainer(modelContainer)
-            .environmentObject(preferencesStore)
-            .mhAppRuntimeEnvironment(bootstrap)
-    }
-}
-
-private extension NormleAppAssembly {
-    static func makeBootstrap() -> MHAppRuntimeBootstrap {
-        .init(
-            runtime: makeRuntime(),
-            lifecyclePlan: .empty
-        )
-    }
-
-    static func makeRuntime() -> MHAppRuntime {
-        let configuration = MHAppConfiguration(
-            subscriptionProductIDs: [Secret.productID],
-            subscriptionGroupID: nil,
-            nativeAdUnitID: nil,
-            preferencesSuiteName: nil,
-            showsLicenses: false
-        )
-        let store = Store()
-        let licensesViewBuilder = {
-            AnyView(EmptyView())
-        }
-
-        return .init(
-            configuration: configuration,
-            preferenceStore: .init(),
-            startStore: { purchasedProductIDsDidSet in
-                store.open(
-                    groupID: configuration.subscriptionGroupID,
-                    productIDs: configuration.subscriptionProductIDs
-                ) { products in
-                    purchasedProductIDsDidSet(
-                        Set(products.map(\.id))
-                    )
-                }
-            },
-            subscriptionSectionViewBuilder: {
-                AnyView(store.buildSubscriptionSection())
-            },
-            startAds: nil,
-            nativeAdViewBuilder: nil,
-            licensesViewBuilder: licensesViewBuilder
-        )
+        content.normlePreviewPlatformEnvironment(platformEnvironment)
     }
 }

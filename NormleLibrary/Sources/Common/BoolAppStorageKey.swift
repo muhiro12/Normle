@@ -6,10 +6,16 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-public enum BoolAppStorageKey: String {
+import MHPreferences
+
+public enum BoolAppStorageKey: String, MHBoolPreferenceKeyRepresentable {
     case isSubscribeOn = "m5k3I8s9"
     case isICloudOn = "c1o9U2d4"
     case isURLMaskingEnabled = "f3R8q1L0"
     case isEmailMaskingEnabled = "K9m4T2s7"
     case isPhoneMaskingEnabled = "p6V1x8N3"
+
+    public var preferenceKey: MHBoolPreferenceKey {
+        .init(storageKey: rawValue)
+    }
 }

@@ -9,7 +9,7 @@
 import CoreGraphics
 
 /// Describes the output produced by a transform pipeline run.
-public struct TransformPipelineResult {
+public struct TransformPipelineResult: Sendable {
     /// The transformed output text.
     public let outputText: String
     /// The generated QR image, when the pipeline performs QR encoding.

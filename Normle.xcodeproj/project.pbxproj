@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		AD1F9A012F30B00100C260B2 /* MHAppRuntimeCore in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A032F30B00100C260B2 /* MHAppRuntimeCore */; };
+		AD62B3012F5E000000C260B2 /* MHLogging in Frameworks */ = {isa = PBXBuildFile; productRef = AD62B3032F5E000000C260B2 /* MHLogging */; };
+		AD62B3042F5E000000C260B2 /* MHMutationFlow in Frameworks */ = {isa = PBXBuildFile; productRef = AD62B3062F5E000000C260B2 /* MHMutationFlow */; };
+		AD62B3072F5E000000C260B2 /* MHPreferences in Frameworks */ = {isa = PBXBuildFile; productRef = AD62B3092F5E000000C260B2 /* MHPreferences */; };
+		AD62B30A2F5E000000C260B2 /* MHReviewPolicy in Frameworks */ = {isa = PBXBuildFile; productRef = AD62B30C2F5E000000C260B2 /* MHReviewPolicy */; };
 		AD7A7B012F31D10000C260B2 /* StoreKitWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = AD7A7B032F31D10000C260B2 /* StoreKitWrapper */; };
 		ADF11DA72ED15BC4006B7FE1 /* NormleLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */; };
 /* End PBXBuildFile section */
@@ -44,6 +48,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD1F9A012F30B00100C260B2 /* MHAppRuntimeCore in Frameworks */,
+				AD62B3012F5E000000C260B2 /* MHLogging in Frameworks */,
+				AD62B3042F5E000000C260B2 /* MHMutationFlow in Frameworks */,
+				AD62B3072F5E000000C260B2 /* MHPreferences in Frameworks */,
+				AD62B30A2F5E000000C260B2 /* MHReviewPolicy in Frameworks */,
 				AD7A7B012F31D10000C260B2 /* StoreKitWrapper in Frameworks */,
 				ADF11DA72ED15BC4006B7FE1 /* NormleLibrary in Frameworks */,
 			);
@@ -90,6 +98,10 @@
 			name = Normle;
 			packageProductDependencies = (
 				AD1F9A032F30B00100C260B2 /* MHAppRuntimeCore */,
+				AD62B3032F5E000000C260B2 /* MHLogging */,
+				AD62B3062F5E000000C260B2 /* MHMutationFlow */,
+				AD62B3092F5E000000C260B2 /* MHPreferences */,
+				AD62B30C2F5E000000C260B2 /* MHReviewPolicy */,
 				AD7A7B032F31D10000C260B2 /* StoreKitWrapper */,
 				ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */,
 			);
@@ -455,6 +467,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
 			productName = MHAppRuntimeCore;
+		};
+		AD62B3032F5E000000C260B2 /* MHLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
+			productName = MHLogging;
+		};
+		AD62B3062F5E000000C260B2 /* MHMutationFlow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
+			productName = MHMutationFlow;
+		};
+		AD62B3092F5E000000C260B2 /* MHPreferences */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
+			productName = MHPreferences;
+		};
+		AD62B30C2F5E000000C260B2 /* MHReviewPolicy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
+			productName = MHReviewPolicy;
 		};
 		AD7A7B032F31D10000C260B2 /* StoreKitWrapper */ = {
 			isa = XCSwiftPackageProductDependency;

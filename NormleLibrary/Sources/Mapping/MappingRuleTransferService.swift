@@ -26,7 +26,7 @@ public enum MappingRuleTransferService {
     }
 
     /// Describes how imported rules should be merged with existing rules.
-    public enum ImportPolicy {
+    public enum ImportPolicy: Sendable {
         /// Replaces all existing rules with the imported rules.
         case replaceAll
         /// Updates matching rules and inserts non-matching rules.
@@ -36,7 +36,7 @@ public enum MappingRuleTransferService {
     }
 
     /// Summarizes the result of an import operation.
-    public struct ImportResult {
+    public struct ImportResult: Sendable {
         /// The number of newly inserted rules.
         public let insertedCount: Int
         /// The number of existing rules updated during import.

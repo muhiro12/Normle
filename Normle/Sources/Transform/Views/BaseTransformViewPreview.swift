@@ -13,10 +13,10 @@ import SwiftUI
 #Preview("Transforms") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
-    let preferencesStore = UserPreferencesStore()
-    return NavigationStack {
-        BaseTransformView()
-    }
-    .modelContainer(container)
-    .environmentObject(preferencesStore)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        NavigationStack {
+            BaseTransformView()
+        }
+    )
 }

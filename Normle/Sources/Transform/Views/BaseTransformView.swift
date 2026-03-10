@@ -13,25 +13,6 @@ import TipKit
 import UniformTypeIdentifiers
 
 struct BaseTransformView: View {
-    private enum Layout {
-        static let horizontalPadding = 16.0
-        static let listRowSpacing = 16.0
-        static let compactInset = 16.0
-        static let wideInset = 24.0
-        static let iOSRowInsets = EdgeInsets(
-            top: compactInset,
-            leading: compactInset,
-            bottom: compactInset,
-            trailing: compactInset
-        )
-        static let macOSRowInsets = EdgeInsets(
-            top: compactInset,
-            leading: wideInset,
-            bottom: compactInset,
-            trailing: wideInset
-        )
-    }
-
     @Environment(\.modelContext)
     private var context
     @EnvironmentObject private var preferencesStore: UserPreferencesStore
@@ -62,12 +43,12 @@ struct BaseTransformView: View {
         #endif
         #if os(macOS)
         .listStyle(.inset)
-        .padding(.horizontal, Layout.horizontalPadding)
+        .padding(.horizontal, BaseTransformViewLayout.horizontalPadding)
         #else
         .listStyle(.insetGrouped)
         #endif
         #if os(iOS)
-        .listRowSpacing(Layout.listRowSpacing)
+        .listRowSpacing(BaseTransformViewLayout.listRowSpacing)
         #endif
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -152,7 +133,7 @@ private extension BaseTransformView {
             isImporterPresented: $isImporterPresented,
             hasSelectedImage: selectedImageData != nil,
             canCreateMappingFromSelection: selectedSourceTextValue != nil,
-            sectionRowInsets: sectionRowInsets,
+            sectionRowInsets: BaseTransformViewLayout.sectionRowInsets,
             createMappingFromSelection: presentMappingFromSelection(text:),
             createMappingFromCurrentSelection: presentMappingFromSelection,
             pasteSourceText: pasteSourceText,
@@ -167,13 +148,13 @@ private extension BaseTransformView {
             resultText: resultText,
             qrImage: qrImage,
             sourceText: sourceText,
-            sectionRowInsets: sectionRowInsets
+            sectionRowInsets: BaseTransformViewLayout.sectionRowInsets
         )
     }
     var actionSection: some View {
         BaseTransformActionSection(
             isDisabled: isRunDisabled,
-            sectionRowInsets: sectionRowInsets,
+            sectionRowInsets: BaseTransformViewLayout.sectionRowInsets,
             runTransform: runTransform
         )
     }
@@ -185,13 +166,6 @@ private extension BaseTransformView {
                 prefilledSource: pendingSourceForMapping
             )
         }
-    }
-    var sectionRowInsets: EdgeInsets {
-        #if os(macOS)
-        return Layout.macOSRowInsets
-        #else
-        return Layout.iOSRowInsets
-        #endif
     }
     var selectedSourceTextValue: String? {
         let trimmed = selectedSourceText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -311,26 +285,47 @@ private extension BaseTransformView {
         }
     }
     func runTransform() {
-        let result = TransformExecutionService(context: context).runAndSave(
-            sourceText: sourceText,
-            presets: orderedSelectedTransforms,
-            maskRules: activeMaskRules,
-            options: maskingOptions(),
-            imageData: selectedImageData
-        )
-        switch result {
-        case .success(let output):
+        Task {
+            await executeTransform()
+        }
+    }
+    @MainActor
+    func executeTransform() async {
+        do {
+            let output = try await NormleMutationWorkflow.runTransform(
+                context: context,
+                request: .init(
+                    sourceText: sourceText,
+                    presets: orderedSelectedTransforms,
+                    maskRules: activeMaskRules,
+                    options: maskingOptions(),
+                    imageData: selectedImageData
+                )
+            )
             alertMessage = nil
             resultText = output.outputText
             if let image = output.qrImage {
-                qrImage = Image(decorative: image, scale: 1, orientation: .up)
+                qrImage = Image(
+                    decorative: image,
+                    scale: 1,
+                    orientation: .up
+                )
             } else {
                 qrImage = nil
             }
-        case .failure(let error):
-            qrImage = nil
-            resultText = String()
-            switch error {
+        } catch {
+            handleTransformFailure(error)
+        }
+    }
+    @MainActor
+    func handleTransformFailure(
+        _ error: any Error
+    ) {
+        qrImage = nil
+        resultText = String()
+
+        if let executionError = error as? TransformExecutionError {
+            switch executionError {
             case .pipeline(let pipelineError):
                 if pipelineError == .missingImageData {
                     alertMessage = String(localized: "Select an image to decode.")
@@ -340,7 +335,10 @@ private extension BaseTransformView {
             case .persistence(let persistenceError):
                 alertMessage = persistenceError.localizedDescription
             }
+            return
         }
+
+        alertMessage = error.localizedDescription
     }
     func pasteSourceText() {
         guard let pastedText = ClipboardService.pasteText() else {

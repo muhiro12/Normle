@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Mapping: Identifiable, Codable, Equatable {
+public struct Mapping: Identifiable, Codable, Equatable, Sendable {
     enum CodingKeys: String, CodingKey {
         case id
         case original

@@ -9,7 +9,7 @@
 import Foundation
 
 /// Stores the persisted user preferences for masking and transform presets.
-public struct UserPreferences: Codable, Equatable {
+public struct UserPreferences: Codable, Equatable, Sendable {
     enum CodingKeys: String, CodingKey {
         case version
         case maskingPreferences
@@ -89,7 +89,8 @@ public extension UserPreferences {
         (try? JSONEncoder().encode(self)) ?? Data()
     }
 
-    private func normalized() -> UserPreferences {
+    /// Normalizes persisted preferences to the current storage schema version.
+    func normalized() -> UserPreferences {
         guard version != Self.currentVersion else {
             return self
         }

@@ -7,7 +7,7 @@
 //
 
 /// Stores the persisted transform preset selection.
-public struct PresetSelection: Codable, Equatable {
+public struct PresetSelection: Codable, Equatable, Sendable {
     enum CodingKeys: String, CodingKey {
         case isCustomMappingEnabled
         case caseTransform

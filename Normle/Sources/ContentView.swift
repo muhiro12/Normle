@@ -7,6 +7,7 @@
 //
 
 import MHAppRuntimeCore
+import MHPreferences
 import NormleLibrary
 import SwiftUI
 
@@ -21,9 +22,9 @@ struct ContentView: View {
     @Environment(MHAppRuntime.self)
     private var runtime
 
-    @AppStorage(.isSubscribeOn)
+    @AppStorage(BoolAppStorageKey.isSubscribeOn)
     private var isSubscribeOn
-    @AppStorage(.isICloudOn)
+    @AppStorage(BoolAppStorageKey.isICloudOn)
     private var isICloudOn
     @State private var selection: Tab = .transforms
 
