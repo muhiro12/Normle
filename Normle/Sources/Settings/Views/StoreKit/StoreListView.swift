@@ -12,10 +12,16 @@ struct StoreListView: View {
     var body: some View {
         List {
             StoreSection()
+            NavigationLink {
+                StoreLicensesView()
+            } label: {
+                Label("Licenses", systemImage: "doc.text")
+            }
         }
         .navigationTitle("Subscription")
     }
 }
+
 #Preview("Store - List") {
     let assembly = NormleAppAssembly.preview()
 

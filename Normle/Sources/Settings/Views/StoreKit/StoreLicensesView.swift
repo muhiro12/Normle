@@ -1,29 +1,30 @@
 //
-//  StoreSection.swift
+//  StoreLicensesView.swift
 //  Normle
 //
-//  Created by Hiromu Nakano on 2025/11/23.
+//  Created by Codex on 2026/03/10.
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
 import MHPlatform
 import SwiftUI
 
-struct StoreSection: View {
+struct StoreLicensesView: View {
     @Environment(MHAppRuntime.self)
     private var runtime
 
     var body: some View {
-        runtime.subscriptionSectionView()
+        runtime.licensesView()
+            .navigationTitle("Licenses")
     }
 }
 
-#Preview("Store - Section") {
+#Preview("Store - Licenses") {
     let assembly = NormleAppAssembly.preview()
 
     return assembly.previewRootView(
-        List {
-            StoreSection()
+        NavigationStack {
+            StoreLicensesView()
         }
     )
 }

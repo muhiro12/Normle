@@ -6,13 +6,9 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHAppRuntimeCore
-import MHPreferences
-import MHReviewPolicy
+import MHPlatform
 import NormleLibrary
-import StoreKitWrapper
 import SwiftData
-import SwiftUI
 
 enum NormlePlatformEnvironmentFactory {
     @MainActor
@@ -38,7 +34,10 @@ enum NormlePlatformEnvironmentFactory {
     private static func makeAppConfiguration() -> MHAppConfiguration {
         .init(
             subscriptionProductIDs: [Secret.productID],
-            showsLicenses: false
+            subscriptionGroupID: nil,
+            nativeAdUnitID: nil,
+            preferencesSuiteName: nil,
+            showsLicenses: true
         )
     }
 
@@ -52,43 +51,12 @@ enum NormlePlatformEnvironmentFactory {
         )
 
         return .init(
-            runtime: makeRuntime(configuration: configuration),
+            configuration: configuration,
             lifecyclePlan: .init(
                 activeTasks: [
                     reviewFlow.task(name: "requestReview")
                 ]
             )
-        )
-    }
-
-    @MainActor
-    private static func makeRuntime(
-        configuration: MHAppConfiguration
-    ) -> MHAppRuntime {
-        let store = Store()
-        let licensesViewBuilder = {
-            AnyView(EmptyView())
-        }
-
-        return .init(
-            configuration: configuration,
-            preferenceStore: .init(),
-            startStore: { purchasedProductIDsDidSet in
-                store.open(
-                    groupID: configuration.subscriptionGroupID,
-                    productIDs: configuration.subscriptionProductIDs
-                ) { products in
-                    purchasedProductIDsDidSet(
-                        Set(products.map(\.id))
-                    )
-                }
-            },
-            subscriptionSectionViewBuilder: {
-                AnyView(store.buildSubscriptionSection())
-            },
-            startAds: nil,
-            nativeAdViewBuilder: nil,
-            licensesViewBuilder: licensesViewBuilder
         )
     }
 }

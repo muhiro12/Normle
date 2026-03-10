@@ -7,12 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AD1F9A012F30B00100C260B2 /* MHAppRuntimeCore in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A032F30B00100C260B2 /* MHAppRuntimeCore */; };
-		AD62B3012F5E000000C260B2 /* MHLogging in Frameworks */ = {isa = PBXBuildFile; productRef = AD62B3032F5E000000C260B2 /* MHLogging */; };
-		AD62B3042F5E000000C260B2 /* MHMutationFlow in Frameworks */ = {isa = PBXBuildFile; productRef = AD62B3062F5E000000C260B2 /* MHMutationFlow */; };
-		AD62B3072F5E000000C260B2 /* MHPreferences in Frameworks */ = {isa = PBXBuildFile; productRef = AD62B3092F5E000000C260B2 /* MHPreferences */; };
-		AD62B30A2F5E000000C260B2 /* MHReviewPolicy in Frameworks */ = {isa = PBXBuildFile; productRef = AD62B30C2F5E000000C260B2 /* MHReviewPolicy */; };
-		AD7A7B012F31D10000C260B2 /* StoreKitWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = AD7A7B032F31D10000C260B2 /* StoreKitWrapper */; };
+		AD1F9A012F30B00100C260B2 /* MHPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A032F30B00100C260B2 /* MHPlatform */; };
 		ADF11DA72ED15BC4006B7FE1 /* NormleLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */; };
 /* End PBXBuildFile section */
 
@@ -47,12 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD1F9A012F30B00100C260B2 /* MHAppRuntimeCore in Frameworks */,
-				AD62B3012F5E000000C260B2 /* MHLogging in Frameworks */,
-				AD62B3042F5E000000C260B2 /* MHMutationFlow in Frameworks */,
-				AD62B3072F5E000000C260B2 /* MHPreferences in Frameworks */,
-				AD62B30A2F5E000000C260B2 /* MHReviewPolicy in Frameworks */,
-				AD7A7B012F31D10000C260B2 /* StoreKitWrapper in Frameworks */,
+				AD1F9A012F30B00100C260B2 /* MHPlatform in Frameworks */,
 				ADF11DA72ED15BC4006B7FE1 /* NormleLibrary in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -97,12 +87,7 @@
 			);
 			name = Normle;
 			packageProductDependencies = (
-				AD1F9A032F30B00100C260B2 /* MHAppRuntimeCore */,
-				AD62B3032F5E000000C260B2 /* MHLogging */,
-				AD62B3062F5E000000C260B2 /* MHMutationFlow */,
-				AD62B3092F5E000000C260B2 /* MHPreferences */,
-				AD62B30C2F5E000000C260B2 /* MHReviewPolicy */,
-				AD7A7B032F31D10000C260B2 /* StoreKitWrapper */,
+				AD1F9A032F30B00100C260B2 /* MHPlatform */,
 				ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */,
 			);
 			productName = Normle;
@@ -140,7 +125,6 @@
 			packageReferences = (
 				ADF11DA52ED15BC4006B7FE1 /* XCLocalSwiftPackageReference "NormleLibrary" */,
 				AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */,
-				AD7A7B022F31D10000C260B2 /* XCRemoteSwiftPackageReference "StoreKitWrapper" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = ADD34ED42ED1566900CB9DE2 /* Products */;
@@ -452,46 +436,13 @@
 				kind = branch;
 			};
 		};
-		AD7A7B022F31D10000C260B2 /* XCRemoteSwiftPackageReference "StoreKitWrapper" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/muhiro12/StoreKitWrapper.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		AD1F9A032F30B00100C260B2 /* MHAppRuntimeCore */ = {
+		AD1F9A032F30B00100C260B2 /* MHPlatform */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
-			productName = MHAppRuntimeCore;
-		};
-		AD62B3032F5E000000C260B2 /* MHLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
-			productName = MHLogging;
-		};
-		AD62B3062F5E000000C260B2 /* MHMutationFlow */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
-			productName = MHMutationFlow;
-		};
-		AD62B3092F5E000000C260B2 /* MHPreferences */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
-			productName = MHPreferences;
-		};
-		AD62B30C2F5E000000C260B2 /* MHReviewPolicy */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
-			productName = MHReviewPolicy;
-		};
-		AD7A7B032F31D10000C260B2 /* StoreKitWrapper */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AD7A7B022F31D10000C260B2 /* XCRemoteSwiftPackageReference "StoreKitWrapper" */;
-			productName = StoreKitWrapper;
+			productName = MHPlatform;
 		};
 		ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */ = {
 			isa = XCSwiftPackageProductDependency;

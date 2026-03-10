@@ -6,7 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHAppRuntimeCore
+import MHPlatform
 import NormleLibrary
 import SwiftData
 import SwiftUI
