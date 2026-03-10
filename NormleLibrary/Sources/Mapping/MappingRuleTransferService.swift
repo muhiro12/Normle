@@ -11,6 +11,20 @@ import SwiftData
 
 /// Imports and exports collections of mapping rules.
 public enum MappingRuleTransferService {
+    private enum TransferFormat {
+        static let currentVersion = 2
+        static let minimumSupportedVersion = 1
+    }
+
+    private enum PayloadCodingKeys: String, CodingKey {
+        case date
+        case source
+        case target
+        case isEnabled
+        case original
+        case masked
+    }
+
     /// Describes how imported rules should be merged with existing rules.
     public enum ImportPolicy {
         /// Replaces all existing rules with the imported rules.
@@ -45,15 +59,6 @@ public enum MappingRuleTransferService {
     }
 
     private struct Payload: Codable {
-        enum CodingKeys: String, CodingKey {
-            case date
-            case source
-            case target
-            case isEnabled
-            case original
-            case masked
-        }
-
         let date: Date
         let source: String
         let target: String
@@ -73,7 +78,7 @@ public enum MappingRuleTransferService {
 
         init(from decoder: Decoder) throws {
             let container = try decoder.container(
-                keyedBy: CodingKeys.self
+                keyedBy: PayloadCodingKeys.self
             )
             date = try container.decode(
                 Date.self,
@@ -109,7 +114,7 @@ public enum MappingRuleTransferService {
 
         func encode(to encoder: Encoder) throws {
             var container = encoder.container(
-                keyedBy: CodingKeys.self
+                keyedBy: PayloadCodingKeys.self
             )
             try container.encode(date, forKey: .date)
             try container.encode(source, forKey: .source)
@@ -161,7 +166,7 @@ public extension MappingRuleTransferService {
         }
 
         let transfer = Transfer(
-            version: 2,
+            version: TransferFormat.currentVersion,
             exportedAt: Date(),
             rules: payloads
         )
@@ -214,7 +219,11 @@ private extension MappingRuleTransferService {
             from: data
         )
 
-        guard [1, 2].contains(transfer.version) else {
+        let supportedVersions = [
+            TransferFormat.minimumSupportedVersion,
+            TransferFormat.currentVersion
+        ]
+        guard supportedVersions.contains(transfer.version) else {
             throw TransferError.unsupportedVersion
         }
 

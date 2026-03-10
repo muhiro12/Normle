@@ -12,7 +12,9 @@ import Foundation
 /// Applies the selected transform presets to source text.
 public struct TransformPipeline {
     /// Creates a transform pipeline.
-    public init() {}
+    public init() {
+        // Intentionally empty.
+    }
 
     /// Runs the selected presets and returns either a pipeline result or an error.
     public func run(

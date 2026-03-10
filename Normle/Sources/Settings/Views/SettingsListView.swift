@@ -12,6 +12,11 @@ import SwiftUI
 import TipKit
 
 struct SettingsListView: View {
+    private enum Layout {
+        static let listRowSpacing = 8.0
+        static let horizontalPadding = 16.0
+    }
+
     @Environment(\.modelContext)
     private var context
     @AppStorage(.isSubscribeOn)
@@ -27,50 +32,19 @@ struct SettingsListView: View {
 
     var body: some View {
         List {
-            Section {
-                if isSubscribeOn {
-                    Toggle("Use iCloud sync", isOn: $isICloudOn)
-                        .popoverTip(isICloudOn ? nil : ICloudSyncTip())
-                } else {
-                    NavigationLink {
-                        StoreNavigationView()
-                    } label: {
-                        Text("Subscription")
-                    }
-                    .popoverTip(SubscriptionSyncTip())
-                }
-            } header: {
-                Text("Subscription")
-            } footer: {
-                Text("Manage your subscription and sync preferences.")
-            }
-            Section {
-                Button(role: .destructive) {
-                    isDeleteDialogPresented = true
-                } label: {
-                    Text("Delete all history")
-                }
-            } header: {
-                Text("Data")
-            } footer: {
-                Text("This action cannot be undone.")
-            }
-
-            Section("Help") {
-                Button("Show tips again") {
-                    resetTips()
-                }
-            }
+            subscriptionSection
+            dataSection
+            helpSection
         }
         .id(tipsRefreshID)
         .navigationTitle("Settings")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
-        .listRowSpacing(8)
+        .listRowSpacing(Layout.listRowSpacing)
         #endif
         #if os(macOS)
         .listStyle(.inset)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, Layout.horizontalPadding)
         #else
         .listStyle(.insetGrouped)
         #endif
@@ -103,6 +77,48 @@ struct SettingsListView: View {
 }
 
 private extension SettingsListView {
+    var subscriptionSection: some View {
+        Section {
+            if isSubscribeOn {
+                Toggle("Use iCloud sync", isOn: $isICloudOn)
+                    .popoverTip(isICloudOn ? nil : ICloudSyncTip())
+            } else {
+                NavigationLink {
+                    StoreNavigationView()
+                } label: {
+                    Text("Subscription")
+                }
+                .popoverTip(SubscriptionSyncTip())
+            }
+        } header: {
+            Text("Subscription")
+        } footer: {
+            Text("Manage your subscription and sync preferences.")
+        }
+    }
+
+    var dataSection: some View {
+        Section {
+            Button(role: .destructive) {
+                isDeleteDialogPresented = true
+            } label: {
+                Text("Delete all history")
+            }
+        } header: {
+            Text("Data")
+        } footer: {
+            Text("This action cannot be undone.")
+        }
+    }
+
+    var helpSection: some View {
+        Section("Help") {
+            Button("Show tips again") {
+                resetTips()
+            }
+        }
+    }
+
     func deleteAllHistory() {
         do {
             try TransformRecordService.deleteAll(

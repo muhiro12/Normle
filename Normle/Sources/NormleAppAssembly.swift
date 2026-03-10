@@ -24,12 +24,14 @@ struct NormleAppAssembly {
         let result = NormleModelContainerFactory.makeWithFallback(
             cloudSyncEnabled: UserDefaults.standard.bool(
                 forKey: BoolAppStorageKey.isICloudOn.rawValue
-            )
-        ) { error in
-            assertionFailure(error.localizedDescription)
-        } onLocalContainerError: { error in
-            assertionFailure(error.localizedDescription)
-        }
+            ),
+            onCloudContainerError: { error in
+                assertionFailure(error.localizedDescription)
+            },
+            onLocalContainerError: { error in
+                assertionFailure(error.localizedDescription)
+            }
+        )
 
         return .init(
             modelContainer: result.container,
@@ -87,6 +89,9 @@ private extension NormleAppAssembly {
             showsLicenses: false
         )
         let store = Store()
+        let licensesViewBuilder = {
+            AnyView(EmptyView())
+        }
 
         return .init(
             configuration: configuration,
@@ -105,9 +110,8 @@ private extension NormleAppAssembly {
                 AnyView(store.buildSubscriptionSection())
             },
             startAds: nil,
-            nativeAdViewBuilder: nil
-        ) {
-            AnyView(EmptyView())
-        }
+            nativeAdViewBuilder: nil,
+            licensesViewBuilder: licensesViewBuilder
+        )
     }
 }

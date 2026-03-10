@@ -26,7 +26,9 @@ public final class TransformRecord {
     @Relationship(deleteRule: .nullify)
     public private(set) var tags = [Tag]()
 
-    private init() {}
+    private init() {
+        // Required for SwiftData model creation.
+    }
 
     /// Creates and inserts a transform record into the provided model context.
     @discardableResult
@@ -61,6 +63,10 @@ public final class TransformRecord {
 }
 
 public extension TransformRecord {
+    private enum Preview {
+        static let previewLength = 80
+    }
+
     /// Decodes the mappings stored with the record.
     var mappings: [Mapping] {
         Self.decodeMappings(from: mappingsData)
@@ -77,8 +83,8 @@ public extension TransformRecord {
 
     /// Returns a shortened preview of the stored target text.
     var previewText: String {
-        if targetText.count > 80 {
-            return "\(targetText.prefix(80))…"
+        if targetText.count > Preview.previewLength {
+            return "\(targetText.prefix(Preview.previewLength))…"
         }
         return targetText
     }

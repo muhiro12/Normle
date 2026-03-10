@@ -44,37 +44,12 @@ struct BaseTransformInputSection: View {
             TipView(TransformSelectionMappingTip())
                 .tipViewStyle(.miniTip)
 
-            SelectableTextEditor(
-                text: $sourceText,
-                selectedText: $selectedSourceText
-            ) { selectedText in
-                createMappingFromSelection(selectedText)
-            }
-            .frame(minHeight: Layout.editorMinHeight)
-            .liquidGlassEffect()
-
-            Button {
-                pasteSourceText()
-            } label: {
-                Label("Paste", systemImage: "doc.on.clipboard")
-            }
-            .secondaryActionStyle()
-
-            Button {
-                clearSourceText()
-            } label: {
-                Label("Clear", systemImage: "xmark.circle")
-            }
-            .secondaryActionStyle()
+            sourceTextEditor
+            pasteButton
+            clearButton
 
             #if os(macOS)
-            Button {
-                createMappingFromCurrentSelection()
-            } label: {
-                Label("Create mapping from selection", systemImage: "plus")
-            }
-            .disabled(canCreateMappingFromSelection == false)
-            .secondaryActionStyle()
+            createMappingButton
             #endif
         } header: {
             Text("Input")
@@ -119,4 +94,45 @@ struct BaseTransformInputSection: View {
         }
         .listRowInsets(sectionRowInsets)
     }
+
+    var sourceTextEditor: some View {
+        SelectableTextEditor(
+            text: $sourceText,
+            selectedText: $selectedSourceText
+        ) { selectedText in
+            createMappingFromSelection(selectedText)
+        }
+        .frame(minHeight: Layout.editorMinHeight)
+        .liquidGlassEffect()
+    }
+
+    var pasteButton: some View {
+        Button {
+            pasteSourceText()
+        } label: {
+            Label("Paste", systemImage: "doc.on.clipboard")
+        }
+        .secondaryActionStyle()
+    }
+
+    var clearButton: some View {
+        Button {
+            clearSourceText()
+        } label: {
+            Label("Clear", systemImage: "xmark.circle")
+        }
+        .secondaryActionStyle()
+    }
+
+    #if os(macOS)
+    var createMappingButton: some View {
+        Button {
+            createMappingFromCurrentSelection()
+        } label: {
+            Label("Create mapping from selection", systemImage: "plus")
+        }
+        .disabled(canCreateMappingFromSelection == false)
+        .secondaryActionStyle()
+    }
+    #endif
 }

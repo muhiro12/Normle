@@ -10,10 +10,14 @@ import NormleLibrary
 import SwiftUI
 
 struct MappingRuleEditor: View {
+    private enum Layout {
+        static let spacing = 8.0
+    }
+
     @Binding var rule: MaskingRule
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Layout.spacing) {
             TextField(
                 "Source text",
                 text: $rule.original,

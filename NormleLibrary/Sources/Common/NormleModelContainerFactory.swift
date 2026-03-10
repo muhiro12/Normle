@@ -26,8 +26,12 @@ public enum NormleModelContainerFactory {
     /// Creates a model container and falls back to local storage if cloud setup fails.
     public static func makeWithFallback(
         cloudSyncEnabled: Bool,
-        onCloudContainerError: (Error) -> Void = { _ in },
-        onLocalContainerError: (Error) -> Void = { _ in }
+        onCloudContainerError: (Error) -> Void = { _ in
+            // Intentionally ignored by default.
+        },
+        onLocalContainerError: (Error) -> Void = { _ in
+            // Intentionally ignored by default.
+        }
     ) -> NormleModelContainerCreationResult {
         makeWithFallback(
             cloudSyncEnabled: cloudSyncEnabled,
@@ -40,8 +44,12 @@ public enum NormleModelContainerFactory {
     static func makeWithFallback(
         cloudSyncEnabled: Bool,
         buildContainer: (Bool) throws -> ModelContainer,
-        onCloudContainerError: (Error) -> Void = { _ in },
-        onLocalContainerError: (Error) -> Void = { _ in }
+        onCloudContainerError: (Error) -> Void = { _ in
+            // Intentionally ignored by default.
+        },
+        onLocalContainerError: (Error) -> Void = { _ in
+            // Intentionally ignored by default.
+        }
     ) -> NormleModelContainerCreationResult {
         do {
             return .init(

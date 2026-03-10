@@ -16,17 +16,19 @@ struct BaseTransformView: View {
     private enum Layout {
         static let horizontalPadding = 16.0
         static let listRowSpacing = 16.0
+        static let compactInset = 16.0
+        static let wideInset = 24.0
         static let iOSRowInsets = EdgeInsets(
-            top: 16,
-            leading: 16,
-            bottom: 16,
-            trailing: 16
+            top: compactInset,
+            leading: compactInset,
+            bottom: compactInset,
+            trailing: compactInset
         )
         static let macOSRowInsets = EdgeInsets(
-            top: 16,
-            leading: 24,
-            bottom: 16,
-            trailing: 24
+            top: compactInset,
+            leading: wideInset,
+            bottom: compactInset,
+            trailing: wideInset
         )
     }
 

@@ -13,6 +13,39 @@ import TipKit
 import UniformTypeIdentifiers
 
 struct MappingListView: View {
+    private enum Layout {
+        static let listRowSpacing = 8.0
+        static let horizontalPadding = 16.0
+        static let compactInset = 16.0
+        static let wideInset = 24.0
+        static let rowSpacing = 8.0
+        static let secondaryLineLimit = 2
+        static let iOSRowInsets = EdgeInsets(
+            top: compactInset,
+            leading: compactInset,
+            bottom: compactInset,
+            trailing: compactInset
+        )
+        static let macOSRowInsets = EdgeInsets(
+            top: compactInset,
+            leading: wideInset,
+            bottom: compactInset,
+            trailing: wideInset
+        )
+        static let iOSEmptyStateInsets = EdgeInsets(
+            top: wideInset,
+            leading: compactInset,
+            bottom: wideInset,
+            trailing: compactInset
+        )
+        static let macOSEmptyStateInsets = EdgeInsets(
+            top: wideInset,
+            leading: wideInset,
+            bottom: wideInset,
+            trailing: wideInset
+        )
+    }
+
     @Environment(\.modelContext)
     private var context
 
@@ -35,11 +68,11 @@ struct MappingListView: View {
         .navigationTitle("Mappings")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
-        .listRowSpacing(8)
+        .listRowSpacing(Layout.listRowSpacing)
         #endif
         #if os(macOS)
         .listStyle(.inset)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, Layout.horizontalPadding)
         #else
         .listStyle(.insetGrouped)
         #endif
@@ -156,23 +189,23 @@ private extension MappingListView {
 
     var listRowInsets: EdgeInsets {
         #if os(macOS)
-        return .init(top: 16, leading: 24, bottom: 16, trailing: 24)
+        return Layout.macOSRowInsets
         #else
-        return .init(top: 16, leading: 16, bottom: 16, trailing: 16)
+        return Layout.iOSRowInsets
         #endif
     }
 
     var emptyStateRowInsets: EdgeInsets {
         #if os(macOS)
-        return .init(top: 24, leading: 24, bottom: 24, trailing: 24)
+        return Layout.macOSEmptyStateInsets
         #else
-        return .init(top: 24, leading: 16, bottom: 24, trailing: 16)
+        return Layout.iOSEmptyStateInsets
         #endif
     }
 
     func ruleRow(_ rule: MappingRule) -> some View {
         NavigationLink(value: rule) {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: Layout.rowSpacing) {
                 Text(rule.target.isEmpty ? String(localized: "Target not set") : rule.target)
                     .font(.headline)
                     .lineLimit(1)
@@ -184,7 +217,7 @@ private extension MappingListView {
                 Text(rule.source.isEmpty ? String(localized: "Source not set") : rule.source)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                    .lineLimit(2)
+                    .lineLimit(Layout.secondaryLineLimit)
                 Text(rule.date.formatted(date: .abbreviated, time: .shortened))
                     .font(.caption)
                     .foregroundStyle(.secondary)

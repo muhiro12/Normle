@@ -2,6 +2,7 @@ opt_in_rules:
     - all
 
 disabled_rules:
+    - contrasted_opening_brace # Conflicts with opening_brace
     - explicit_acl # Omit ACL
     - explicit_enum_raw_value # Omit raw values if possible
     - explicit_top_level_acl # Omit ACL
@@ -21,6 +22,10 @@ disabled_rules:
     - anonymous_argument_in_multiline_closure
 
 excluded:
+    - .build
+    - build
+    - NormleLibrary/.build
+    - NormleLibrary/Package.swift
     - Normle.swiftpm/Package.swift
 
 file_header:

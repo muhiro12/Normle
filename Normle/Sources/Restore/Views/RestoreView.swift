@@ -12,6 +12,10 @@ import SwiftUI
 import TipKit
 
 struct RestoreView: View {
+    private enum Layout {
+        static let editorMinimumHeight = 200.0
+    }
+
     let record: TransformRecord
 
     @State private var viewModel = RestoreViewModel()
@@ -20,7 +24,7 @@ struct RestoreView: View {
         List {
             Section("AI response to restore") {
                 TextEditor(text: $viewModel.sourceText)
-                    .frame(minHeight: 200)
+                    .frame(minHeight: Layout.editorMinimumHeight)
                     .liquidGlassEffect()
             }
 
@@ -36,7 +40,7 @@ struct RestoreView: View {
             if viewModel.restoredText.isEmpty == false {
                 Section("Restored text") {
                     TextEditor(text: .constant(viewModel.restoredText))
-                        .frame(minHeight: 200)
+                        .frame(minHeight: Layout.editorMinimumHeight)
                         .textSelection(.enabled)
                         .liquidGlassEffect()
                     CopyButton(text: viewModel.restoredText)

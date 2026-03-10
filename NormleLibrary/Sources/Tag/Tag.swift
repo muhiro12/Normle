@@ -17,7 +17,9 @@ public final class Tag {
     /// The raw tag type identifier persisted in storage.
     public private(set) var typeID = TagType.maskRule.rawValue
 
-    private init() {}
+    private init() {
+        // Required for SwiftData model creation.
+    }
 
     /// Creates or returns an existing tag with the given `name` and `type`.
     public static func create(

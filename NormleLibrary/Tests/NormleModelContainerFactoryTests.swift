@@ -56,6 +56,7 @@ struct NormleModelContainerFactoryTests {
                 capturedCloudError = error as? ForcedError
             },
             onLocalContainerError: { _ in
+                // Intentionally ignored in this scenario.
             }
         )
 

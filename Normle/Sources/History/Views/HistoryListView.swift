@@ -12,6 +12,37 @@ import SwiftUI
 import TipKit
 
 struct HistoryListView: View {
+    private enum Layout {
+        static let listRowSpacing = 8.0
+        static let horizontalPadding = 16.0
+        static let compactInset = 16.0
+        static let wideInset = 24.0
+        static let iOSRowInsets = EdgeInsets(
+            top: compactInset,
+            leading: compactInset,
+            bottom: compactInset,
+            trailing: compactInset
+        )
+        static let macOSRowInsets = EdgeInsets(
+            top: compactInset,
+            leading: wideInset,
+            bottom: compactInset,
+            trailing: wideInset
+        )
+        static let iOSEmptyStateInsets = EdgeInsets(
+            top: wideInset,
+            leading: compactInset,
+            bottom: wideInset,
+            trailing: compactInset
+        )
+        static let macOSEmptyStateInsets = EdgeInsets(
+            top: wideInset,
+            leading: wideInset,
+            bottom: wideInset,
+            trailing: wideInset
+        )
+    }
+
     @Environment(\.modelContext)
     private var context
 
@@ -56,11 +87,11 @@ struct HistoryListView: View {
         .navigationTitle("History")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
-        .listRowSpacing(8)
+        .listRowSpacing(Layout.listRowSpacing)
         #endif
         #if os(macOS)
         .listStyle(.inset)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, Layout.horizontalPadding)
         #else
         .listStyle(.insetGrouped)
         #endif
@@ -112,17 +143,17 @@ struct HistoryListView: View {
 private extension HistoryListView {
     var listRowInsets: EdgeInsets {
         #if os(macOS)
-        return .init(top: 16, leading: 24, bottom: 16, trailing: 24)
+        return Layout.macOSRowInsets
         #else
-        return .init(top: 16, leading: 16, bottom: 16, trailing: 16)
+        return Layout.iOSRowInsets
         #endif
     }
 
     var emptyStateRowInsets: EdgeInsets {
         #if os(macOS)
-        return .init(top: 24, leading: 24, bottom: 24, trailing: 24)
+        return Layout.macOSEmptyStateInsets
         #else
-        return .init(top: 24, leading: 16, bottom: 24, trailing: 16)
+        return Layout.iOSEmptyStateInsets
         #endif
     }
 

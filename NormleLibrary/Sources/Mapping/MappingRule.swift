@@ -25,7 +25,9 @@ public final class MappingRule {
     @Relationship(deleteRule: .nullify)
     public private(set) var tags = [Tag]()
 
-    private init() {}
+    private init() {
+        // Required for SwiftData model creation.
+    }
 
     /// Creates a new mapping rule after validating source and target uniqueness.
     @discardableResult

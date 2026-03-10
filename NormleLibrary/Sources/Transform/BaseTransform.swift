@@ -9,7 +9,7 @@
 import CoreImage.CIFilterBuiltins
 import Foundation
 
-public enum BaseTransform: String, CaseIterable, Identifiable, Codable, Sendable {
+public enum BaseTransform: CaseIterable, Identifiable, Sendable {
     case fullwidthAlphanumericToHalfwidth
     case halfwidthAlphanumericToFullwidth
     case fullwidthSpaceToHalfwidth
@@ -89,6 +89,25 @@ public enum BaseTransform: String, CaseIterable, Identifiable, Codable, Sendable
 }
 
 private extension BaseTransform {
+    enum ScalarRange {
+        static let halfwidthDigitsStart = scalarValue(for: "0")
+        static let halfwidthDigitsEnd = scalarValue(for: "9")
+        static let fullwidthDigitsStart = scalarValue(for: "０")
+        static let fullwidthDigitsEnd = scalarValue(for: "９")
+        static let fullwidthOffset = fullwidthDigitsStart - halfwidthDigitsStart
+
+        private static func scalarValue(for character: Character) -> UInt32 {
+            guard let scalar = String(character).unicodeScalars.first else {
+                fatalError("Expected a single unicode scalar.")
+            }
+            return scalar.value
+        }
+    }
+
+    enum QRCode {
+        static let scale = 10.0
+    }
+
     func transformedText(for text: String) -> String? {
         if let transformedText = transformedWidthText(for: text) {
             return transformedText
@@ -233,15 +252,19 @@ private extension BaseTransform {
     ) -> String {
         let scalars: [UnicodeScalar] = text.unicodeScalars.map { scalar in
             if toFullwidth,
-               scalar.value >= 0x30,
-               scalar.value <= 0x39,
-               let converted = UnicodeScalar(scalar.value + 0xFEE0) {
+               scalar.value >= ScalarRange.halfwidthDigitsStart,
+               scalar.value <= ScalarRange.halfwidthDigitsEnd,
+               let converted = UnicodeScalar(
+                scalar.value + ScalarRange.fullwidthOffset
+               ) {
                 return converted
             }
             if toFullwidth == false,
-               scalar.value >= 0xFF10,
-               scalar.value <= 0xFF19,
-               let converted = UnicodeScalar(scalar.value - 0xFEE0) {
+               scalar.value >= ScalarRange.fullwidthDigitsStart,
+               scalar.value <= ScalarRange.fullwidthDigitsEnd,
+               let converted = UnicodeScalar(
+                scalar.value - ScalarRange.fullwidthOffset
+               ) {
                 return converted
             }
             return scalar
@@ -257,7 +280,12 @@ private extension BaseTransform {
         guard let outputImage = filter.outputImage else {
             return nil
         }
-        let scaledImage = outputImage.transformed(by: CGAffineTransform(scaleX: 10, y: 10))
+        let scaledImage = outputImage.transformed(
+            by: CGAffineTransform(
+                scaleX: QRCode.scale,
+                y: QRCode.scale
+            )
+        )
 
         let context = makeCIContext()
         let colorSpace = CGColorSpaceCreateDeviceGray()

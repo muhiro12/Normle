@@ -13,6 +13,10 @@ import SwiftUI
 }
 
 private struct SelectableTextEditorPreview: View {
+    private enum Layout {
+        static let minimumHeight = 140.0
+    }
+
     @State private var text = "Select this text to test selection."
     @State private var selectedText = String()
 
@@ -22,7 +26,7 @@ private struct SelectableTextEditorPreview: View {
             selectedText: $selectedText,
             onCreateMapping: nil
         )
-        .frame(minHeight: 140)
+        .frame(minHeight: Layout.minimumHeight)
         .padding()
     }
 }

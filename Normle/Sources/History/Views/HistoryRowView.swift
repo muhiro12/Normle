@@ -11,10 +11,15 @@ import SwiftData
 import SwiftUI
 
 struct HistoryRowView: View {
+    private enum Layout {
+        static let spacing = 4.0
+        static let previewLineLimit = 2
+    }
+
     let record: TransformRecord
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: Layout.spacing) {
             HStack {
                 Text(record.date.formatted(date: .abbreviated, time: .shortened))
                     .font(.headline)
@@ -23,7 +28,7 @@ struct HistoryRowView: View {
             Text(record.previewText)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-                .lineLimit(2)
+                .lineLimit(Layout.previewLineLimit)
         }
     }
 }

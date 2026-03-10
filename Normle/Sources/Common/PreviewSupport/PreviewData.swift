@@ -12,6 +12,12 @@ import SwiftUI
 
 @MainActor
 enum PreviewData {
+    private enum TimeIntervalOffset {
+        static let recentMapping = -3_600.0
+        static let olderMapping = -7_200.0
+        static let sampleMapping = -1_800.0
+    }
+
     static func makeContainer() -> ModelContainer {
         let configuration: ModelConfiguration = .init(isStoredInMemoryOnly: true)
         do {
@@ -34,14 +40,14 @@ enum PreviewData {
                 source: "alice@example.com",
                 target: "[Email 1]",
                 isEnabled: true,
-                date: Date().addingTimeInterval(-3_600)
+                date: Date().addingTimeInterval(TimeIntervalOffset.recentMapping)
             )
             try MappingRule.create(
                 context: context,
                 source: "Tokyo",
                 target: "[City]",
                 isEnabled: false,
-                date: Date().addingTimeInterval(-7_200)
+                date: Date().addingTimeInterval(TimeIntervalOffset.olderMapping)
             )
             _ = TransformRecord.create(
                 context: context,
@@ -69,7 +75,7 @@ enum PreviewData {
                 source: "Example",
                 target: "[Masked]",
                 isEnabled: true,
-                date: Date().addingTimeInterval(-1_800)
+                date: Date().addingTimeInterval(TimeIntervalOffset.sampleMapping)
             )
             try context.save()
             return rule

@@ -141,6 +141,12 @@ struct BaseTransformTests {
 }
 
 private extension BaseTransformTests {
+    enum PNGImage {
+        static let width = 4
+        static let height = 4
+        static let bitsPerComponent = 8
+    }
+
     func pngData(from image: CGImage) -> Data? {
         let mutableData = NSMutableData()
         guard let destination = CGImageDestinationCreateWithData(
@@ -161,15 +167,13 @@ private extension BaseTransformTests {
     }
 
     func makeSolidPNGData() -> Data? {
-        let width = 4
-        let height = 4
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue
         guard let context = CGContext(
             data: nil,
-            width: width,
-            height: height,
-            bitsPerComponent: 8,
+            width: PNGImage.width,
+            height: PNGImage.height,
+            bitsPerComponent: PNGImage.bitsPerComponent,
             bytesPerRow: 0,
             space: colorSpace,
             bitmapInfo: bitmapInfo
@@ -189,8 +193,8 @@ private extension BaseTransformTests {
             CGRect(
                 x: 0,
                 y: 0,
-                width: CGFloat(width),
-                height: CGFloat(height)
+                width: CGFloat(PNGImage.width),
+                height: CGFloat(PNGImage.height)
             )
         )
 
