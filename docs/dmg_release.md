@@ -9,14 +9,15 @@ Flow:
 
 1. Run release gates:
    iOS build, macOS build, and `NormleLibrary` tests.
-2. Validate the provided app path, signature, and CloudKit entitlements.
+2. Validate the exported app path, `Contents/Info.plist`,
+   `CFBundleShortVersionString`, Developer ID signature, and CloudKit entitlements.
 3. Create a DMG (`Normle_<version>.dmg`) with `Normle.app` and `/Applications`.
 4. Notarize and staple.
 
 Current policy for direct DMG distribution:
 
-1. macOS builds distributed by DMG treat subscription-gated features as enabled.
-2. iCloud sync remains user-configurable in Settings.
+1. The macOS runtime grants premium access without requiring an active subscription.
+2. iCloud sync still follows the `Use iCloud sync` setting in Settings.
 
 ## One-Time Setup: notarytool Keychain Profile
 
