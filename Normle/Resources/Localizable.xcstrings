@@ -171,6 +171,40 @@
         }
       }
     },
+    "Choose presets first" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose presets first"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Choose presets first"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Choose presets first"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Choose presets first"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Choose presets first"
+          }
+        }
+      }
+    },
     "Clear" : {
       "localizations" : {
         "en" : {
@@ -405,6 +439,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "从所选内容创建映射"
+          }
+        }
+      }
+    },
+    "Create your first mapping" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create your first mapping"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create your first mapping"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create your first mapping"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create your first mapping"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create your first mapping"
           }
         }
       }
@@ -885,6 +953,40 @@
         }
       }
     },
+    "Enable this to keep history and mappings synced with iCloud." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable this to keep history and mappings synced with iCloud."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enable this to keep history and mappings synced with iCloud."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enable this to keep history and mappings synced with iCloud."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enable this to keep history and mappings synced with iCloud."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enable this to keep history and mappings synced with iCloud."
+          }
+        }
+      }
+    },
     "Enabled" : {
       "localizations" : {
         "en" : {
@@ -1021,6 +1123,74 @@
         }
       }
     },
+    "Help" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Help"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Help"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Help"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Help"
+          }
+        }
+      }
+    },
+    "Highlight part of your input to turn recurring replacements into a reusable mapping." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
+          }
+        }
+      }
+    },
     "History" : {
       "localizations" : {
         "en" : {
@@ -1051,6 +1221,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "历史记录"
+          }
+        }
+      }
+    },
+    "History keeps source, target, and restore context for each saved transform." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History keeps source, target, and restore context for each saved transform."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "History keeps source, target, and restore context for each saved transform."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "History keeps source, target, and restore context for each saved transform."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "History keeps source, target, and restore context for each saved transform."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "History keeps source, target, and restore context for each saved transform."
           }
         }
       }
@@ -1259,6 +1463,40 @@
         }
       }
     },
+    "Licenses" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licenses"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Licenses"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Licenses"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Licenses"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Licenses"
+          }
+        }
+      }
+    },
     "Manage your subscription and sync preferences." : {
       "localizations" : {
         "en" : {
@@ -1391,6 +1629,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "映射"
+          }
+        }
+      }
+    },
+    "Mappings let you replace repeated text patterns during transforms." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mappings let you replace repeated text patterns during transforms."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mappings let you replace repeated text patterns during transforms."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mappings let you replace repeated text patterns during transforms."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mappings let you replace repeated text patterns during transforms."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mappings let you replace repeated text patterns during transforms."
           }
         }
       }
@@ -1905,6 +2177,74 @@
         }
       }
     },
+    "Open a record for restore details" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open a record for restore details"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open a record for restore details"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open a record for restore details"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open a record for restore details"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open a record for restore details"
+          }
+        }
+      }
+    },
+    "Open Subscription to enable iCloud sync across your devices." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Subscription to enable iCloud sync across your devices."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open Subscription to enable iCloud sync across your devices."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open Subscription to enable iCloud sync across your devices."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open Subscription to enable iCloud sync across your devices."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open Subscription to enable iCloud sync across your devices."
+          }
+        }
+      }
+    },
     "Paste" : {
       "localizations" : {
         "en" : {
@@ -2105,6 +2445,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "恢复"
+          }
+        }
+      }
+    },
+    "Restore from this record" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore from this record"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Restore from this record"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Restore from this record"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Restore from this record"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Restore from this record"
           }
         }
       }
@@ -2381,6 +2755,40 @@
         }
       }
     },
+    "Select text to make a mapping" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select text to make a mapping"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Select text to make a mapping"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Select text to make a mapping"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Select text to make a mapping"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Select text to make a mapping"
+          }
+        }
+      }
+    },
     "Settings" : {
       "localizations" : {
         "en" : {
@@ -2411,6 +2819,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "设置"
+          }
+        }
+      }
+    },
+    "Show tips again" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show tips again"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show tips again"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show tips again"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show tips again"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show tips again"
           }
         }
       }
@@ -2551,6 +2993,40 @@
         }
       }
     },
+    "Start by selecting one or more transforms before you run and save a result." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start by selecting one or more transforms before you run and save a result."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Start by selecting one or more transforms before you run and save a result."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Start by selecting one or more transforms before you run and save a result."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Start by selecting one or more transforms before you run and save a result."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Start by selecting one or more transforms before you run and save a result."
+          }
+        }
+      }
+    },
     "Status" : {
       "localizations" : {
         "en" : {
@@ -2649,6 +3125,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "订阅"
+          }
+        }
+      }
+    },
+    "Subscription unlocks sync" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription unlocks sync"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Subscription unlocks sync"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Subscription unlocks sync"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Subscription unlocks sync"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Subscription unlocks sync"
           }
         }
       }
@@ -2823,6 +3333,74 @@
         }
       }
     },
+    "Tips reset" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tips reset"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tips reset"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tips reset"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tips reset"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tips reset"
+          }
+        }
+      }
+    },
+    "Tips will appear again as you move through the app." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tips will appear again as you move through the app."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tips will appear again as you move through the app."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tips will appear again as you move through the app."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tips will appear again as you move through the app."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tips will appear again as you move through the app."
+          }
+        }
+      }
+    },
     "Total: %d" : {
       "localizations" : {
         "en" : {
@@ -2959,6 +3537,40 @@
         }
       }
     },
+    "Turn on iCloud sync" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on iCloud sync"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Turn on iCloud sync"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Turn on iCloud sync"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Turn on iCloud sync"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Turn on iCloud sync"
+          }
+        }
+      }
+    },
     "Updated: %d" : {
       "localizations" : {
         "en" : {
@@ -3027,181 +3639,35 @@
         }
       }
     },
-    "Choose presets first" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose presets first"
-          }
-        }
-      }
-    },
-    "Create your first mapping" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create your first mapping"
-          }
-        }
-      }
-    },
-    "Enable this to keep history and mappings synced with iCloud." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enable this to keep history and mappings synced with iCloud."
-          }
-        }
-      }
-    },
-    "Help" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Help"
-          }
-        }
-      }
-    },
-    "Highlight part of your input to turn recurring replacements into a reusable mapping." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
-          }
-        }
-      }
-    },
-    "History keeps source, target, and restore context for each saved transform." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "History keeps source, target, and restore context for each saved transform."
-          }
-        }
-      }
-    },
-    "Mappings let you replace repeated text patterns during transforms." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mappings let you replace repeated text patterns during transforms."
-          }
-        }
-      }
-    },
-    "Open a record for restore details" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open a record for restore details"
-          }
-        }
-      }
-    },
-    "Open Subscription to enable iCloud sync across your devices." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open Subscription to enable iCloud sync across your devices."
-          }
-        }
-      }
-    },
-    "Restore from this record" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Restore from this record"
-          }
-        }
-      }
-    },
-    "Select text to make a mapping" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select text to make a mapping"
-          }
-        }
-      }
-    },
-    "Show tips again" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Show tips again"
-          }
-        }
-      }
-    },
-    "Start by selecting one or more transforms before you run and save a result." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Start by selecting one or more transforms before you run and save a result."
-          }
-        }
-      }
-    },
-    "Subscription unlocks sync" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Subscription unlocks sync"
-          }
-        }
-      }
-    },
-    "Tips reset" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tips reset"
-          }
-        }
-      }
-    },
-    "Tips will appear again as you move through the app." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tips will appear again as you move through the app."
-          }
-        }
-      }
-    },
-    "Turn on iCloud sync" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turn on iCloud sync"
-          }
-        }
-      }
-    },
     "Use this saved record to rebuild text when you need to recover a prior response." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Use this saved record to rebuild text when you need to recover a prior response."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use this saved record to rebuild text when you need to recover a prior response."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use this saved record to rebuild text when you need to recover a prior response."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use this saved record to rebuild text when you need to recover a prior response."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
             "value" : "Use this saved record to rebuild text when you need to recover a prior response."
           }
         }
