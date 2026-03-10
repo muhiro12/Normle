@@ -14,6 +14,8 @@ Flow:
 3. Create a DMG (`Normle_<version>.dmg`) with `Normle.app` and `/Applications`.
 4. Notarize and staple.
 
+Build and test gate artifacts are written under `.build/ci/`.
+
 Current policy for direct DMG distribution:
 
 1. The macOS runtime grants premium access without requiring an active subscription.
@@ -40,6 +42,8 @@ bash ci_scripts/build_normle_dmg.sh "/path/to/Normle.app"
 
 The app must already be signed with `Developer ID Application`.
 The script will fail if any pre-release gate fails.
+Those gate runs use `ci_scripts/tasks/build_app.sh` and
+`ci_scripts/tasks/test_shared_library.sh`.
 
 Output file:
 

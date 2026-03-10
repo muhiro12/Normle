@@ -17,28 +17,34 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 project_path="Normle.xcodeproj"
-ci_directory="$repository_root/build/ci"
-derived_data_path="$ci_directory/DerivedData"
-results_directory="$ci_directory/results"
+shared_directory="${CI_SHARED_DIR:-$repository_root/.build/ci/shared}"
+work_directory="${CI_RUN_WORK_DIR:-${AI_RUN_WORK_DIR:-$shared_directory/work}}"
+cache_directory="${CI_CACHE_DIR:-${AI_RUN_CACHE_ROOT:-$shared_directory/cache}}"
+derived_data_path="${CI_DERIVED_DATA_DIR:-$shared_directory/DerivedData}"
+results_directory="${CI_RUN_RESULTS_DIR:-${AI_RUN_RESULTS_DIR:-$work_directory/results}}"
 
-local_home_directory="$ci_directory/home"
-cache_directory="$ci_directory/cache"
-temporary_directory="$ci_directory/tmp"
+local_home_directory="$shared_directory/home"
+temporary_directory="$shared_directory/tmp"
 clang_module_cache_directory="$cache_directory/clang/ModuleCache"
-swiftpm_cache_directory="$ci_directory/swiftpm_cache"
-swiftpm_config_directory="$ci_directory/swiftpm_config"
+package_cache_directory="$cache_directory/package"
+cloned_source_packages_directory="$cache_directory/source_packages"
+swiftpm_cache_directory="$cache_directory/swiftpm/cache"
+swiftpm_config_directory="$cache_directory/swiftpm/config"
 
 mkdir -p \
+  "$work_directory" \
   "$local_home_directory/Library/Caches" \
   "$local_home_directory/Library/Developer" \
   "$local_home_directory/Library/Logs" \
   "$cache_directory" \
   "$clang_module_cache_directory" \
+  "$package_cache_directory" \
+  "$cloned_source_packages_directory" \
   "$swiftpm_cache_directory" \
   "$swiftpm_config_directory" \
-  "$temporary_directory"
-
-mkdir -p "$derived_data_path" "$results_directory"
+  "$temporary_directory" \
+  "$derived_data_path" \
+  "$results_directory"
 
 resolve_simulator_identifier() {
   local booted_simulator_identifier
@@ -78,6 +84,7 @@ CLANG_MODULE_CACHE_PATH="$clang_module_cache_directory" \
 SWIFTPM_MODULECACHE_OVERRIDE="$clang_module_cache_directory" \
 SWIFTPM_CACHE_PATH="$swiftpm_cache_directory" \
 SWIFTPM_CONFIG_PATH="$swiftpm_config_directory" \
+PLL_SOURCE_PACKAGES_PATH="$cloned_source_packages_directory" \
 xcodebuild \
   -project "$project_path" \
   -scheme "NormleLibrary" \
@@ -86,6 +93,8 @@ xcodebuild \
   -parallel-testing-enabled NO \
   -derivedDataPath "$derived_data_path" \
   -resultBundlePath "$result_bundle_path" \
+  -clonedSourcePackagesDirPath "$cloned_source_packages_directory" \
+  -packageCachePath "$package_cache_directory" \
   "CLANG_MODULE_CACHE_PATH=$clang_module_cache_directory" \
   test
 

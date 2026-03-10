@@ -67,8 +67,8 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 echo "Running release gates before DMG packaging."
-bash ci_scripts/build_normle.sh
-bash ci_scripts/test_normle_library.sh
+bash "$repository_root/ci_scripts/tasks/build_app.sh"
+bash "$repository_root/ci_scripts/tasks/test_shared_library.sh"
 echo "Release gates passed."
 
 required_commands=(
@@ -140,8 +140,7 @@ run_timestamp=$(date +%Y%m%d-%H%M%S)
 dmg_log_path="$logs_directory/dmg-${run_timestamp}.log"
 notary_log_path="$logs_directory/notary-${run_timestamp}.log"
 staple_log_path="$logs_directory/staple-${run_timestamp}.log"
-staging_directory="$repository_root/build/ci/tmp/dmg-staging-${run_timestamp}"
-
+staging_directory="$repository_root/.build/ci/shared/tmp/dmg-staging-${run_timestamp}"
 mkdir -p "$artifacts_directory" "$logs_directory"
 
 cleanup() {
