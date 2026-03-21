@@ -19,11 +19,15 @@ enum PreviewData {
     }
 
     static func makeContainer() -> ModelContainer {
-        do {
-            return try NormleModelContainerFactory.makeInMemory()
-        } catch {
-            fatalError(error.localizedDescription)
-        }
+        // Xcode previews have been unreliable with the in-memory container in the app target.
+        // Use a local-only store for previews, then wipe it so every render starts clean.
+        let container = NormleModelContainerFactory.makeWithFallback(
+            cloudSyncEnabled: false
+        ).container
+        clearAllPreviewData(
+            in: container
+        )
+        return container
     }
 
     static func seed(container: ModelContainer) {
@@ -93,5 +97,39 @@ enum PreviewData {
             assertionFailure(error.localizedDescription)
         }
         return record
+    }
+
+    private static func clearAllPreviewData(
+        in container: ModelContainer
+    ) {
+        let context = container.mainContext
+
+        do {
+            try deleteAll(
+                of: TransformRecord.self,
+                context: context
+            )
+            try deleteAll(
+                of: MappingRule.self,
+                context: context
+            )
+            try deleteAll(
+                of: Tag.self,
+                context: context
+            )
+            try context.save()
+        } catch {
+            assertionFailure(error.localizedDescription)
+        }
+    }
+
+    private static func deleteAll<Model: PersistentModel>(
+        of _: Model.Type,
+        context: ModelContext
+    ) throws {
+        let descriptor = FetchDescriptor<Model>()
+        try context.fetch(descriptor).forEach { model in
+            context.delete(model)
+        }
     }
 }
