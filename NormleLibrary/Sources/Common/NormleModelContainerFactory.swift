@@ -23,6 +23,19 @@ public enum NormleModelContainerFactory {
         )
     }
 
+    /// Creates an in-memory model container for previews and tests.
+    public static func makeInMemory() throws -> ModelContainer {
+        // Previews have been unstable when the in-memory container is built
+        // through the migration-plan initializer, so use the direct model list.
+        let configuration: ModelConfiguration = .init(isStoredInMemoryOnly: true)
+        return try .init(
+            for: TransformRecord.self,
+            MappingRule.self,
+            Tag.self,
+            configurations: configuration
+        )
+    }
+
     /// Creates a model container and falls back to local storage if cloud setup fails.
     public static func makeWithFallback(
         cloudSyncEnabled: Bool,

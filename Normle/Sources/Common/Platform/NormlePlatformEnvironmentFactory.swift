@@ -15,11 +15,19 @@ enum NormlePlatformEnvironmentFactory {
     static func make(
         modelContainer: ModelContainer
     ) -> NormlePlatformEnvironment {
-        .init(
+        let preferencesStore = UserPreferencesStore()
+        let routeInbox = makeRouteInbox()
+        let pendingRouteStore = NormlePendingRouteStore()
+
+        return .init(
             modelContainer: modelContainer,
-            preferencesStore: .init(),
+            preferencesStore: preferencesStore,
+            routeInbox: routeInbox,
+            pendingRouteStore: pendingRouteStore,
             runtimeBootstrap: makeRuntimeBootstrap(
-                configuration: makeAppConfiguration()
+                configuration: makeAppConfiguration(),
+                routeInbox: routeInbox,
+                pendingRouteStore: pendingRouteStore
             )
         )
     }
@@ -43,20 +51,48 @@ enum NormlePlatformEnvironmentFactory {
 
     @MainActor
     private static func makeRuntimeBootstrap(
-        configuration: MHAppConfiguration
+        configuration: MHAppConfiguration,
+        routeInbox: NormleRouteInbox,
+        pendingRouteStore: NormlePendingRouteStore
     ) -> MHAppRuntimeBootstrap {
         let reviewFlow = NormleReviewSupport.flow(
             context: .appActivation,
             source: #fileID
+        )
+        let routePipeline = MHAppRoutePipeline(
+            routeLifecycle: .init(
+                logger: NormleApp.logger(
+                    category: "Routing",
+                    source: #fileID
+                ),
+                isDuplicate: ==
+            ),
+            using: NormleRouteCodec.deepLink,
+            routeInbox: routeInbox,
+            pendingSources: [
+                pendingRouteStore.source
+            ]
         )
 
         return .init(
             configuration: configuration,
             lifecyclePlan: .init(
                 activeTasks: [
+                    routePipeline.task(
+                        name: "synchronizePendingRoutes"
+                    ),
                     reviewFlow.task(name: "requestReview")
-                ]
-            )
+                ],
+                skipFirstActivePhase: true
+            ),
+            routePipeline: routePipeline
+        )
+    }
+
+    @MainActor
+    private static func makeRouteInbox() -> NormleRouteInbox {
+        .init(
+            isDuplicate: ==
         )
     }
 }

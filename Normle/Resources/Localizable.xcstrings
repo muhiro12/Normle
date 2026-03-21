@@ -179,12 +179,6 @@
             "value" : "Choose presets first"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Choose presets first"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -192,6 +186,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Choose presets first"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Choose presets first"
@@ -451,12 +451,6 @@
             "value" : "Create your first mapping"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create your first mapping"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -464,6 +458,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create your first mapping"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Create your first mapping"
@@ -961,12 +961,6 @@
             "value" : "Enable this to keep history and mappings synced with iCloud."
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Enable this to keep history and mappings synced with iCloud."
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -974,6 +968,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enable this to keep history and mappings synced with iCloud."
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Enable this to keep history and mappings synced with iCloud."
@@ -1123,17 +1123,23 @@
         }
       }
     },
+    "Factory Reset" : {
+
+    },
+    "Factory reset app" : {
+
+    },
+    "Factory reset app?" : {
+
+    },
+    "Factory reset removes all local data and settings on this device." : {
+
+    },
     "Help" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Help"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
             "value" : "Help"
           }
         },
@@ -1144,6 +1150,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Help"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Help"
@@ -1165,12 +1177,6 @@
             "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -1178,6 +1184,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
@@ -1233,12 +1245,6 @@
             "value" : "History keeps source, target, and restore context for each saved transform."
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "History keeps source, target, and restore context for each saved transform."
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -1246,6 +1252,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "History keeps source, target, and restore context for each saved transform."
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "History keeps source, target, and restore context for each saved transform."
@@ -1471,12 +1483,6 @@
             "value" : "Licenses"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Licenses"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -1484,6 +1490,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Licenses"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Licenses"
@@ -1641,12 +1653,6 @@
             "value" : "Mappings let you replace repeated text patterns during transforms."
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Mappings let you replace repeated text patterns during transforms."
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -1654,6 +1660,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mappings let you replace repeated text patterns during transforms."
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Mappings let you replace repeated text patterns during transforms."
@@ -2185,12 +2197,6 @@
             "value" : "Open a record for restore details"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Open a record for restore details"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -2198,6 +2204,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open a record for restore details"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Open a record for restore details"
@@ -2219,12 +2231,6 @@
             "value" : "Open Subscription to enable iCloud sync across your devices."
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Open Subscription to enable iCloud sync across your devices."
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -2232,6 +2238,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open Subscription to enable iCloud sync across your devices."
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Open Subscription to enable iCloud sync across your devices."
@@ -2457,12 +2469,6 @@
             "value" : "Restore from this record"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Restore from this record"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -2470,6 +2476,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Restore from this record"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Restore from this record"
@@ -2763,12 +2775,6 @@
             "value" : "Select text to make a mapping"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Select text to make a mapping"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -2776,6 +2782,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Select text to make a mapping"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Select text to make a mapping"
@@ -2831,12 +2843,6 @@
             "value" : "Show tips again"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show tips again"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -2844,6 +2850,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show tips again"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Show tips again"
@@ -3001,12 +3013,6 @@
             "value" : "Start by selecting one or more transforms before you run and save a result."
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Start by selecting one or more transforms before you run and save a result."
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -3014,6 +3020,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Start by selecting one or more transforms before you run and save a result."
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Start by selecting one or more transforms before you run and save a result."
@@ -3137,12 +3149,6 @@
             "value" : "Subscription unlocks sync"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Subscription unlocks sync"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -3150,6 +3156,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Subscription unlocks sync"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Subscription unlocks sync"
@@ -3300,6 +3312,7 @@
       }
     },
     "This action cannot be undone." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3341,12 +3354,6 @@
             "value" : "Tips reset"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Tips reset"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -3354,6 +3361,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tips reset"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Tips reset"
@@ -3375,12 +3388,6 @@
             "value" : "Tips will appear again as you move through the app."
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Tips will appear again as you move through the app."
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -3388,6 +3395,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tips will appear again as you move through the app."
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Tips will appear again as you move through the app."
@@ -3545,12 +3558,6 @@
             "value" : "Turn on iCloud sync"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Turn on iCloud sync"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -3558,6 +3565,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Turn on iCloud sync"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Turn on iCloud sync"
@@ -3647,12 +3660,6 @@
             "value" : "Use this saved record to rebuild text when you need to recover a prior response."
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Use this saved record to rebuild text when you need to recover a prior response."
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -3660,6 +3667,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use this saved record to rebuild text when you need to recover a prior response."
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Use this saved record to rebuild text when you need to recover a prior response."

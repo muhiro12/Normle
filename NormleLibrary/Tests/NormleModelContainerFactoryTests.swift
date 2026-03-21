@@ -38,6 +38,52 @@ struct NormleModelContainerFactoryTests {
 
     @MainActor
     @Test
+    func makeInMemorySupportsPersistence() throws {
+        let container = try NormleModelContainerFactory.makeInMemory()
+        let context = container.mainContext
+        let descriptor = FetchDescriptor<TransformRecord>()
+        let baselineCount = try context.fetch(descriptor).count
+
+        _ = TransformRecord.create(
+            context: context,
+            sourceText: "source",
+            targetText: "target"
+        )
+        try context.save()
+
+        let updatedCount = try context.fetch(descriptor).count
+        #expect(updatedCount == baselineCount + 1)
+    }
+
+    @MainActor
+    @Test
+    func makeInMemorySupportsEntireSchema() throws {
+        let container = try NormleModelContainerFactory.makeInMemory()
+        let context = container.mainContext
+        let mappingDescriptor = FetchDescriptor<MappingRule>()
+        let tagDescriptor = FetchDescriptor<NormleLibrary.Tag>()
+
+        #expect(try context.fetch(mappingDescriptor).isEmpty)
+        #expect(try context.fetch(tagDescriptor).isEmpty)
+
+        _ = try MappingRule.create(
+            context: context,
+            source: "email@example.com",
+            target: "[Email]"
+        )
+        _ = NormleLibrary.Tag.createIgnoringDuplicates(
+            context: context,
+            name: "Sensitive",
+            type: .maskRule
+        )
+        try context.save()
+
+        #expect(try context.fetch(mappingDescriptor).count == 1)
+        #expect(try context.fetch(tagDescriptor).count == 1)
+    }
+
+    @MainActor
+    @Test
     func makeWithFallbackDisablesCloudSyncAfterCloudFailure() throws {
         let localContainer = try NormleModelContainerFactory.make(
             cloudSyncEnabled: false

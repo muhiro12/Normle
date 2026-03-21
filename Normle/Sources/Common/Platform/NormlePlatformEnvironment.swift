@@ -8,13 +8,32 @@
 
 import MHPlatform
 import NormleLibrary
+import Observation
 import SwiftData
 import SwiftUI
 
-struct NormlePlatformEnvironment {
+@MainActor
+@Observable
+final class NormlePlatformEnvironment {
     let modelContainer: ModelContainer
     let preferencesStore: UserPreferencesStore
+    let routeInbox: NormleRouteInbox
+    let pendingRouteStore: NormlePendingRouteStore
     let runtimeBootstrap: MHAppRuntimeBootstrap
+
+    init(
+        modelContainer: ModelContainer,
+        preferencesStore: UserPreferencesStore,
+        routeInbox: NormleRouteInbox,
+        pendingRouteStore: NormlePendingRouteStore,
+        runtimeBootstrap: MHAppRuntimeBootstrap
+    ) {
+        self.modelContainer = modelContainer
+        self.preferencesStore = preferencesStore
+        self.routeInbox = routeInbox
+        self.pendingRouteStore = pendingRouteStore
+        self.runtimeBootstrap = runtimeBootstrap
+    }
 }
 
 extension View {
@@ -37,5 +56,6 @@ extension View {
     ) -> some View {
         modelContainer(environment.modelContainer)
             .environmentObject(environment.preferencesStore)
+            .environment(environment)
     }
 }

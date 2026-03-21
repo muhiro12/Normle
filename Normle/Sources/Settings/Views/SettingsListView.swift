@@ -8,6 +8,7 @@
 
 import MHPlatform
 import NormleLibrary
+import Observation
 import SwiftData
 import SwiftUI
 import TipKit
@@ -20,16 +21,22 @@ struct SettingsListView: View {
 
     @Environment(\.modelContext)
     private var context
+    @Environment(NormleAppSessionController.self)
+    private var sessionController
+    @Environment(NormlePlatformEnvironment.self)
+    private var platformEnvironment
     @AppStorage(BoolAppStorageKey.isSubscribeOn)
     private var isSubscribeOn
     @AppStorage(BoolAppStorageKey.isICloudOn)
     private var isICloudOn
 
     @State private var isDeleteDialogPresented = false
+    @State private var isFactoryResetDialogPresented = false
     @State private var alertTitle = String()
     @State private var alertMessage = String()
     @State private var isShowingAlert = false
     @State private var tipsRefreshID: UUID = .init()
+    @State private var factoryResetCoordinator = NormleFactoryResetCoordinator()
 
     var body: some View {
         List {
@@ -64,6 +71,26 @@ struct SettingsListView: View {
                 Text("Cancel")
             }
         }
+        .confirmationDialog(
+            "Factory reset app?",
+            isPresented: $isFactoryResetDialogPresented
+        ) {
+            Button(role: .destructive) {
+                runFactoryReset()
+            } label: {
+                Text("Factory Reset")
+            }
+            Button(role: .cancel) {
+                isFactoryResetDialogPresented = false
+            } label: {
+                Text("Cancel")
+            }
+        } message: {
+            Text(
+                "This removes local history, mappings, tags, preferences, tips, "
+                    + "pending deep links, and sync settings on this device."
+            )
+        }
         .alert(
             alertTitle,
             isPresented: $isShowingAlert
@@ -84,9 +111,7 @@ private extension SettingsListView {
                 Toggle("Use iCloud sync", isOn: $isICloudOn)
                     .popoverTip(isICloudOn ? nil : ICloudSyncTip())
             } else {
-                NavigationLink {
-                    StoreNavigationView()
-                } label: {
+                NavigationLink(value: NormleSettingsDestination.subscription) {
                     Text("Subscription")
                 }
                 .popoverTip(SubscriptionSyncTip())
@@ -105,10 +130,24 @@ private extension SettingsListView {
             } label: {
                 Text("Delete all history")
             }
+            .disabled(factoryResetCoordinator.isRunning)
+
+            Button(role: .destructive) {
+                isFactoryResetDialogPresented = true
+            } label: {
+                Text("Factory reset app")
+            }
+            .disabled(factoryResetCoordinator.isRunning)
+
+            if factoryResetCoordinator.isRunning {
+                ProgressView(
+                    factoryResetCoordinator.activeStepDescription ?? "Factory reset in progress"
+                )
+            }
         } header: {
             Text("Data")
         } footer: {
-            Text("This action cannot be undone.")
+            Text("Factory reset removes all local data and settings on this device.")
         }
     }
 
@@ -123,6 +162,17 @@ private extension SettingsListView {
     func deleteAllHistory() {
         Task {
             await deleteAllHistoryTask()
+        }
+    }
+
+    func runFactoryReset() {
+        Task {
+            await factoryResetCoordinator.run(
+                context: context,
+                preferencesStore: platformEnvironment.preferencesStore,
+                pendingRouteStore: platformEnvironment.pendingRouteStore,
+                sessionController: sessionController
+            )
         }
     }
 
@@ -156,8 +206,8 @@ private extension SettingsListView {
     let container = PreviewData.makeContainer()
     let assembly = NormleAppAssembly.preview(container: container)
     return assembly.previewRootView(
-        NavigationStack {
-            SettingsListView()
-        }
+        SettingsNavigationView(
+            path: .constant(.init())
+        )
     )
 }

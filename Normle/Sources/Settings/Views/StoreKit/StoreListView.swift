@@ -12,9 +12,7 @@ struct StoreListView: View {
     var body: some View {
         List {
             StoreSection()
-            NavigationLink {
-                StoreLicensesView()
-            } label: {
+            NavigationLink(value: NormleSettingsDestination.licenses) {
                 Label("Licenses", systemImage: "doc.text")
             }
         }
@@ -28,6 +26,14 @@ struct StoreListView: View {
     return assembly.previewRootView(
         NavigationStack {
             StoreListView()
+                .navigationDestination(for: NormleSettingsDestination.self) { destination in
+                    switch destination {
+                    case .subscription:
+                        StoreListView()
+                    case .licenses:
+                        StoreLicensesView()
+                    }
+                }
         }
     )
 }

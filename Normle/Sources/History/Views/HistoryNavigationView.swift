@@ -11,7 +11,7 @@ import SwiftData
 import SwiftUI
 
 struct HistoryNavigationView: View {
-    @State private var path = NavigationPath()
+    @Binding var path: NavigationPath
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -26,6 +26,8 @@ struct HistoryNavigationView: View {
 #Preview("History - Navigation") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
-    return HistoryNavigationView()
-        .modelContainer(container)
+    return HistoryNavigationView(
+        path: .constant(.init())
+    )
+    .modelContainer(container)
 }

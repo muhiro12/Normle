@@ -11,7 +11,7 @@ import SwiftData
 import SwiftUI
 
 struct MappingNavigationView: View {
-    @State private var path = NavigationPath()
+    @Binding var path: NavigationPath
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -26,6 +26,8 @@ struct MappingNavigationView: View {
 #Preview("Mapping - Navigation") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
-    return MappingNavigationView()
-        .modelContainer(container)
+    return MappingNavigationView(
+        path: .constant(.init())
+    )
+    .modelContainer(container)
 }

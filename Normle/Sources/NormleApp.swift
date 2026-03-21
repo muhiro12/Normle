@@ -8,6 +8,7 @@
 
 import MHPlatform
 import NormleLibrary
+import Observation
 import SwiftUI
 
 @main
@@ -15,20 +16,27 @@ struct NormleApp: App {
     @AppStorage(BoolAppStorageKey.isICloudOn)
     private var isICloudOn
 
-    private let assembly: NormleAppAssembly
+    @State private var sessionController: NormleAppSessionController
 
     var body: some Scene {
         WindowGroup {
-            assembly.rootView(
+            sessionController.assembly.rootView(
                 ContentView()
-                    .id(isICloudOn)
+                    .id(sessionController.revision),
+                sessionController: sessionController
             )
+            .task(id: isICloudOn) {
+                synchronizeAppSession()
+            }
         }
     }
 
     init() {
-        assembly = .live()
-        isICloudOn = assembly.isCloudSyncEnabled
+        let sessionController = NormleAppSessionController.live()
+        _sessionController = State(
+            initialValue: sessionController
+        )
+        isICloudOn = sessionController.cloudSyncEnabled
         NormleTipManager.configure()
     }
 }
@@ -44,5 +52,16 @@ extension NormleApp {
             category: category,
             source: source
         )
+    }
+
+    @MainActor
+    private func synchronizeAppSession() {
+        let actualCloudSyncEnabled = sessionController.rebuildIfNeeded(
+            for: isICloudOn
+        )
+
+        if actualCloudSyncEnabled != isICloudOn {
+            isICloudOn = actualCloudSyncEnabled
+        }
     }
 }

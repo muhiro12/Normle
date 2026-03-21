@@ -51,14 +51,24 @@ struct NormleAppAssembly {
 
     @ViewBuilder
     func rootView<Content: View>(
-        _ content: Content
+        _ content: Content,
+        sessionController: NormleAppSessionController
     ) -> some View {
-        content.normlePlatformEnvironment(platformEnvironment)
+        content
+            .normlePlatformEnvironment(platformEnvironment)
+            .environment(sessionController)
     }
 
     func previewRootView<Content: View>(
-        _ content: Content
+        _ content: Content,
+        sessionController: NormleAppSessionController? = nil
     ) -> some View {
-        content.normlePreviewPlatformEnvironment(platformEnvironment)
+        let previewSessionController = sessionController ?? .preview(
+            container: platformEnvironment.modelContainer
+        )
+
+        return content
+            .normlePreviewPlatformEnvironment(platformEnvironment)
+            .environment(previewSessionController)
     }
 }

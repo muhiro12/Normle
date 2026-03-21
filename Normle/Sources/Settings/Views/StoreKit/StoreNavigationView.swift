@@ -10,9 +10,7 @@ import SwiftUI
 
 struct StoreNavigationView: View {
     var body: some View {
-        NavigationStack {
-            StoreListView()
-        }
+        StoreListView()
     }
 }
 

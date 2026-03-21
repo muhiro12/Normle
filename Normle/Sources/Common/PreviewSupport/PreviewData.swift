@@ -19,14 +19,8 @@ enum PreviewData {
     }
 
     static func makeContainer() -> ModelContainer {
-        let configuration: ModelConfiguration = .init(isStoredInMemoryOnly: true)
         do {
-            return try .init(
-                for: TransformRecord.self,
-                MappingRule.self,
-                Tag.self,
-                configurations: configuration
-            )
+            return try NormleModelContainerFactory.makeInMemory()
         } catch {
             fatalError(error.localizedDescription)
         }
