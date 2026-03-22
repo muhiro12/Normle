@@ -19,7 +19,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/muhiro12/MHPlatform.git",
-            revision: "083817e803431d33825a5878593d63e399053ed9"
+            "1.0.0"..<"2.0.0"
         ),
         .package(url: "https://github.com/muhiro12/SwiftUtilities", "1.0.0"..<"2.0.0")
     ],

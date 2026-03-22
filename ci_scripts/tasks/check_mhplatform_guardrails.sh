@@ -32,6 +32,11 @@ collect_matches() {
   rg -n "$pattern" "$@" || true
 }
 
+mhplatform_package_block=$(sed -n '/url: "https:\/\/github.com\/muhiro12\/MHPlatform\.git"/,+3p' NormleLibrary/Package.swift)
+mhplatform_project_block=$(
+  sed -n '/XCRemoteSwiftPackageReference "MHPlatform"/,+7p' Normle.xcodeproj/project.pbxproj
+)
+
 package_path_hits=$(
   collect_matches \
     '\.package\(.*path:\s*"[^"]*MHPlatform' \
@@ -54,26 +59,16 @@ if [[ -n "$project_path_hits" ]]; then
     "$project_path_hits"
 fi
 
-package_branch_hits=$(
-  collect_matches \
-    'branch:\s*"|\.branch\("' \
-    NormleLibrary/Package.swift
-)
-if [[ -n "$package_branch_hits" ]]; then
+if [[ -n "$mhplatform_package_block" ]] && grep -Eq 'branch:\s*"|\.branch\("' <<<"$mhplatform_package_block"; then
   print_failure \
     "Floating MHPlatform branch dependencies are forbidden in Package.swift." \
-    "$package_branch_hits"
+    "$mhplatform_package_block"
 fi
 
-project_branch_hits=$(
-  collect_matches \
-    'kind = branch;' \
-    Normle.xcodeproj/project.pbxproj
-)
-if [[ -n "$project_branch_hits" ]]; then
+if [[ -n "$mhplatform_project_block" ]] && grep -Eq 'kind = branch;' <<<"$mhplatform_project_block"; then
   print_failure \
     "Floating MHPlatform branch dependencies are forbidden in the Xcode project." \
-    "$project_branch_hits"
+    "$mhplatform_project_block"
 fi
 
 library_umbrella_hits=$(
@@ -112,29 +107,35 @@ if [[ -n "$umbrella_import_hits" ]]; then
     "$umbrella_import_hits"
 fi
 
-if ! rg -q "url:\\s*\"${canonical_remote_url//\//\\/}\"" NormleLibrary/Package.swift; then
+if [[ -z "$mhplatform_package_block" ]] || \
+  ! grep -Eq "url:\\s*\"${canonical_remote_url//\//\\/}\"" <<<"$mhplatform_package_block"; then
   print_failure \
     "NormleLibrary/Package.swift must reference the canonical MHPlatform remote." \
-    "Expected remote: ${canonical_remote_url}"
+    "${mhplatform_package_block:-Expected remote: ${canonical_remote_url}}"
 fi
 
-if ! rg -q 'revision:\s*"[0-9a-f]{40}"' NormleLibrary/Package.swift; then
+if [[ -z "$mhplatform_package_block" ]] || \
+  ! grep -Eq '"1\.0\.0"\.\.<"2\.0\.0"' <<<"$mhplatform_package_block" || \
+  grep -Eq 'revision:\s*"|\.revision\("' <<<"$mhplatform_package_block"; then
   print_failure \
-    "NormleLibrary/Package.swift must pin MHPlatform by revision." \
-    "$(sed -n '1,120p' NormleLibrary/Package.swift)"
+    "NormleLibrary/Package.swift must require MHPlatform with the 1.x SemVer range." \
+    "${mhplatform_package_block:-$(sed -n '1,120p' NormleLibrary/Package.swift)}"
 fi
 
-if ! rg -q "repositoryURL = \"${canonical_remote_url//\//\\/}\";" Normle.xcodeproj/project.pbxproj; then
+if [[ -z "$mhplatform_project_block" ]] || \
+  ! grep -Eq "repositoryURL = \"${canonical_remote_url//\//\\/}\";" <<<"$mhplatform_project_block"; then
   print_failure \
     "Normle.xcodeproj must reference the canonical MHPlatform remote." \
-    "Expected remote: ${canonical_remote_url}"
+    "${mhplatform_project_block:-Expected remote: ${canonical_remote_url}}"
 fi
 
-if ! rg -q 'kind = revision;' Normle.xcodeproj/project.pbxproj || \
-  ! rg -q 'revision = [0-9a-f]{40};' Normle.xcodeproj/project.pbxproj; then
+if [[ -z "$mhplatform_project_block" ]] || \
+  ! grep -Eq 'kind = upToNextMajorVersion;' <<<"$mhplatform_project_block" || \
+  ! grep -Eq 'minimumVersion = 1\.0\.0;' <<<"$mhplatform_project_block" || \
+  grep -Eq 'kind = revision;|revision = [0-9a-f]{40};' <<<"$mhplatform_project_block"; then
   print_failure \
-    "Normle.xcodeproj must pin MHPlatform by revision." \
-    "$(rg -n 'MHPlatform|kind = revision|revision =' Normle.xcodeproj/project.pbxproj || true)"
+    "Normle.xcodeproj must require MHPlatform with the 1.x SemVer range." \
+    "${mhplatform_project_block:-$(rg -n 'MHPlatform|kind = upToNextMajorVersion|minimumVersion =' Normle.xcodeproj/project.pbxproj || true)}"
 fi
 
 for resolved_file in \
@@ -158,13 +159,19 @@ do
 
   if ! grep -Eq '"revision" : "[0-9a-f]{40}"' <<<"$mhplatform_block"; then
     print_failure \
-      "${resolved_file} must pin MHPlatform by revision." \
+      "${resolved_file} must include the resolved MHPlatform revision." \
       "$mhplatform_block"
   fi
 
-  if grep -Eq '"branch" :|"version" :' <<<"$mhplatform_block"; then
+  if ! grep -Eq '"version" : "1\.0\.0"' <<<"$mhplatform_block"; then
     print_failure \
-      "${resolved_file} must not float MHPlatform on a branch or version range." \
+      "${resolved_file} must record MHPlatform version 1.0.0." \
+      "$mhplatform_block"
+  fi
+
+  if grep -Eq '"branch" :' <<<"$mhplatform_block"; then
+    print_failure \
+      "${resolved_file} must not float MHPlatform on a branch." \
       "$mhplatform_block"
   fi
 done
