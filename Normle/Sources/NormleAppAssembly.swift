@@ -7,6 +7,7 @@
 //
 
 import MHPreferences
+import MHUI
 import NormleLibrary
 import SwiftData
 import SwiftUI
@@ -74,6 +75,7 @@ struct NormleAppAssembly {
         content
             .normlePlatformEnvironment(platformEnvironment)
             .environment(sessionController)
+            .mhTheme(MHTheme.standard())
     }
 
     func previewRootView<Content: View>(
@@ -87,5 +89,6 @@ struct NormleAppAssembly {
         return content
             .normlePreviewPlatformEnvironment(platformEnvironment)
             .environment(previewSessionController)
+            .mhTheme(MHTheme.standard())
     }
 }

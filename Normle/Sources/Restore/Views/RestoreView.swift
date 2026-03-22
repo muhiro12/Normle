@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import NormleLibrary
 import SwiftData
 import SwiftUI
@@ -22,32 +23,11 @@ struct RestoreView: View {
 
     var body: some View {
         List {
-            Section("AI response to restore") {
-                TextEditor(text: $viewModel.sourceText)
-                    .frame(minHeight: Layout.editorMinimumHeight)
-                    .liquidGlassEffect()
-            }
-
-            Section {
-                Button {
-                    viewModel.restore(with: record)
-                } label: {
-                    Label("Restore", systemImage: "arrow.uturn.backward")
-                }
-                .disabled(viewModel.sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            }
-
-            if viewModel.restoredText.isEmpty == false {
-                Section("Restored text") {
-                    TextEditor(text: .constant(viewModel.restoredText))
-                        .frame(minHeight: Layout.editorMinimumHeight)
-                        .textSelection(.enabled)
-                        .liquidGlassEffect()
-                    CopyButton(text: viewModel.restoredText)
-                }
-            }
+            sourceSection
+            restoreSection
+            restoredTextSection
         }
-        .navigationTitle("Restore")
+        .mhListChrome(title: "Restore")
         .task {
             markRestoreOpened()
         }
@@ -55,6 +35,48 @@ struct RestoreView: View {
 }
 
 private extension RestoreView {
+    var sourceSection: some View {
+        Section {
+            TextEditor(text: $viewModel.sourceText)
+                .frame(minHeight: Layout.editorMinimumHeight)
+                .scrollContentBackground(.hidden)
+                .mhInputChrome()
+        } header: {
+            Text("AI response to restore")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
+        }
+    }
+
+    var restoreSection: some View {
+        Section {
+            Button {
+                viewModel.restore(with: record)
+            } label: {
+                Label("Restore", systemImage: "arrow.uturn.backward")
+            }
+            .disabled(viewModel.sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .buttonStyle(.mhPrimary)
+        }
+    }
+
+    @ViewBuilder var restoredTextSection: some View {
+        if viewModel.restoredText.isEmpty == false {
+            Section {
+                TextEditor(text: .constant(viewModel.restoredText))
+                    .frame(minHeight: Layout.editorMinimumHeight)
+                    .scrollContentBackground(.hidden)
+                    .textSelection(.enabled)
+                    .mhInputChrome()
+                CopyButton(text: viewModel.restoredText)
+            } header: {
+                Text("Restored text")
+                    .mhSectionHeaderTitle()
+                    .mhSectionHeader()
+            }
+        }
+    }
+
     func markRestoreOpened() {
         NormleTipManager.donate(NormleTipEvents.didOpenRestoreView)
         HistoryRestoreTip().invalidate(reason: .actionPerformed)
@@ -64,8 +86,10 @@ private extension RestoreView {
 #Preview("Restore - Base") {
     let container = PreviewData.makeContainer()
     let record = PreviewData.makeSampleTransformRecord(container: container)
-    return NavigationStack {
-        RestoreView(record: record)
-    }
-    .modelContainer(container)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        NavigationStack {
+            RestoreView(record: record)
+        }
+    )
 }

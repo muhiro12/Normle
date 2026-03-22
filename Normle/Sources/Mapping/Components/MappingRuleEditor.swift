@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import NormleLibrary
 import SwiftUI
 
@@ -23,14 +24,16 @@ struct MappingRuleEditor: View {
                 text: $rule.original,
                 axis: .vertical
             )
-            .liquidGlassTextFieldStyle()
+            .textFieldStyle(.plain)
+            .mhInputChrome()
 
             TextField(
                 "Target text",
                 text: $rule.masked,
                 axis: .vertical
             )
-            .liquidGlassTextFieldStyle()
+            .textFieldStyle(.plain)
+            .mhInputChrome()
 
             Picker("Kind", selection: $rule.kind) {
                 ForEach(MappingKind.allCases) { kind in
@@ -43,14 +46,17 @@ struct MappingRuleEditor: View {
 }
 
 #Preview("MappingRuleEditor - Base") {
-    MappingRuleEditor(
-        rule: .constant(
-            .init(
-                original: "Example",
-                masked: "[Masked]",
-                kind: .custom
+    let assembly = NormleAppAssembly.preview()
+    return assembly.previewRootView(
+        MappingRuleEditor(
+            rule: .constant(
+                .init(
+                    original: "Example",
+                    masked: "[Masked]",
+                    kind: .custom
+                )
             )
         )
+        .padding()
     )
-    .padding()
 }

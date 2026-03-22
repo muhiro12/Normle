@@ -7,6 +7,7 @@
 //
 
 import MHAppRuntime
+import MHUI
 import SwiftUI
 
 struct StoreLicensesView: View {
@@ -15,7 +16,7 @@ struct StoreLicensesView: View {
 
     var body: some View {
         runtime.licensesView()
-            .navigationTitle("Licenses")
+            .mhListChrome(title: "Licenses")
     }
 }
 

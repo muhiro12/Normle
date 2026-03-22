@@ -26,8 +26,10 @@ struct HistoryNavigationView: View {
 #Preview("History - Navigation") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
-    return HistoryNavigationView(
-        path: .constant(.init())
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        HistoryNavigationView(
+            path: .constant(.init())
+        )
     )
-    .modelContainer(container)
 }

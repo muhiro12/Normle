@@ -9,7 +9,8 @@
 import SwiftUI
 
 #Preview("SelectableTextEditor - Base") {
-    SelectableTextEditorPreview()
+    let assembly = NormleAppAssembly.preview()
+    return assembly.previewRootView(SelectableTextEditorPreview())
 }
 
 private struct SelectableTextEditorPreview: View {

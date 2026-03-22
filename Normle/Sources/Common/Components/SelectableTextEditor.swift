@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import SwiftUI
 
 struct SelectableTextEditor: View {
@@ -19,6 +20,6 @@ struct SelectableTextEditor: View {
             selectedText: $selectedText,
             onCreateMapping: onCreateMapping
         )
-        .liquidGlassEffect()
+        .mhInputChrome()
     }
 }

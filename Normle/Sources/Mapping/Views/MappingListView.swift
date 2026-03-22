@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import NormleLibrary
 import SwiftData
 import SwiftUI
@@ -14,36 +15,8 @@ import UniformTypeIdentifiers
 
 struct MappingListView: View {
     private enum Layout {
-        static let listRowSpacing = 8.0
-        static let horizontalPadding = 16.0
-        static let compactInset = 16.0
-        static let wideInset = 24.0
         static let rowSpacing = 8.0
         static let secondaryLineLimit = 2
-        static let iOSRowInsets = EdgeInsets(
-            top: compactInset,
-            leading: compactInset,
-            bottom: compactInset,
-            trailing: compactInset
-        )
-        static let macOSRowInsets = EdgeInsets(
-            top: compactInset,
-            leading: wideInset,
-            bottom: compactInset,
-            trailing: wideInset
-        )
-        static let iOSEmptyStateInsets = EdgeInsets(
-            top: wideInset,
-            leading: compactInset,
-            bottom: wideInset,
-            trailing: compactInset
-        )
-        static let macOSEmptyStateInsets = EdgeInsets(
-            top: wideInset,
-            leading: wideInset,
-            bottom: wideInset,
-            trailing: wideInset
-        )
     }
 
     @Environment(\.modelContext)
@@ -65,17 +38,7 @@ struct MappingListView: View {
         List {
             rulesContent
         }
-        .navigationTitle("Mappings")
-        #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-        .listRowSpacing(Layout.listRowSpacing)
-        #endif
-        #if os(macOS)
-        .listStyle(.inset)
-        .padding(.horizontal, Layout.horizontalPadding)
-        #else
-        .listStyle(.insetGrouped)
-        #endif
+        .mhListChrome(title: "Mappings")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -179,7 +142,9 @@ private extension MappingListView {
                 systemImage: "link",
                 description: Text("Create a mapping to get started.")
             )
-            .listRowInsets(emptyStateRowInsets)
+            .mhEmptyStateLayout()
+            .mhSurfaceInset()
+            .mhSurface()
         } else {
             ForEach(rules) { rule in
                 ruleRow(rule)
@@ -187,43 +152,27 @@ private extension MappingListView {
         }
     }
 
-    var listRowInsets: EdgeInsets {
-        #if os(macOS)
-        return Layout.macOSRowInsets
-        #else
-        return Layout.iOSRowInsets
-        #endif
-    }
-
-    var emptyStateRowInsets: EdgeInsets {
-        #if os(macOS)
-        return Layout.macOSEmptyStateInsets
-        #else
-        return Layout.iOSEmptyStateInsets
-        #endif
-    }
-
     func ruleRow(_ rule: MappingRule) -> some View {
         NavigationLink(value: rule) {
             VStack(alignment: .leading, spacing: Layout.rowSpacing) {
-                Text(rule.target.isEmpty ? String(localized: "Target not set") : rule.target)
-                    .font(.headline)
-                    .lineLimit(1)
-                if rule.isEnabled == false {
-                    Text("Disabled")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                Text(rule.date.formatted(date: .abbreviated, time: .shortened))
+                    .mhRowOverline()
+                HStack(alignment: .firstTextBaseline, spacing: Layout.rowSpacing) {
+                    Text(rule.target.isEmpty ? String(localized: "Target not set") : rule.target)
+                        .mhRowTitle()
+                        .lineLimit(1)
+                    if rule.isEnabled == false {
+                        Text("Disabled")
+                            .mhBadge()
+                    }
                 }
                 Text(rule.source.isEmpty ? String(localized: "Source not set") : rule.source)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .mhRowSupporting()
                     .lineLimit(Layout.secondaryLineLimit)
-                Text(rule.date.formatted(date: .abbreviated, time: .shortened))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .mhRow()
         }
-        .listRowInsets(listRowInsets)
     }
 
     func presentCreate() {

@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import NormleLibrary
 import SwiftData
 import SwiftUI
@@ -37,19 +38,7 @@ struct BaseTransformView: View {
             resultSection
             actionSection
         }
-        .navigationTitle("Transforms")
-        #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
-        #if os(macOS)
-        .listStyle(.inset)
-        .padding(.horizontal, BaseTransformViewLayout.horizontalPadding)
-        #else
-        .listStyle(.insetGrouped)
-        #endif
-        #if os(iOS)
-        .listRowSpacing(BaseTransformViewLayout.listRowSpacing)
-        #endif
+        .mhFormChrome(title: "Transforms")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -133,7 +122,6 @@ private extension BaseTransformView {
             isImporterPresented: $isImporterPresented,
             hasSelectedImage: selectedImageData != nil,
             canCreateMappingFromSelection: selectedSourceTextValue != nil,
-            sectionRowInsets: BaseTransformViewLayout.sectionRowInsets,
             createMappingFromSelection: presentMappingFromSelection(text:),
             createMappingFromCurrentSelection: presentMappingFromSelection,
             pasteSourceText: pasteSourceText,
@@ -147,14 +135,12 @@ private extension BaseTransformView {
             isQREncode: presetSelectionState.selectedPresets.contains(.qrEncode),
             resultText: resultText,
             qrImage: qrImage,
-            sourceText: sourceText,
-            sectionRowInsets: BaseTransformViewLayout.sectionRowInsets
+            sourceText: sourceText
         )
     }
     var actionSection: some View {
         BaseTransformActionSection(
             isDisabled: isRunDisabled,
-            sectionRowInsets: BaseTransformViewLayout.sectionRowInsets,
             runTransform: runTransform
         )
     }

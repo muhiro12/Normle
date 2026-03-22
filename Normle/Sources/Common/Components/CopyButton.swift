@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import SwiftUI
 
 struct CopyButton: View {
@@ -18,6 +19,7 @@ struct CopyButton: View {
         } label: {
             Label(String(localized: .init(labelKey)), systemImage: "doc.on.doc")
         }
+        .buttonStyle(.mhSecondary)
     }
 
     init(
@@ -30,8 +32,11 @@ struct CopyButton: View {
 }
 
 #Preview("CopyButton - Base") {
-    CopyButton(
-        text: "Sample text"
+    let assembly = NormleAppAssembly.preview()
+    return assembly.previewRootView(
+        CopyButton(
+            text: "Sample text"
+        )
+        .padding()
     )
-    .padding()
 }

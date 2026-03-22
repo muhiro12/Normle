@@ -7,6 +7,7 @@
 //
 
 import MHPreferences
+import MHUI
 import NormleLibrary
 import Observation
 import SwiftData
@@ -14,11 +15,6 @@ import SwiftUI
 import TipKit
 
 struct SettingsListView: View {
-    private enum Layout {
-        static let listRowSpacing = 8.0
-        static let horizontalPadding = 16.0
-    }
-
     @Environment(\.modelContext)
     private var context
     @Environment(NormleAppSessionController.self)
@@ -45,17 +41,7 @@ struct SettingsListView: View {
             helpSection
         }
         .id(tipsRefreshID)
-        .navigationTitle("Settings")
-        #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-        .listRowSpacing(Layout.listRowSpacing)
-        #endif
-        #if os(macOS)
-        .listStyle(.inset)
-        .padding(.horizontal, Layout.horizontalPadding)
-        #else
-        .listStyle(.insetGrouped)
-        #endif
+        .mhListChrome(title: "Settings")
         .confirmationDialog(
             "Delete all history?",
             isPresented: $isDeleteDialogPresented
@@ -113,49 +99,67 @@ private extension SettingsListView {
             } else {
                 NavigationLink(value: NormleSettingsDestination.subscription) {
                     Text("Subscription")
+                        .mhRow()
                 }
                 .popoverTip(SubscriptionSyncTip())
             }
         } header: {
             Text("Subscription")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
         } footer: {
             Text("Manage your subscription and sync preferences.")
+                .mhSectionFooterText()
         }
     }
 
     var dataSection: some View {
         Section {
-            Button(role: .destructive) {
-                isDeleteDialogPresented = true
-            } label: {
-                Text("Delete all history")
-            }
-            .disabled(factoryResetCoordinator.isRunning)
+            MHActionGroup(layout: .automatic) {
+                Button(role: .destructive) {
+                    isDeleteDialogPresented = true
+                } label: {
+                    Text("Delete all history")
+                }
+                .disabled(factoryResetCoordinator.isRunning)
+                .buttonStyle(.mhDestructive)
 
-            Button(role: .destructive) {
-                isFactoryResetDialogPresented = true
-            } label: {
-                Text("Factory reset app")
+                Button(role: .destructive) {
+                    isFactoryResetDialogPresented = true
+                } label: {
+                    Text("Factory reset app")
+                }
+                .disabled(factoryResetCoordinator.isRunning)
+                .buttonStyle(.mhDestructive)
             }
-            .disabled(factoryResetCoordinator.isRunning)
 
             if factoryResetCoordinator.isRunning {
                 ProgressView(
                     factoryResetCoordinator.activeStepDescription ?? "Factory reset in progress"
                 )
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .mhRow()
             }
         } header: {
             Text("Data")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
         } footer: {
             Text("Factory reset removes all local data and settings on this device.")
+                .mhSectionFooterText()
         }
     }
 
     var helpSection: some View {
-        Section("Help") {
+        Section {
             Button("Show tips again") {
                 resetTips()
             }
+            .buttonStyle(.mhSecondary)
+        } header: {
+            Text("Help")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
         }
     }
 

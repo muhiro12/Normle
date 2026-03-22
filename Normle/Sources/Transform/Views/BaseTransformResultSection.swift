@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import SwiftUI
 
 struct BaseTransformResultSection: View {
@@ -18,13 +19,15 @@ struct BaseTransformResultSection: View {
     let resultText: String
     let qrImage: Image?
     let sourceText: String
-    let sectionRowInsets: EdgeInsets
 
     var body: some View {
-        Section("Result") {
+        Section {
             resultContent
+        } header: {
+            Text("Result")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
         }
-        .listRowInsets(sectionRowInsets)
     }
 
     @ViewBuilder var resultContent: some View {
@@ -46,6 +49,9 @@ struct BaseTransformResultSection: View {
                     systemImage: "qrcode",
                     description: Text("Enter text, then run QR Encode.")
                 )
+                .mhEmptyStateLayout()
+                .mhSurfaceInset()
+                .mhSurface()
             }
         } else if resultText.isEmpty {
             ContentUnavailableView(
@@ -53,11 +59,15 @@ struct BaseTransformResultSection: View {
                 systemImage: "sparkles",
                 description: Text("Select a preset and run transform.")
             )
+            .mhEmptyStateLayout()
+            .mhSurfaceInset()
+            .mhSurface()
         } else {
             TextEditor(text: .constant(resultText))
                 .frame(minHeight: Layout.editorMinHeight)
+                .scrollContentBackground(.hidden)
                 .textSelection(.enabled)
-                .liquidGlassEffect()
+                .mhInputChrome()
             CopyButton(text: resultText)
         }
     }

@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import NormleLibrary
 import SwiftData
 import SwiftUI
@@ -25,32 +26,12 @@ struct MappingEditView: View {
 
     var body: some View {
         Form {
-            Section("Source") {
-                TextField("Source text", text: $draft.sourceText)
-            }
-            Section("Target") {
-                TextField("Target text", text: $draft.targetText)
-            }
-            Section("Status") {
-                Toggle("Enabled", isOn: $draft.isEnabled)
-            }
-            Section {
-                Button(saveTitle) {
-                    Task {
-                        await save()
-                    }
-                }
-                .disabled(draft.canSave == false)
-                if rule != nil {
-                    Button("Delete", role: .destructive) {
-                        Task {
-                            await delete()
-                        }
-                    }
-                }
-            }
+            sourceSection
+            targetSection
+            statusSection
+            actionSection
         }
-        .navigationTitle(title)
+        .mhFormChrome(title: Text(title))
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
@@ -99,6 +80,63 @@ struct MappingEditView: View {
 }
 
 private extension MappingEditView {
+    var sourceSection: some View {
+        Section {
+            TextField("Source text", text: $draft.sourceText)
+                .textFieldStyle(.plain)
+                .mhInputChrome()
+        } header: {
+            Text("Source")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
+        }
+    }
+
+    var targetSection: some View {
+        Section {
+            TextField("Target text", text: $draft.targetText)
+                .textFieldStyle(.plain)
+                .mhInputChrome()
+        } header: {
+            Text("Target")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
+        }
+    }
+
+    var statusSection: some View {
+        Section {
+            Toggle("Enabled", isOn: $draft.isEnabled)
+        } header: {
+            Text("Status")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
+        }
+    }
+
+    var actionSection: some View {
+        Section {
+            MHActionGroup(layout: .automatic) {
+                Button(saveTitle) {
+                    Task {
+                        await save()
+                    }
+                }
+                .disabled(draft.canSave == false)
+                .buttonStyle(.mhPrimary)
+
+                if rule != nil {
+                    Button("Delete", role: .destructive) {
+                        Task {
+                            await delete()
+                        }
+                    }
+                    .buttonStyle(.mhDestructive)
+                }
+            }
+        }
+    }
+
     var title: String {
         rule == nil ? String(localized: "New Mapping") : String(localized: "Edit Mapping")
     }

@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import NormleLibrary
 import SwiftData
 import SwiftUI
@@ -20,23 +21,23 @@ struct HistoryRowView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Layout.spacing) {
-            HStack {
-                Text(record.date.formatted(date: .abbreviated, time: .shortened))
-                    .font(.headline)
-                Spacer()
-            }
+            Text(record.date.formatted(date: .abbreviated, time: .shortened))
+                .mhRowOverline()
             Text(record.previewText)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .mhRowTitle()
                 .lineLimit(Layout.previewLineLimit)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .mhRow()
     }
 }
 
 #Preview("History - Row") {
     let container = PreviewData.makeContainer()
     let record = PreviewData.makeSampleTransformRecord(container: container)
-    return HistoryRowView(record: record)
-        .padding()
-        .modelContainer(container)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        HistoryRowView(record: record)
+            .padding()
+    )
 }

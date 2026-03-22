@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import NormleLibrary
 import SwiftData
 import SwiftUI
@@ -17,30 +18,10 @@ struct MappingDetailView: View {
 
     var body: some View {
         List {
-            Section("Target") {
-                Text(rule.target.isEmpty ? String(localized: "Not set") : rule.target)
-            }
-            Section("Source") {
-                Text(rule.source.isEmpty ? String(localized: "Not set") : rule.source)
-            }
-            Section("Kind") {
-                Text("Tags are not set")
-            }
-            Section("Status") {
-                Text(rule.isEnabled ? String(localized: "Enabled") : String(localized: "Disabled"))
-            }
-            Section("Created at") {
-                Text(rule.date.formatted(date: .abbreviated, time: .shortened))
-            }
+            detailsSection
+            actionSection
         }
-        .navigationTitle("Mapping Detail")
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("Edit") {
-                    isEditing = true
-                }
-            }
-        }
+        .mhListChrome(title: "Mapping Detail")
         .sheet(isPresented: $isEditing) {
             NavigationStack {
                 MappingEditView(
@@ -52,11 +33,58 @@ struct MappingDetailView: View {
     }
 }
 
+private extension MappingDetailView {
+    var detailsSection: some View {
+        Section {
+            LabeledContent("Target") {
+                Text(rule.target.isEmpty ? String(localized: "Not set") : rule.target)
+            }
+            .labeledContentStyle(.mhKeyValue)
+
+            LabeledContent("Source") {
+                Text(rule.source.isEmpty ? String(localized: "Not set") : rule.source)
+            }
+            .labeledContentStyle(.mhKeyValue)
+
+            LabeledContent("Kind") {
+                Text("Tags are not set")
+            }
+            .labeledContentStyle(.mhKeyValue)
+
+            LabeledContent("Status") {
+                Text(rule.isEnabled ? String(localized: "Enabled") : String(localized: "Disabled"))
+                    .mhBadge(style: rule.isEnabled ? .positive : .neutral)
+            }
+            .labeledContentStyle(.mhKeyValue)
+
+            LabeledContent("Created at") {
+                Text(rule.date.formatted(date: .abbreviated, time: .shortened))
+            }
+            .labeledContentStyle(.mhKeyValue)
+        } header: {
+            Text("Details")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
+        }
+    }
+
+    var actionSection: some View {
+        Section {
+            Button("Edit") {
+                isEditing = true
+            }
+            .buttonStyle(.mhPrimary)
+        }
+    }
+}
+
 #Preview("Mapping - Detail") {
     let container = PreviewData.makeContainer()
     let rule = PreviewData.makeSampleMappingRule(container: container)
-    return NavigationStack {
-        MappingDetailView(rule: rule)
-    }
-    .modelContainer(container)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        NavigationStack {
+            MappingDetailView(rule: rule)
+        }
+    )
 }

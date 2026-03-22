@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import NormleLibrary
 import SwiftData
 import SwiftUI
@@ -21,7 +22,9 @@ struct HistoryDetailView: View {
             mappingsSection
             restoreSection
         }
-        .navigationTitle(record.date.formatted(date: .abbreviated, time: .shortened))
+        .mhListChrome(
+            title: Text(record.date.formatted(date: .abbreviated, time: .shortened))
+        )
         .task {
             markHistoryRecordOpened()
         }
@@ -30,31 +33,39 @@ struct HistoryDetailView: View {
 
 private extension HistoryDetailView {
     var sourceTextSection: some View {
-        Section("Source text") {
+        Section {
             if let sourceText = record.retainedSourceText {
                 Text(sourceText)
                     .textSelection(.enabled)
                 CopyButton(text: sourceText)
             } else {
                 Text("Source text not retained.")
-                    .foregroundStyle(.secondary)
+                    .mhTextStyle(.supporting, colorRole: .secondaryText)
             }
+        } header: {
+            Text("Source text")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
         }
     }
 
     var targetTextSection: some View {
-        Section("Target text") {
+        Section {
             Text(record.targetText)
                 .textSelection(.enabled)
             CopyButton(text: record.targetText)
+        } header: {
+            Text("Target text")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
         }
     }
 
     var mappingsSection: some View {
-        Section("Mappings") {
+        Section {
             if record.mappings.isEmpty {
                 Text("No explicit mappings were stored. Restore falls back to source and target text.")
-                    .foregroundStyle(.secondary)
+                    .mhTextStyle(.supporting, colorRole: .secondaryText)
             } else {
                 Text(
                     String.localizedStringWithFormat(
@@ -62,8 +73,12 @@ private extension HistoryDetailView {
                         record.mappings.count
                     )
                 )
-                .foregroundStyle(.secondary)
+                .mhTextStyle(.supporting, colorRole: .secondaryText)
             }
+        } header: {
+            Text("Mappings")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
         }
     }
 
@@ -73,6 +88,7 @@ private extension HistoryDetailView {
                 RestoreView(record: record)
             } label: {
                 Label("Restore with this record", systemImage: "arrow.uturn.backward")
+                    .mhRow()
             }
             .popoverTip(HistoryRestoreTip())
         }
@@ -87,8 +103,10 @@ private extension HistoryDetailView {
 #Preview("History - Detail") {
     let container = PreviewData.makeContainer()
     let record = PreviewData.makeSampleTransformRecord(container: container)
-    return NavigationStack {
-        HistoryDetailView(record: record)
-    }
-    .modelContainer(container)
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        NavigationStack {
+            HistoryDetailView(record: record)
+        }
+    )
 }

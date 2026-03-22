@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import NormleLibrary
 import SwiftUI
 
@@ -26,7 +27,7 @@ struct BaseTransformViewPresetSheet: View {
                 customPresetSection
                 presetGroupSections
             }
-            .navigationTitle("Presets")
+            .mhFormChrome(title: "Presets")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
@@ -40,7 +41,7 @@ struct BaseTransformViewPresetSheet: View {
 
 private extension BaseTransformViewPresetSheet {
     var maskingOptionsSection: some View {
-        Section("Masking Options") {
+        Section {
             Toggle(isOn: maskingToggleBinding(\.isURLMaskingEnabled)) {
                 Text("Mask URLs")
             }
@@ -50,11 +51,15 @@ private extension BaseTransformViewPresetSheet {
             Toggle(isOn: maskingToggleBinding(\.isPhoneMaskingEnabled)) {
                 Text("Mask phone numbers")
             }
+        } header: {
+            Text("Masking Options")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
         }
     }
 
     var customPresetSection: some View {
-        Section("Custom") {
+        Section {
             Picker("Custom", selection: customSelectionBinding) {
                 Text("None")
                     .tag(false)
@@ -63,16 +68,19 @@ private extension BaseTransformViewPresetSheet {
             }
             .pickerStyle(.segmented)
             .disabled(isCustomDisabled)
-
+        } header: {
+            Text("Custom")
+                .mhSectionHeaderTitle()
+                .mhSectionHeader()
+        } footer: {
             Text("Applied first.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .mhSectionFooterText()
         }
     }
 
     var presetGroupSections: some View {
         ForEach(transformGroups) { group in
-            Section(group.title) {
+            Section {
                 Picker(group.title, selection: groupSelectionBinding(group)) {
                     Text("None")
                         .tag(Optional<TransformPreset>.none)
@@ -83,6 +91,10 @@ private extension BaseTransformViewPresetSheet {
                 }
                 .pickerStyle(.segmented)
                 .disabled(isGroupDisabled(group))
+            } header: {
+                Text(group.title)
+                    .mhSectionHeaderTitle()
+                    .mhSectionHeader()
             }
         }
     }

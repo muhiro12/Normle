@@ -15,6 +15,7 @@
 		AD1F9A092F30B00100C260B2 /* MHPersistenceMaintenance in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A112F30B00100C260B2 /* MHPersistenceMaintenance */; };
 		AD1F9A0A2F30B00100C260B2 /* MHMutationFlow in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A122F30B00100C260B2 /* MHMutationFlow */; };
 		AD1F9A0B2F30B00100C260B2 /* MHReviewPolicy in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A132F30B00100C260B2 /* MHReviewPolicy */; };
+		AE3210013011000000AAA001 /* MHUI in Frameworks */ = {isa = PBXBuildFile; productRef = AE3210033011000000AAA001 /* MHUI */; };
 		AD9911012FF1000000AAA001 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD9911072FF1000000AAA001 /* XCTest.framework */; };
 		ADF11DA72ED15BC4006B7FE1 /* NormleLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */; };
 /* End PBXBuildFile section */
@@ -30,9 +31,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		ADD34ED32ED1566900CB9DE2 /* Normle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Normle.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		AD9911062FF1000000AAA001 /* NormleTests.xctest */ = {isa = PBXFileReference; explicitFileType = "wrapper.cfbundle"; includeInIndex = 0; path = NormleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD9911062FF1000000AAA001 /* NormleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NormleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD9911072FF1000000AAA001 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		ADD34ED32ED1566900CB9DE2 /* Normle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Normle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADF11DD82ED1689E006B7FE1 /* NormleLibrary */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NormleLibrary; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -47,6 +48,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		AD9911082FF1000000AAA001 /* NormleTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NormleTests;
+			sourceTree = "<group>";
+		};
 		ADD34ED52ED1566900CB9DE2 /* Normle */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -55,18 +61,17 @@
 			path = Normle;
 			sourceTree = "<group>";
 		};
-		AD9911082FF1000000AAA001 /* NormleTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = NormleTests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		AD9911092FF1000000AAA001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD9911012FF1000000AAA001 /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		ADD34ED02ED1566900CB9DE2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -79,21 +84,22 @@
 				AD1F9A092F30B00100C260B2 /* MHPersistenceMaintenance in Frameworks */,
 				AD1F9A0A2F30B00100C260B2 /* MHMutationFlow in Frameworks */,
 				AD1F9A0B2F30B00100C260B2 /* MHReviewPolicy in Frameworks */,
+				AE3210013011000000AAA001 /* MHUI in Frameworks */,
 				ADF11DA72ED15BC4006B7FE1 /* NormleLibrary in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AD9911092FF1000000AAA001 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AD9911012FF1000000AAA001 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AD9911142FF1000000AAA001 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AD9911072FF1000000AAA001 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		ADD34ECA2ED1566900CB9DE2 = {
 			isa = PBXGroup;
 			children = (
@@ -114,17 +120,30 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		AD9911142FF1000000AAA001 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				AD9911072FF1000000AAA001 /* XCTest.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		AD99110D2FF1000000AAA001 /* NormleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AD9911102FF1000000AAA001 /* Build configuration list for PBXNativeTarget "NormleTests" */;
+			buildPhases = (
+				AD99110B2FF1000000AAA001 /* Sources */,
+				AD9911092FF1000000AAA001 /* Frameworks */,
+				AD99110A2FF1000000AAA001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AD99110C2FF1000000AAA001 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AD9911082FF1000000AAA001 /* NormleTests */,
+			);
+			name = NormleTests;
+			productName = NormleTests;
+			productReference = AD9911062FF1000000AAA001 /* NormleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		ADD34ED22ED1566900CB9DE2 /* Normle */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = ADD34EE12ED1566A00CB9DE2 /* Build configuration list for PBXNativeTarget "Normle" */;
@@ -150,32 +169,12 @@
 				AD1F9A112F30B00100C260B2 /* MHPersistenceMaintenance */,
 				AD1F9A122F30B00100C260B2 /* MHMutationFlow */,
 				AD1F9A132F30B00100C260B2 /* MHReviewPolicy */,
+				AE3210033011000000AAA001 /* MHUI */,
 				ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */,
 			);
 			productName = Normle;
 			productReference = ADD34ED32ED1566900CB9DE2 /* Normle.app */;
 			productType = "com.apple.product-type.application";
-		};
-		AD99110D2FF1000000AAA001 /* NormleTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AD9911102FF1000000AAA001 /* Build configuration list for PBXNativeTarget "NormleTests" */;
-			buildPhases = (
-				AD99110B2FF1000000AAA001 /* Sources */,
-				AD9911092FF1000000AAA001 /* Frameworks */,
-				AD99110A2FF1000000AAA001 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				AD99110C2FF1000000AAA001 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				AD9911082FF1000000AAA001 /* NormleTests */,
-			);
-			name = NormleTests;
-			productName = NormleTests;
-			productReference = AD9911062FF1000000AAA001 /* NormleTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -187,10 +186,10 @@
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
-					ADD34ED22ED1566900CB9DE2 = {
+					AD99110D2FF1000000AAA001 = {
 						CreatedOnToolsVersion = 26.0;
 					};
-					AD99110D2FF1000000AAA001 = {
+					ADD34ED22ED1566900CB9DE2 = {
 						CreatedOnToolsVersion = 26.0;
 					};
 				};
@@ -211,6 +210,7 @@
 			packageReferences = (
 				ADF11DA52ED15BC4006B7FE1 /* XCLocalSwiftPackageReference "NormleLibrary" */,
 				AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */,
+				AE3210023011000000AAA001 /* XCRemoteSwiftPackageReference "MHUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = ADD34ED42ED1566900CB9DE2 /* Products */;
@@ -224,14 +224,14 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		ADD34ED12ED1566900CB9DE2 /* Resources */ = {
+		AD99110A2FF1000000AAA001 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AD99110A2FF1000000AAA001 /* Resources */ = {
+		ADD34ED12ED1566900CB9DE2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -241,14 +241,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		ADD34ECF2ED1566900CB9DE2 /* Sources */ = {
+		AD99110B2FF1000000AAA001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AD99110B2FF1000000AAA001 /* Sources */ = {
+		ADD34ECF2ED1566900CB9DE2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -266,6 +266,67 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		AD99110E2FF1000000AAA001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 66PKF55HK5;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = NormleTests;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.muhiro12.NormleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Normle.app/Normle";
+				TEST_TARGET_NAME = Normle;
+			};
+			name = Debug;
+		};
+		AD99110F2FF1000000AAA001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 66PKF55HK5;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = NormleTests;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.muhiro12.NormleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Normle.app/Normle";
+				TEST_TARGET_NAME = Normle;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		ADD34EE22ED1566A00CB9DE2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -506,70 +567,18 @@
 			};
 			name = Release;
 		};
-		AD99110E2FF1000000AAA001 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 66PKF55HK5;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = NormleTests;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 0.10;
-				PRODUCT_BUNDLE_IDENTIFIER = com.muhiro12.NormleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Normle.app/Normle";
-				TEST_TARGET_NAME = Normle;
-			};
-			name = Debug;
-		};
-		AD99110F2FF1000000AAA001 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 66PKF55HK5;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = NormleTests;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 0.10;
-				PRODUCT_BUNDLE_IDENTIFIER = com.muhiro12.NormleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Normle.app/Normle";
-				TEST_TARGET_NAME = Normle;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		AD9911102FF1000000AAA001 /* Build configuration list for PBXNativeTarget "NormleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AD99110E2FF1000000AAA001 /* Debug */,
+				AD99110F2FF1000000AAA001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		ADD34ECE2ED1566900CB9DE2 /* Build configuration list for PBXProject "Normle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -584,15 +593,6 @@
 			buildConfigurations = (
 				ADD34EE22ED1566A00CB9DE2 /* Debug */,
 				ADD34EE32ED1566A00CB9DE2 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		AD9911102FF1000000AAA001 /* Build configuration list for PBXNativeTarget "NormleTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AD99110E2FF1000000AAA001 /* Debug */,
-				AD99110F2FF1000000AAA001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -613,6 +613,14 @@
 			requirement = {
 				kind = revision;
 				revision = 083817e803431d33825a5878593d63e399053ed9;
+			};
+		};
+		AE3210023011000000AAA001 /* XCRemoteSwiftPackageReference "MHUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/muhiro12/MHUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -657,6 +665,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
 			productName = MHReviewPolicy;
+		};
+		AE3210033011000000AAA001 /* MHUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AE3210023011000000AAA001 /* XCRemoteSwiftPackageReference "MHUI" */;
+			productName = MHUI;
 		};
 		ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */ = {
 			isa = XCSwiftPackageProductDependency;

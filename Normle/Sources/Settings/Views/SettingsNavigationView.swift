@@ -35,5 +35,4 @@ struct SettingsNavigationView: View {
             path: .constant(.init())
         )
     )
-    .modelContainer(container)
 }

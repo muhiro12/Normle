@@ -14,7 +14,6 @@ struct TransformNavigationView: View {
     var body: some View {
         NavigationStack {
             BaseTransformView()
-                .navigationTitle("Transforms")
         }
     }
 }

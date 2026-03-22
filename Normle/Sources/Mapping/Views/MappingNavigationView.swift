@@ -26,8 +26,10 @@ struct MappingNavigationView: View {
 #Preview("Mapping - Navigation") {
     let container = PreviewData.makeContainer()
     PreviewData.seed(container: container)
-    return MappingNavigationView(
-        path: .constant(.init())
+    let assembly = NormleAppAssembly.preview(container: container)
+    return assembly.previewRootView(
+        MappingNavigationView(
+            path: .constant(.init())
+        )
     )
-    .modelContainer(container)
 }

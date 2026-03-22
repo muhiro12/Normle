@@ -6,36 +6,22 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import SwiftUI
 
 struct BaseTransformActionSection: View {
     let isDisabled: Bool
-    let sectionRowInsets: EdgeInsets
     let runTransform: () -> Void
 
     var body: some View {
         Section {
-            #if os(macOS)
-            HStack {
-                Spacer()
-                Button {
-                    runTransform()
-                } label: {
-                    Label("Transform & Save", systemImage: "arrow.triangle.2.circlepath")
-                }
-                .disabled(isDisabled)
-                .primaryActionStyle()
-            }
-            #else
             Button {
                 runTransform()
             } label: {
                 Label("Transform & Save", systemImage: "arrow.triangle.2.circlepath")
             }
             .disabled(isDisabled)
-            .primaryActionStyle()
-            #endif
+            .buttonStyle(.mhPrimary)
         }
-        .listRowInsets(sectionRowInsets)
     }
 }

@@ -6,43 +6,13 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import NormleLibrary
 import SwiftData
 import SwiftUI
 import TipKit
 
 struct HistoryListView: View {
-    private enum Layout {
-        static let listRowSpacing = 8.0
-        static let horizontalPadding = 16.0
-        static let compactInset = 16.0
-        static let wideInset = 24.0
-        static let iOSRowInsets = EdgeInsets(
-            top: compactInset,
-            leading: compactInset,
-            bottom: compactInset,
-            trailing: compactInset
-        )
-        static let macOSRowInsets = EdgeInsets(
-            top: compactInset,
-            leading: wideInset,
-            bottom: compactInset,
-            trailing: wideInset
-        )
-        static let iOSEmptyStateInsets = EdgeInsets(
-            top: wideInset,
-            leading: compactInset,
-            bottom: wideInset,
-            trailing: compactInset
-        )
-        static let macOSEmptyStateInsets = EdgeInsets(
-            top: wideInset,
-            leading: wideInset,
-            bottom: wideInset,
-            trailing: wideInset
-        )
-    }
-
     @Environment(\.modelContext)
     private var context
 
@@ -56,17 +26,7 @@ struct HistoryListView: View {
         List(selection: selection) {
             historyContent
         }
-        .navigationTitle("History")
-        #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-        .listRowSpacing(Layout.listRowSpacing)
-        #endif
-        #if os(macOS)
-        .listStyle(.inset)
-        .padding(.horizontal, Layout.horizontalPadding)
-        #else
-        .listStyle(.insetGrouped)
-        #endif
+        .mhListChrome(title: "History")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
@@ -122,11 +82,12 @@ private extension HistoryListView {
                 systemImage: "clock.arrow.circlepath",
                 description: Text("Run a transform to see it here.")
             )
-            .listRowInsets(emptyStateRowInsets)
+            .mhEmptyStateLayout()
+            .mhSurfaceInset()
+            .mhSurface()
         } else {
             TipView(HistoryListTip())
                 .tipViewStyle(.miniTip)
-                .listRowInsets(listRowInsets)
 
             ForEach(records) { record in
                 historyRow(record: record)
@@ -135,27 +96,10 @@ private extension HistoryListView {
         }
     }
 
-    var listRowInsets: EdgeInsets {
-        #if os(macOS)
-        return Layout.macOSRowInsets
-        #else
-        return Layout.iOSRowInsets
-        #endif
-    }
-
-    var emptyStateRowInsets: EdgeInsets {
-        #if os(macOS)
-        return Layout.macOSEmptyStateInsets
-        #else
-        return Layout.iOSEmptyStateInsets
-        #endif
-    }
-
     func historyRow(record: TransformRecord) -> some View {
         NavigationLink(value: record) {
             HistoryRowView(record: record)
         }
-        .listRowInsets(listRowInsets)
         .swipeActions {
             Button(role: .destructive) {
                 Task {

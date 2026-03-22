@@ -77,7 +77,6 @@ struct ContentView: View {
         }
         .tabViewStyle(.automatic)
         .environment(navigationModel)
-        .liquidGlassButtonStyle()
         .task(id: runtime.premiumStatus) {
             synchronizeSubscriptionAccess()
         }

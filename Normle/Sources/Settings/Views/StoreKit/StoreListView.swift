@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import MHUI
 import SwiftUI
 
 struct StoreListView: View {
@@ -14,9 +15,10 @@ struct StoreListView: View {
             StoreSection()
             NavigationLink(value: NormleSettingsDestination.licenses) {
                 Label("Licenses", systemImage: "doc.text")
+                    .mhRow()
             }
         }
-        .navigationTitle("Subscription")
+        .mhListChrome(title: "Subscription")
     }
 }
 
