@@ -27,7 +27,10 @@ public enum NormleModelContainerFactory {
     public static func makeInMemory() throws -> ModelContainer {
         // Previews have been unstable when the in-memory container is built
         // through the migration-plan initializer, so use the direct model list.
-        let configuration: ModelConfiguration = .init(isStoredInMemoryOnly: true)
+        let configuration: ModelConfiguration = .init(
+            isStoredInMemoryOnly: true,
+            cloudKitDatabase: .none
+        )
         return try .init(
             for: TransformRecord.self,
             MappingRule.self,

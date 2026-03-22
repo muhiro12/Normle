@@ -199,23 +199,34 @@ if [[ -z "$changed_files" ]]; then
   exit 0
 fi
 
+run_logged_step \
+  "mhplatform_guardrails" \
+  "Check MHPlatform boundary guardrails" \
+  bash "$repository_root/ci_scripts/tasks/check_mhplatform_guardrails.sh"
+
 needs_normle_build=false
+needs_normle_app_tests=false
 needs_normle_library_tests=false
 
 if grep -Eq '^Normle/|^Normle\.xcodeproj/' <<<"$changed_files"; then
   needs_normle_build=true
+  needs_normle_app_tests=true
 fi
 
 if grep -Eq '^NormleLibrary/' <<<"$changed_files"; then
   needs_normle_library_tests=true
 fi
 
-if ! $needs_normle_build && ! $needs_normle_library_tests; then
-  echo "No changes under Normle/, NormleLibrary/, or Normle.xcodeproj/."
+if grep -Eq '^NormleTests/' <<<"$changed_files"; then
+  needs_normle_app_tests=true
+fi
+
+if ! $needs_normle_build && ! $needs_normle_app_tests && ! $needs_normle_library_tests; then
+  echo "No changes under Normle/, NormleTests/, NormleLibrary/, or Normle.xcodeproj/."
   if $should_run_pre_commit; then
-    run_note="pre-commit completed. No changes under Normle/, NormleLibrary/, or Normle.xcodeproj/. Build/test steps were skipped."
+    run_note="pre-commit completed. No changes under Normle/, NormleTests/, NormleLibrary/, or Normle.xcodeproj/. Build/test steps were skipped."
   else
-    run_note="No changes under Normle/, NormleLibrary/, or Normle.xcodeproj/. Build/test steps were skipped."
+    run_note="No changes under Normle/, NormleTests/, NormleLibrary/, or Normle.xcodeproj/. Build/test steps were skipped."
   fi
   exit 0
 fi
@@ -227,6 +238,13 @@ if $needs_normle_build; then
     "build_app" \
     "Build Normle scheme" \
     bash "$repository_root/ci_scripts/tasks/build_app.sh"
+fi
+
+if $needs_normle_app_tests; then
+  run_logged_step \
+    "test_app" \
+    "Test Normle scheme" \
+    bash "$repository_root/ci_scripts/tasks/test_app.sh"
 fi
 
 if $needs_normle_library_tests; then

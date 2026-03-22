@@ -7,12 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AD1F9A012F30B00100C260B2 /* MHPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A032F30B00100C260B2 /* MHPlatform */; };
+		AD1F9A042F30B00100C260B2 /* MHAppRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A0C2F30B00100C260B2 /* MHAppRuntime */; };
+		AD1F9A052F30B00100C260B2 /* MHLogging in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A0D2F30B00100C260B2 /* MHLogging */; };
+		AD1F9A062F30B00100C260B2 /* MHPreferences in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A0E2F30B00100C260B2 /* MHPreferences */; };
+		AD1F9A072F30B00100C260B2 /* MHDeepLinking in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A0F2F30B00100C260B2 /* MHDeepLinking */; };
+		AD1F9A082F30B00100C260B2 /* MHRouteExecution in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A102F30B00100C260B2 /* MHRouteExecution */; };
+		AD1F9A092F30B00100C260B2 /* MHPersistenceMaintenance in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A112F30B00100C260B2 /* MHPersistenceMaintenance */; };
+		AD1F9A0A2F30B00100C260B2 /* MHMutationFlow in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A122F30B00100C260B2 /* MHMutationFlow */; };
+		AD1F9A0B2F30B00100C260B2 /* MHReviewPolicy in Frameworks */ = {isa = PBXBuildFile; productRef = AD1F9A132F30B00100C260B2 /* MHReviewPolicy */; };
+		AD9911012FF1000000AAA001 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD9911072FF1000000AAA001 /* XCTest.framework */; };
 		ADF11DA72ED15BC4006B7FE1 /* NormleLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		AD9911052FF1000000AAA001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ADD34ECB2ED1566900CB9DE2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ADD34ED22ED1566900CB9DE2;
+			remoteInfo = Normle;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		ADD34ED32ED1566900CB9DE2 /* Normle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Normle.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD9911062FF1000000AAA001 /* NormleTests.xctest */ = {isa = PBXFileReference; explicitFileType = "wrapper.cfbundle"; includeInIndex = 0; path = NormleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD9911072FF1000000AAA001 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
 		ADF11DD82ED1689E006B7FE1 /* NormleLibrary */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NormleLibrary; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -35,6 +55,15 @@
 			path = Normle;
 			sourceTree = "<group>";
 		};
+		AD9911082FF1000000AAA001 /* NormleTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = NormleTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,8 +71,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD1F9A012F30B00100C260B2 /* MHPlatform in Frameworks */,
+				AD1F9A042F30B00100C260B2 /* MHAppRuntime in Frameworks */,
+				AD1F9A052F30B00100C260B2 /* MHLogging in Frameworks */,
+				AD1F9A062F30B00100C260B2 /* MHPreferences in Frameworks */,
+				AD1F9A072F30B00100C260B2 /* MHDeepLinking in Frameworks */,
+				AD1F9A082F30B00100C260B2 /* MHRouteExecution in Frameworks */,
+				AD1F9A092F30B00100C260B2 /* MHPersistenceMaintenance in Frameworks */,
+				AD1F9A0A2F30B00100C260B2 /* MHMutationFlow in Frameworks */,
+				AD1F9A0B2F30B00100C260B2 /* MHReviewPolicy in Frameworks */,
 				ADF11DA72ED15BC4006B7FE1 /* NormleLibrary in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AD9911092FF1000000AAA001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD9911012FF1000000AAA001 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,7 +99,9 @@
 			children = (
 				ADF11DD82ED1689E006B7FE1 /* NormleLibrary */,
 				ADD34ED52ED1566900CB9DE2 /* Normle */,
+				AD9911082FF1000000AAA001 /* NormleTests */,
 				ADD34ED42ED1566900CB9DE2 /* Products */,
+				AD9911142FF1000000AAA001 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -63,8 +109,17 @@
 			isa = PBXGroup;
 			children = (
 				ADD34ED32ED1566900CB9DE2 /* Normle.app */,
+				AD9911062FF1000000AAA001 /* NormleTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AD9911142FF1000000AAA001 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AD9911072FF1000000AAA001 /* XCTest.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -87,12 +142,40 @@
 			);
 			name = Normle;
 			packageProductDependencies = (
-				AD1F9A032F30B00100C260B2 /* MHPlatform */,
+				AD1F9A0C2F30B00100C260B2 /* MHAppRuntime */,
+				AD1F9A0D2F30B00100C260B2 /* MHLogging */,
+				AD1F9A0E2F30B00100C260B2 /* MHPreferences */,
+				AD1F9A0F2F30B00100C260B2 /* MHDeepLinking */,
+				AD1F9A102F30B00100C260B2 /* MHRouteExecution */,
+				AD1F9A112F30B00100C260B2 /* MHPersistenceMaintenance */,
+				AD1F9A122F30B00100C260B2 /* MHMutationFlow */,
+				AD1F9A132F30B00100C260B2 /* MHReviewPolicy */,
 				ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */,
 			);
 			productName = Normle;
 			productReference = ADD34ED32ED1566900CB9DE2 /* Normle.app */;
 			productType = "com.apple.product-type.application";
+		};
+		AD99110D2FF1000000AAA001 /* NormleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AD9911102FF1000000AAA001 /* Build configuration list for PBXNativeTarget "NormleTests" */;
+			buildPhases = (
+				AD99110B2FF1000000AAA001 /* Sources */,
+				AD9911092FF1000000AAA001 /* Frameworks */,
+				AD99110A2FF1000000AAA001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AD99110C2FF1000000AAA001 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AD9911082FF1000000AAA001 /* NormleTests */,
+			);
+			name = NormleTests;
+			productName = NormleTests;
+			productReference = AD9911062FF1000000AAA001 /* NormleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -105,6 +188,9 @@
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					ADD34ED22ED1566900CB9DE2 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					AD99110D2FF1000000AAA001 = {
 						CreatedOnToolsVersion = 26.0;
 					};
 				};
@@ -132,12 +218,20 @@
 			projectRoot = "";
 			targets = (
 				ADD34ED22ED1566900CB9DE2 /* Normle */,
+				AD99110D2FF1000000AAA001 /* NormleTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		ADD34ED12ED1566900CB9DE2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AD99110A2FF1000000AAA001 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -154,7 +248,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AD99110B2FF1000000AAA001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AD99110C2FF1000000AAA001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ADD34ED22ED1566900CB9DE2 /* Normle */;
+			targetProxy = AD9911052FF1000000AAA001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		ADD34EE22ED1566A00CB9DE2 /* Debug */ = {
@@ -397,6 +506,67 @@
 			};
 			name = Release;
 		};
+		AD99110E2FF1000000AAA001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 66PKF55HK5;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = NormleTests;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.muhiro12.NormleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Normle.app/Normle";
+				TEST_TARGET_NAME = Normle;
+			};
+			name = Debug;
+		};
+		AD99110F2FF1000000AAA001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 66PKF55HK5;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = NormleTests;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.muhiro12.NormleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Normle.app/Normle";
+				TEST_TARGET_NAME = Normle;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -414,6 +584,15 @@
 			buildConfigurations = (
 				ADD34EE22ED1566A00CB9DE2 /* Debug */,
 				ADD34EE32ED1566A00CB9DE2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AD9911102FF1000000AAA001 /* Build configuration list for PBXNativeTarget "NormleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AD99110E2FF1000000AAA001 /* Debug */,
+				AD99110F2FF1000000AAA001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -439,10 +618,45 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		AD1F9A032F30B00100C260B2 /* MHPlatform */ = {
+		AD1F9A0C2F30B00100C260B2 /* MHAppRuntime */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
-			productName = MHPlatform;
+			productName = MHAppRuntime;
+		};
+		AD1F9A0D2F30B00100C260B2 /* MHLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
+			productName = MHLogging;
+		};
+		AD1F9A0E2F30B00100C260B2 /* MHPreferences */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
+			productName = MHPreferences;
+		};
+		AD1F9A0F2F30B00100C260B2 /* MHDeepLinking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
+			productName = MHDeepLinking;
+		};
+		AD1F9A102F30B00100C260B2 /* MHRouteExecution */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
+			productName = MHRouteExecution;
+		};
+		AD1F9A112F30B00100C260B2 /* MHPersistenceMaintenance */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
+			productName = MHPersistenceMaintenance;
+		};
+		AD1F9A122F30B00100C260B2 /* MHMutationFlow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
+			productName = MHMutationFlow;
+		};
+		AD1F9A132F30B00100C260B2 /* MHReviewPolicy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */;
+			productName = MHReviewPolicy;
 		};
 		ADF11DA62ED15BC4006B7FE1 /* NormleLibrary */ = {
 			isa = XCSwiftPackageProductDependency;

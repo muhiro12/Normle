@@ -6,7 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHPlatform
+import MHPreferences
 import NormleLibrary
 import SwiftData
 import SwiftUI
@@ -44,6 +44,23 @@ struct NormleAppAssembly {
         .init(
             platformEnvironment: NormlePlatformEnvironmentFactory.makePreview(
                 modelContainer: container
+            ),
+            isCloudSyncEnabled: false
+        )
+    }
+
+    static func smokeTest() -> Self {
+        let modelContainer: ModelContainer
+
+        do {
+            modelContainer = try NormleModelContainerFactory.makeInMemory()
+        } catch {
+            preconditionFailure(error.localizedDescription)
+        }
+
+        return .init(
+            platformEnvironment: NormlePlatformEnvironmentFactory.makePreview(
+                modelContainer: modelContainer
             ),
             isCloudSyncEnabled: false
         )

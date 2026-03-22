@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import MHPlatform
+import MHDeepLinking
 import SwiftData
 
 nonisolated enum NormleRoute: Hashable, Sendable, MHDeepLinkRoute {

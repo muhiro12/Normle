@@ -76,7 +76,11 @@ final class NormleAppSessionController {
 extension NormleAppSessionController {
     static func live() -> Self {
         .init {
-            .live()
+            if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+                return NormleAppAssembly.smokeTest()
+            }
+
+            return NormleAppAssembly.live()
         }
     }
 

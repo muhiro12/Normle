@@ -6,7 +6,8 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHPlatform
+import MHLogging
+import MHReviewPolicy
 
 enum NormleReviewSupport {
     enum Context {

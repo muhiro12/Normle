@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import MHPlatform
+import MHDeepLinking
 
 struct NormlePendingRouteStore {
     private enum Constants {

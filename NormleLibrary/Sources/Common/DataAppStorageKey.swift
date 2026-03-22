@@ -6,7 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHPlatform
+import MHPreferences
 
 public enum DataAppStorageKey: String {
     case userPreferences = "U9r3E7p2"

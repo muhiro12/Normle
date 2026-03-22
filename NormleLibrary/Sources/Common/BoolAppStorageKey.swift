@@ -6,7 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHPlatform
+import MHPreferences
 
 public enum BoolAppStorageKey: String, MHBoolPreferenceKeyRepresentable {
     case isSubscribeOn = "m5k3I8s9"

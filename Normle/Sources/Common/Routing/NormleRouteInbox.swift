@@ -6,6 +6,6 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHPlatform
+import MHRouteExecution
 
 typealias NormleRouteInbox = MHObservableRouteInbox<NormleRoute>
