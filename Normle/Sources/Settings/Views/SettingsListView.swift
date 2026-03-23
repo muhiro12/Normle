@@ -9,7 +9,6 @@
 import MHPlatform
 import MHUI
 import NormleLibrary
-import Observation
 import SwiftData
 import SwiftUI
 import TipKit
@@ -26,13 +25,9 @@ struct SettingsListView: View {
     @AppStorage(BoolAppStorageKey.isICloudOn)
     private var isICloudOn
 
+    @State private var screenModel = SettingsScreenModel()
     @State private var isDeleteDialogPresented = false
     @State private var isFactoryResetDialogPresented = false
-    @State private var alertTitle = String()
-    @State private var alertMessage = String()
-    @State private var isShowingAlert = false
-    @State private var tipsRefreshID: UUID = .init()
-    @State private var factoryResetCoordinator = NormleFactoryResetCoordinator()
 
     var body: some View {
         List {
@@ -40,7 +35,7 @@ struct SettingsListView: View {
             dataSection
             helpSection
         }
-        .id(tipsRefreshID)
+        .id(screenModel.tipsRefreshID)
         .mhListChrome(title: "Settings")
         .confirmationDialog(
             "Delete all history?",
@@ -78,14 +73,23 @@ struct SettingsListView: View {
             )
         }
         .alert(
-            alertTitle,
-            isPresented: $isShowingAlert
+            screenModel.alertTitle,
+            isPresented: Binding(
+                get: {
+                    screenModel.isShowingAlert
+                },
+                set: { isPresented in
+                    if isPresented == false {
+                        screenModel.dismissAlert()
+                    }
+                }
+            )
         ) {
             Button("OK", role: .cancel) {
-                isShowingAlert = false
+                screenModel.dismissAlert()
             }
         } message: {
-            Text(alertMessage)
+            Text(screenModel.alertMessage)
         }
     }
 }
@@ -121,7 +125,7 @@ private extension SettingsListView {
                 } label: {
                     Text("Delete all history")
                 }
-                .disabled(factoryResetCoordinator.isRunning)
+                .disabled(screenModel.factoryResetCoordinator.isRunning)
                 .buttonStyle(.mhDestructive)
 
                 Button(role: .destructive) {
@@ -129,13 +133,13 @@ private extension SettingsListView {
                 } label: {
                     Text("Factory reset app")
                 }
-                .disabled(factoryResetCoordinator.isRunning)
+                .disabled(screenModel.factoryResetCoordinator.isRunning)
                 .buttonStyle(.mhDestructive)
             }
 
-            if factoryResetCoordinator.isRunning {
+            if screenModel.factoryResetCoordinator.isRunning {
                 ProgressView(
-                    factoryResetCoordinator.activeStepDescription ?? "Factory reset in progress"
+                    screenModel.factoryResetCoordinator.activeStepDescription ?? "Factory reset in progress"
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .mhRow()
@@ -153,7 +157,7 @@ private extension SettingsListView {
     var helpSection: some View {
         Section {
             Button("Show tips again") {
-                resetTips()
+                screenModel.resetTips()
             }
             .buttonStyle(.mhSecondary)
         } header: {
@@ -165,43 +169,20 @@ private extension SettingsListView {
 
     func deleteAllHistory() {
         Task {
-            await deleteAllHistoryTask()
+            await screenModel.deleteAllHistory(
+                context: context
+            )
         }
     }
 
     func runFactoryReset() {
         Task {
-            await factoryResetCoordinator.run(
+            await screenModel.runFactoryReset(
                 context: context,
                 preferencesStore: platformEnvironment.preferencesStore,
                 pendingRouteStore: platformEnvironment.pendingRouteStore,
                 sessionController: sessionController
             )
-        }
-    }
-
-    func resetTips() {
-        do {
-            try NormleTipManager.reset()
-            tipsRefreshID = .init()
-            alertTitle = String(localized: "Tips reset")
-            alertMessage = String(localized: "Tips will appear again as you move through the app.")
-            isShowingAlert = true
-        } catch {
-            alertTitle = String(localized: "Error")
-            alertMessage = error.localizedDescription
-            isShowingAlert = true
-        }
-    }
-
-    @MainActor
-    func deleteAllHistoryTask() async {
-        do {
-            try await NormleMutationWorkflow.deleteAllHistory(
-                context: context
-            )
-        } catch {
-            assertionFailure(error.localizedDescription)
         }
     }
 }

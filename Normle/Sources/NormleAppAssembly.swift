@@ -21,7 +21,7 @@ struct NormleAppAssembly {
         let isCloudSyncEnabled = MHPreferenceStore().bool(
             for: BoolAppStorageKey.isICloudOn.preferenceKey
         )
-        let result = NormleModelContainerFactory.makeWithFallback(
+        let result = NormleAppModelContainerFactory.makeLiveContainer(
             cloudSyncEnabled: isCloudSyncEnabled,
             onCloudContainerError: { error in
                 assertionFailure(error.localizedDescription)
@@ -54,7 +54,7 @@ struct NormleAppAssembly {
         let modelContainer: ModelContainer
 
         do {
-            modelContainer = try NormleModelContainerFactory.makeInMemory()
+            modelContainer = try NormleAppModelContainerFactory.makeInMemoryModelContainer()
         } catch {
             preconditionFailure(error.localizedDescription)
         }

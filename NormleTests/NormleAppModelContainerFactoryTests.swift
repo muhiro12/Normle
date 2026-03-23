@@ -1,16 +1,17 @@
 //
-//  NormleModelContainerFactoryTests.swift
-//  Normle
+//  NormleAppModelContainerFactoryTests.swift
+//  NormleTests
 //
-//  Created by Hiromu Nakano on 2026/02/27.
+//  Created by Codex on 2026/03/23.
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-@testable import NormleLibrary
+@testable import Normle
+import NormleLibrary
 import SwiftData
 import Testing
 
-struct NormleModelContainerFactoryTests {
+struct NormleAppModelContainerFactoryTests {
     private enum ForcedError: Error, Equatable {
         case cloudContainerUnavailable
     }
@@ -18,7 +19,7 @@ struct NormleModelContainerFactoryTests {
     @MainActor
     @Test
     func makeContainerWithoutCloudSyncSupportsPersistence() throws {
-        let container = try NormleModelContainerFactory.make(
+        let container = try NormleAppModelContainerFactory.makeAppModelContainer(
             cloudSyncEnabled: false
         )
         let context = container.mainContext
@@ -39,7 +40,7 @@ struct NormleModelContainerFactoryTests {
     @MainActor
     @Test
     func makeInMemorySupportsPersistence() throws {
-        let container = try NormleModelContainerFactory.makeInMemory()
+        let container = try NormleAppModelContainerFactory.makeInMemoryModelContainer()
         let context = container.mainContext
         let descriptor = FetchDescriptor<TransformRecord>()
         let baselineCount = try context.fetch(descriptor).count
@@ -58,7 +59,7 @@ struct NormleModelContainerFactoryTests {
     @MainActor
     @Test
     func makeInMemorySupportsEntireSchema() throws {
-        let container = try NormleModelContainerFactory.makeInMemory()
+        let container = try NormleAppModelContainerFactory.makeInMemoryModelContainer()
         let context = container.mainContext
         let mappingDescriptor = FetchDescriptor<MappingRule>()
         let tagDescriptor = FetchDescriptor<NormleLibrary.Tag>()
@@ -84,13 +85,13 @@ struct NormleModelContainerFactoryTests {
 
     @MainActor
     @Test
-    func makeWithFallbackDisablesCloudSyncAfterCloudFailure() throws {
-        let localContainer = try NormleModelContainerFactory.make(
+    func makeLiveContainerDisablesCloudSyncAfterCloudFailure() throws {
+        let localContainer = try NormleAppModelContainerFactory.makeAppModelContainer(
             cloudSyncEnabled: false
         )
         var capturedCloudError: ForcedError?
 
-        let result = NormleModelContainerFactory.makeWithFallback(
+        let result = NormleAppModelContainerFactory.makeLiveContainer(
             cloudSyncEnabled: true,
             buildContainer: { isCloudSyncEnabled in
                 if isCloudSyncEnabled {
@@ -112,8 +113,8 @@ struct NormleModelContainerFactoryTests {
 
     @MainActor
     @Test
-    func makeWithFallbackKeepsCloudSyncStateWhenLocalOnly() throws {
-        let result = NormleModelContainerFactory.makeWithFallback(
+    func makeLiveContainerKeepsCloudSyncStateWhenLocalOnly() throws {
+        let result = NormleAppModelContainerFactory.makeLiveContainer(
             cloudSyncEnabled: false
         )
 

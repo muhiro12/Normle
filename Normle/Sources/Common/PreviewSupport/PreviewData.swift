@@ -21,9 +21,7 @@ enum PreviewData {
     static func makeContainer() -> ModelContainer {
         // Xcode previews have been unreliable with the in-memory container in the app target.
         // Use a local-only store for previews, then wipe it so every render starts clean.
-        let container = NormleModelContainerFactory.makeWithFallback(
-            cloudSyncEnabled: false
-        ).container
+        let container = NormleAppModelContainerFactory.makePreviewModelContainer()
         clearAllPreviewData(
             in: container
         )

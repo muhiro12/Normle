@@ -190,6 +190,7 @@
 				ADF11DA52ED15BC4006B7FE1 /* XCLocalSwiftPackageReference "NormleLibrary" */,
 				AD1F9A022F30B00100C260B2 /* XCRemoteSwiftPackageReference "MHPlatform" */,
 				AE3210023011000000AAA001 /* XCRemoteSwiftPackageReference "MHUI" */,
+				AE3210043011000000AAA001 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = ADD34ED42ED1566900CB9DE2 /* Products */;
@@ -600,6 +601,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
+			};
+		};
+		AE3210043011000000AAA001 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

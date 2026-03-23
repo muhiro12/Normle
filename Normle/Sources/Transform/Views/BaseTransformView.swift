@@ -8,6 +8,7 @@
 
 import MHUI
 import NormleLibrary
+import Observation
 import SwiftData
 import SwiftUI
 import TipKit
@@ -20,19 +21,14 @@ struct BaseTransformView: View {
 
     @Query private var mappingRules: [MappingRule]
 
-    @State private var sourceText = String()
-    @State private var presetSelectionState = TransformPresetSelectionState()
-    @State private var resultText = String()
-    @State private var alertMessage: String?
-    @State private var qrImage: Image?
-    @State private var selectedImageData: Data?
-    @State private var importedImageName: String?
+    @State private var screenModel = BaseTransformScreenModel()
     @State private var isImporterPresented = false
     @State private var isPresetSelectorPresented = false
-    @State private var selectedSourceText = String()
     @State private var isPresentingMappingCreation = false
-    @State private var pendingSourceForMapping = String()
+
     var body: some View {
+        @Bindable var screenModel = screenModel
+
         Form {
             inputSection
             resultSection
@@ -56,25 +52,29 @@ struct BaseTransformView: View {
             mappingCreationSheet
         }
         .task {
-            applyPresetSelection(preferencesStore.preferences.presetSelection)
+            screenModel.applyPresetSelection(
+                preferencesStore.preferences.presetSelection
+            )
         }
         .onChange(of: preferencesStore.preferences) { _, newValue in
-            applyPresetSelection(newValue.presetSelection)
+            screenModel.applyPresetSelection(
+                newValue.presetSelection
+            )
         }
         .alert(
             "Transform failed",
             isPresented: Binding(
-                get: { alertMessage != nil },
+                get: { screenModel.alertMessage != nil },
                 set: { isPresented in
                     if isPresented == false {
-                        alertMessage = nil
+                        screenModel.dismissAlert()
                     }
                 }
             ),
-            presenting: alertMessage
+            presenting: screenModel.alertMessage
         ) { _ in
             Button("OK", role: .cancel) {
-                alertMessage = nil
+                screenModel.dismissAlert()
             }
         } message: { message in
             Text(message)
@@ -83,170 +83,118 @@ struct BaseTransformView: View {
             isPresented: $isImporterPresented,
             allowedContentTypes: [.image]
         ) { result in
-            handleImageImport(result)
+            screenModel.handleImageImport(result)
         }
     }
 }
+
 private extension BaseTransformView {
-    var orderedSelectedTransforms: [TransformPreset] {
-        presetSelectionState.orderedSelectedPresets
-    }
     var presetSelectionSheet: some View {
         BaseTransformViewPresetSheet(
             isPresented: $isPresetSelectorPresented,
-            transformGroups: transformGroups,
-            isCustomDisabled: isCustomDisabled,
-            isGroupDisabled: isGroupDisabled(group:),
+            transformGroups: screenModel.transformGroups,
+            isCustomDisabled: screenModel.isCustomDisabled,
+            isGroupDisabled: { group in
+                screenModel.isGroupDisabled(group)
+            },
             customSelectionBinding: customSelectionBinding(),
             groupSelectionBinding: groupSelectionBinding(for:),
             maskingToggleBinding: maskingToggleBinding(_:)
         )
     }
-    var isCustomDisabled: Bool {
-        presetSelectionState.isCustomDisabled
-    }
-    var activeMaskRules: [MaskingRule] {
-        mappingRules
-            .filter(\.isEnabled)
-            .map(\.maskingRule)
-    }
-    var transformGroups: [TransformGroup] {
-        presetSelectionState.transformGroups
-    }
+
     var inputSection: some View {
         BaseTransformInputSection(
-            isQRCodeInput: presetSelectionState.selectedPresets.contains(.qrDecode),
-            sourceText: $sourceText,
-            selectedSourceText: $selectedSourceText,
-            importedImageName: importedImageName,
+            isQRCodeInput: screenModel.presetSelectionState.selectedPresets.contains(.qrDecode),
+            sourceText: $screenModel.sourceText,
+            selectedSourceText: $screenModel.selectedSourceText,
+            importedImageName: screenModel.importedImageName,
             isImporterPresented: $isImporterPresented,
-            hasSelectedImage: selectedImageData != nil,
-            canCreateMappingFromSelection: selectedSourceTextValue != nil,
+            hasSelectedImage: screenModel.selectedImageData != nil,
+            canCreateMappingFromSelection: screenModel.selectedSourceTextValue != nil,
             createMappingFromSelection: presentMappingFromSelection(text:),
             createMappingFromCurrentSelection: presentMappingFromSelection,
-            pasteSourceText: pasteSourceText,
-            clearSourceText: clearSourceText,
-            clearSelectedImage: clearSelectedImage,
+            pasteSourceText: screenModel.pasteSourceText,
+            clearSourceText: screenModel.clearSourceText,
+            clearSelectedImage: screenModel.clearSelectedImage,
             handleDrop: handleDrop(providers:)
         )
     }
+
     var resultSection: some View {
         BaseTransformResultSection(
-            isQREncode: presetSelectionState.selectedPresets.contains(.qrEncode),
-            resultText: resultText,
-            qrImage: qrImage,
-            sourceText: sourceText
+            isQREncode: screenModel.presetSelectionState.selectedPresets.contains(.qrEncode),
+            resultText: screenModel.resultText,
+            qrImage: screenModel.qrImage,
+            sourceText: screenModel.sourceText
         )
     }
+
     var actionSection: some View {
         BaseTransformActionSection(
-            isDisabled: isRunDisabled,
+            isDisabled: screenModel.isRunDisabled,
             runTransform: runTransform
         )
     }
+
     var mappingCreationSheet: some View {
         NavigationStack {
             MappingEditView(
                 rule: nil,
                 isPresented: $isPresentingMappingCreation,
-                prefilledSource: pendingSourceForMapping
+                prefilledSource: screenModel.pendingSourceForMapping
             )
         }
     }
-    var selectedSourceTextValue: String? {
-        let trimmed = selectedSourceText.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? nil : trimmed
-    }
-    var isRunDisabled: Bool {
-        if presetSelectionState.selectedPresets.isEmpty {
-            return true
-        }
-        if presetSelectionState.selectedPresets.contains(.qrEncode) {
-            return sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        }
-        if presetSelectionState.selectedPresets.contains(.qrDecode) {
-            return selectedImageData == nil
-        }
-        return sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
 }
+
 private extension BaseTransformView {
     func customSelectionBinding() -> Binding<Bool> {
         Binding(
             get: {
-                presetSelectionState.selectedPresets.contains(.customMapping)
+                screenModel.presetSelectionState.selectedPresets.contains(.customMapping)
             },
             set: { isSelected in
-                updateCustomSelection(isSelected: isSelected)
-            }
-        )
-    }
-    func groupSelectionBinding(for group: TransformGroup) -> Binding<TransformPreset?> {
-        Binding(
-            get: {
-                presetSelectionState.selectedPreset(in: group)
-            },
-            set: { selectedPreset in
-                updateGroupSelection(
-                    group: group,
-                    selectedPreset: selectedPreset
+                screenModel.updateCustomSelection(
+                    isSelected: isSelected,
+                    preferencesStore: preferencesStore
                 )
             }
         )
     }
-    func updateCustomSelection(isSelected: Bool) {
-        presetSelectionState.updateCustomSelection(isSelected: isSelected)
-        syncPresetSelection()
-        resetSelectionState()
+
+    func groupSelectionBinding(for group: TransformGroup) -> Binding<TransformPreset?> {
+        Binding(
+            get: {
+                screenModel.presetSelectionState.selectedPreset(in: group)
+            },
+            set: { selectedPreset in
+                screenModel.updateGroupSelection(
+                    group: group,
+                    selectedPreset: selectedPreset,
+                    preferencesStore: preferencesStore
+                )
+            }
+        )
     }
+
     func openPresetSelector() {
-        NormleTipManager.donate(NormleTipEvents.didOpenPresetSelector)
-        TransformPresetTip().invalidate(reason: .actionPerformed)
+        screenModel.openPresetSelector()
         isPresetSelectorPresented = true
     }
-    func updateGroupSelection(
-        group: TransformGroup,
-        selectedPreset: TransformPreset?
-    ) {
-        presetSelectionState.updateGroupSelection(
-            group: group,
-            selectedPreset: selectedPreset
-        )
-        syncPresetSelection()
-        resetSelectionState()
-    }
-    func isGroupDisabled(group: TransformGroup) -> Bool {
-        presetSelectionState.isGroupDisabled(group)
-    }
-    func resetSelectionState() {
-        resultText = String()
-        qrImage = nil
-        alertMessage = nil
-    }
-    func startMappingCreation(prefilledSource: String) {
-        pendingSourceForMapping = prefilledSource
-        NormleTipManager.donate(NormleTipEvents.didStartMappingFromSelection)
-        NormleTipManager.donate(NormleTipEvents.didStartMappingCreation)
-        TransformSelectionMappingTip().invalidate(reason: .actionPerformed)
-        MappingAddTip().invalidate(reason: .actionPerformed)
-        isPresentingMappingCreation = true
-    }
+
     func presentMappingFromSelection() {
-        guard let selectedSourceTextValue else {
-            return
+        if screenModel.prepareMappingCreationFromCurrentSelection() {
+            isPresentingMappingCreation = true
         }
-        startMappingCreation(prefilledSource: selectedSourceTextValue)
     }
+
     func presentMappingFromSelection(text: String) {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmed.isEmpty == false else {
-            return
+        if screenModel.prepareMappingCreation(from: text) {
+            isPresentingMappingCreation = true
         }
-        startMappingCreation(prefilledSource: trimmed)
     }
-    func maskingOptions() -> MaskingOptions {
-        preferencesStore.preferences.maskingPreferences.maskingOptions
-    }
+
     func maskingToggleBinding(
         _ keyPath: WritableKeyPath<MaskingPreferences, Bool>
     ) -> Binding<Bool> {
@@ -261,92 +209,17 @@ private extension BaseTransformView {
             }
         )
     }
-    func applyPresetSelection(_ selection: PresetSelection) {
-        presetSelectionState.applyPresetSelection(selection)
-    }
-    func syncPresetSelection() {
-        let selection = presetSelectionState.presetSelection()
-        preferencesStore.update { preferences in
-            preferences.presetSelection = selection
-        }
-    }
+
     func runTransform() {
         Task {
-            await executeTransform()
-        }
-    }
-    @MainActor
-    func executeTransform() async {
-        do {
-            let output = try await NormleMutationWorkflow.runTransform(
+            await screenModel.executeTransform(
                 context: context,
-                request: .init(
-                    sourceText: sourceText,
-                    presets: orderedSelectedTransforms,
-                    maskRules: activeMaskRules,
-                    options: maskingOptions(),
-                    imageData: selectedImageData
-                )
+                mappingRules: mappingRules,
+                preferencesStore: preferencesStore
             )
-            alertMessage = nil
-            resultText = output.outputText
-            if let image = output.qrImage {
-                qrImage = Image(
-                    decorative: image,
-                    scale: 1,
-                    orientation: .up
-                )
-            } else {
-                qrImage = nil
-            }
-        } catch {
-            handleTransformFailure(error)
         }
     }
-    @MainActor
-    func handleTransformFailure(
-        _ error: any Error
-    ) {
-        qrImage = nil
-        resultText = String()
 
-        if let executionError = error as? TransformExecutionError {
-            switch executionError {
-            case .pipeline(let pipelineError):
-                if pipelineError == .missingImageData {
-                    alertMessage = String(localized: "Select an image to decode.")
-                } else {
-                    alertMessage = pipelineError.localizedDescription
-                }
-            case .persistence(let persistenceError):
-                alertMessage = persistenceError.localizedDescription
-            }
-            return
-        }
-
-        alertMessage = error.localizedDescription
-    }
-    func pasteSourceText() {
-        guard let pastedText = ClipboardService.pasteText() else {
-            return
-        }
-        sourceText = pastedText
-        resultText = String()
-        qrImage = nil
-    }
-    func clearSourceText() {
-        sourceText = String()
-        resultText = String()
-        qrImage = nil
-        alertMessage = nil
-    }
-    func clearSelectedImage() {
-        selectedImageData = nil
-        importedImageName = nil
-        resultText = String()
-        qrImage = nil
-        alertMessage = nil
-    }
     func handleDrop(providers: [NSItemProvider]) {
         guard let provider = providers.first(where: { provider in
             provider.hasItemConformingToTypeIdentifier(UTType.image.identifier)
@@ -358,26 +231,13 @@ private extension BaseTransformView {
             guard let data else {
                 return
             }
-            DispatchQueue.main.async {
-                selectedImageData = data
-                importedImageName = suggestedName
-                resultText = String()
+
+            Task { @MainActor in
+                screenModel.applyImportedImageData(
+                    data,
+                    suggestedName: suggestedName
+                )
             }
-        }
-    }
-    func handleImageImport(_ result: Result<URL, Error>) {
-        switch result {
-        case .success(let url):
-            do {
-                let data = try Data(contentsOf: url)
-                selectedImageData = data
-                importedImageName = url.lastPathComponent
-                resultText = String()
-            } catch {
-                alertMessage = error.localizedDescription
-            }
-        case .failure(let error):
-            alertMessage = error.localizedDescription
         }
     }
 }

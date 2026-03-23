@@ -1,22 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-argument_count=$#
-if [[ $argument_count -ne 0 ]]; then
-  echo "This script does not accept arguments." >&2
-  exit 2
-fi
-
 script_directory=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-repository_root=$(cd "$script_directory/../.." && pwd)
-cd "$repository_root"
+source "$script_directory/../lib/task_utils.sh"
+source "$script_directory/../lib/ci_runs.sh"
 
-source "$repository_root/ci_scripts/lib/ci_runs.sh"
-
-if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  echo "This script must run inside a git repository." >&2
-  exit 1
-fi
+ci_task_require_no_arguments "$@"
+ci_task_enter_repository "${BASH_SOURCE[0]}"
+repository_root=$CI_TASK_REPOSITORY_ROOT
 
 ci_root="$repository_root/.build/ci"
 runs_root="$ci_root/runs"
@@ -70,7 +61,7 @@ finalize_run_artifacts() {
 
   if [[ $exit_code -ne 0 ]]; then
     overall_result="failure"
-    if [[ -z "$run_note" || "$run_note" == "Executed required CI steps based on local changes." ]]; then
+    if [[ "$run_note" != "A required step failed. Review failure details and logs." ]]; then
       run_note="A required step failed. Review failure details and logs."
     fi
   fi
@@ -169,69 +160,85 @@ run_logged_step() {
   return 0
 }
 
-should_run_pre_commit=false
-if [[ "${CI_RUN_ENABLE_PRE_COMMIT:-0}" == "1" || "${CI_RUN_ENABLE_PRE_COMMIT:-}" == "true" ]]; then
-  should_run_pre_commit=true
+should_force_full=false
+if [[ "${CI_RUN_FORCE_FULL:-0}" == "1" || "${CI_RUN_FORCE_FULL:-}" == "true" ]]; then
+  should_force_full=true
 fi
 
-if $should_run_pre_commit; then
-  run_logged_step \
-    "pre_commit" \
-    "Run pre-commit hooks" \
-    bash "$repository_root/ci_scripts/tasks/pre_commit.sh"
+should_skip_environment_check=false
+if [[ "${CI_SKIP_ENV_CHECK:-0}" == "1" || "${CI_SKIP_ENV_CHECK:-}" == "true" ]]; then
+  should_skip_environment_check=true
 fi
-
-changed_files=$(
-  {
-    git diff --name-only --cached
-    git diff --name-only
-    git ls-files --others --exclude-standard
-  } | sed '/^$/d' | sort -u
-)
-
-if [[ -z "$changed_files" ]]; then
-  echo "No local changes detected."
-  if $should_run_pre_commit; then
-    run_note="pre-commit completed. No local changes detected. Build/test steps were skipped."
-  else
-    run_note="No local changes detected. Build/test steps were skipped."
-  fi
-  exit 0
-fi
-
-run_logged_step \
-  "mhplatform_guardrails" \
-  "Check MHPlatform boundary guardrails" \
-  bash "$repository_root/ci_scripts/tasks/check_mhplatform_guardrails.sh"
 
 needs_normle_build=false
 needs_normle_app_tests=false
 needs_normle_library_tests=false
+needs_mhplatform_boundary_checks=false
 
-if grep -Eq '^Normle/|^Normle\.xcodeproj/' <<<"$changed_files"; then
+if $should_force_full; then
+  echo "Forcing full verification regardless of local changes."
   needs_normle_build=true
   needs_normle_app_tests=true
-fi
-
-if grep -Eq '^NormleLibrary/' <<<"$changed_files"; then
   needs_normle_library_tests=true
-fi
+  needs_mhplatform_boundary_checks=true
+  run_note="Executed a forced full verification run regardless of local changes."
+else
+  changed_files=$(
+    {
+      git diff --name-only --cached
+      git diff --name-only
+      git ls-files --others --exclude-standard
+    } | sed '/^$/d' | sort -u
+  )
 
-if grep -Eq '^NormleTests/' <<<"$changed_files"; then
-  needs_normle_app_tests=true
-fi
-
-if ! $needs_normle_build && ! $needs_normle_app_tests && ! $needs_normle_library_tests; then
-  echo "No changes under Normle/, NormleTests/, NormleLibrary/, or Normle.xcodeproj/."
-  if $should_run_pre_commit; then
-    run_note="pre-commit completed. No changes under Normle/, NormleTests/, NormleLibrary/, or Normle.xcodeproj/. Build/test steps were skipped."
-  else
-    run_note="No changes under Normle/, NormleTests/, NormleLibrary/, or Normle.xcodeproj/. Build/test steps were skipped."
+  if [[ -z "$changed_files" ]]; then
+    echo "No local changes detected."
+    run_note="No local changes detected. Build/test steps were skipped."
+    exit 0
   fi
-  exit 0
+
+  if grep -Eq '^Normle/|^Normle\.xcodeproj/' <<<"$changed_files"; then
+    needs_normle_build=true
+    needs_normle_app_tests=true
+    needs_mhplatform_boundary_checks=true
+  fi
+
+  if grep -Eq '^NormleLibrary/' <<<"$changed_files"; then
+    needs_normle_library_tests=true
+    needs_mhplatform_boundary_checks=true
+  fi
+
+  if grep -Eq '^NormleTests/' <<<"$changed_files"; then
+    needs_normle_app_tests=true
+    needs_mhplatform_boundary_checks=true
+  fi
+
+  if grep -Eq '^ci_scripts/|^\.pre-commit-config\.yaml$|^\.swiftlint\.yml$' <<<"$changed_files"; then
+    needs_mhplatform_boundary_checks=true
+  fi
+
+  if ! $needs_normle_build && ! $needs_normle_app_tests && ! $needs_normle_library_tests && ! $needs_mhplatform_boundary_checks; then
+    echo "No changes under Normle/, NormleLibrary/, NormleTests/, Normle.xcodeproj/, ci_scripts/, .pre-commit-config.yaml, or .swiftlint.yml."
+    run_note="No changes under Normle/, NormleLibrary/, NormleTests/, Normle.xcodeproj/, ci_scripts/, .pre-commit-config.yaml, or .swiftlint.yml. Build/test steps were skipped."
+    exit 0
+  fi
+
+  run_note="Executed required CI steps based on local changes."
 fi
 
-run_note="Executed required CI steps based on local changes."
+if ! $should_skip_environment_check && { $needs_normle_build || $needs_normle_app_tests || $needs_normle_library_tests; }; then
+  run_logged_step \
+    "check_environment" \
+    "Check build environment" \
+    bash "$repository_root/ci_scripts/tasks/check_environment.sh" --profile build
+fi
+
+if $needs_mhplatform_boundary_checks; then
+  run_logged_step \
+    "check_mhplatform_boundaries" \
+    "Check MHPlatform boundaries" \
+    bash "$repository_root/ci_scripts/tasks/check_mhplatform_boundaries.sh"
+fi
 
 if $needs_normle_build; then
   run_logged_step \

@@ -1,17 +1,22 @@
 //
-//  NormleModelContainerFactory.swift
+//  NormleAppModelContainerFactory.swift
 //  Normle
 //
-//  Created by Hiromu Nakano on 2026/02/27.
+//  Created by Codex on 2026/03/23.
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import Foundation
+import NormleLibrary
 import SwiftData
 
-/// Builds SwiftData model containers for the app.
-public enum NormleModelContainerFactory {
-    /// Creates a model container with the requested cloud sync setting.
-    public static func make(
+enum NormleAppModelContainerFactory {
+    struct CreationResult {
+        let container: ModelContainer
+        let isCloudSyncEnabled: Bool
+    }
+
+    static func makeAppModelContainer(
         cloudSyncEnabled: Bool
     ) throws -> ModelContainer {
         try .init(
@@ -23,10 +28,13 @@ public enum NormleModelContainerFactory {
         )
     }
 
-    /// Creates an in-memory model container for previews and tests.
-    public static func makeInMemory() throws -> ModelContainer {
-        // Previews have been unstable when the in-memory container is built
-        // through the migration-plan initializer, so use the direct model list.
+    static func makePreviewModelContainer() -> ModelContainer {
+        makeLiveContainer(
+            cloudSyncEnabled: false
+        ).container
+    }
+
+    static func makeInMemoryModelContainer() throws -> ModelContainer {
         let configuration: ModelConfiguration = .init(
             isStoredInMemoryOnly: true,
             cloudKitDatabase: .none
@@ -39,8 +47,7 @@ public enum NormleModelContainerFactory {
         )
     }
 
-    /// Creates a model container and falls back to local storage if cloud setup fails.
-    public static func makeWithFallback(
+    static func makeLiveContainer(
         cloudSyncEnabled: Bool,
         onCloudContainerError: (Error) -> Void = { _ in
             // Intentionally ignored by default.
@@ -48,16 +55,16 @@ public enum NormleModelContainerFactory {
         onLocalContainerError: (Error) -> Void = { _ in
             // Intentionally ignored by default.
         }
-    ) -> NormleModelContainerCreationResult {
-        makeWithFallback(
+    ) -> CreationResult {
+        makeLiveContainer(
             cloudSyncEnabled: cloudSyncEnabled,
-            buildContainer: make,
+            buildContainer: makeAppModelContainer,
             onCloudContainerError: onCloudContainerError,
             onLocalContainerError: onLocalContainerError
         )
     }
 
-    static func makeWithFallback(
+    static func makeLiveContainer(
         cloudSyncEnabled: Bool,
         buildContainer: (Bool) throws -> ModelContainer,
         onCloudContainerError: (Error) -> Void = { _ in
@@ -66,7 +73,7 @@ public enum NormleModelContainerFactory {
         onLocalContainerError: (Error) -> Void = { _ in
             // Intentionally ignored by default.
         }
-    ) -> NormleModelContainerCreationResult {
+    ) -> CreationResult {
         do {
             return .init(
                 container: try buildContainer(cloudSyncEnabled),

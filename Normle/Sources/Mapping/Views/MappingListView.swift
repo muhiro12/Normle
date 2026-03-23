@@ -24,15 +24,11 @@ struct MappingListView: View {
 
     @Query private var rules: [MappingRule]
 
+    @State private var screenModel = MappingListScreenModel()
     @State private var isPresentingCreate = false
     @State private var isExporting = false
-    @State private var exportDocument = MappingRuleExportDocument(data: Data())
     @State private var isImporting = false
-    @State private var pendingImportData: Data?
     @State private var isChoosingImportPolicy = false
-    @State private var alertTitle = String()
-    @State private var alertMessage = String()
-    @State private var isShowingAlert = false
 
     var body: some View {
         List {
@@ -42,7 +38,8 @@ struct MappingListView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    presentCreate()
+                    screenModel.presentCreate()
+                    isPresentingCreate = true
                 } label: {
                     Label("Add", systemImage: "plus")
                 }
@@ -51,7 +48,11 @@ struct MappingListView: View {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button {
-                        exportRules()
+                        if screenModel.prepareExport(
+                            context: context
+                        ) {
+                            isExporting = true
+                        }
                     } label: {
                         Label("Export", systemImage: "square.and.arrow.up")
                     }
@@ -75,12 +76,14 @@ struct MappingListView: View {
         }
         .fileExporter(
             isPresented: $isExporting,
-            document: exportDocument,
+            document: screenModel.exportDocument,
             contentType: .json,
             defaultFilename: String(localized: "mappings")
         ) { result in
             if case let .failure(error) = result {
-                presentError(message: error.localizedDescription)
+                screenModel.presentError(
+                    message: error.localizedDescription
+                )
             }
         }
         .fileImporter(
@@ -89,9 +92,13 @@ struct MappingListView: View {
         ) { result in
             switch result {
             case let .success(url):
-                prepareImport(url: url)
+                if screenModel.prepareImport(url: url) {
+                    isChoosingImportPolicy = true
+                }
             case let .failure(error):
-                presentError(message: error.localizedDescription)
+                screenModel.presentError(
+                    message: error.localizedDescription
+                )
             }
         }
         .confirmationDialog(
@@ -108,18 +115,27 @@ struct MappingListView: View {
                 applyImport(policy: .appendNew)
             }
             Button("Cancel", role: .cancel) {
-                pendingImportData = nil
+                screenModel.clearPendingImportData()
             }
         }
         .alert(
-            alertTitle,
-            isPresented: $isShowingAlert
+            screenModel.alertTitle,
+            isPresented: Binding(
+                get: {
+                    screenModel.isShowingAlert
+                },
+                set: { isPresented in
+                    if isPresented == false {
+                        screenModel.dismissAlert()
+                    }
+                }
+            )
         ) {
             Button("OK", role: .cancel) {
-                isShowingAlert = false
+                screenModel.dismissAlert()
             }
         } message: {
-            Text(alertMessage)
+            Text(screenModel.alertMessage)
         }
     }
 
@@ -175,99 +191,15 @@ private extension MappingListView {
         }
     }
 
-    func presentCreate() {
-        NormleTipManager.donate(NormleTipEvents.didStartMappingCreation)
-        MappingAddTip().invalidate(reason: .actionPerformed)
-        isPresentingCreate = true
-    }
-
-    func exportRules() {
-        do {
-            let data = try MappingRuleTransferCoordinator.exportData(
+    func applyImport(
+        policy: MappingRuleTransferService.ImportPolicy
+    ) {
+        Task {
+            await screenModel.applyImport(
+                policy: policy,
                 context: context
             )
-            exportDocument = .init(data: data)
-            isExporting = true
-        } catch {
-            presentError(message: error.localizedDescription)
         }
-    }
-
-    func prepareImport(url: URL) {
-        do {
-            pendingImportData = try MappingRuleTransferCoordinator.loadImportData(
-                from: url
-            )
-            isChoosingImportPolicy = true
-        } catch {
-            presentError(message: error.localizedDescription)
-        }
-    }
-
-    func applyImport(
-        policy: MappingRuleTransferService.ImportPolicy
-    ) {
-        guard let data = pendingImportData else {
-            return
-        }
-
-        Task {
-            await applyImport(
-                data: data,
-                policy: policy
-            )
-        }
-    }
-
-    @MainActor
-    func applyImport(
-        data: Data,
-        policy: MappingRuleTransferService.ImportPolicy
-    ) async {
-        defer {
-            pendingImportData = nil
-        }
-
-        do {
-            let result = try await NormleMutationWorkflow.importMappings(
-                data: data,
-                context: context,
-                policy: policy
-            )
-            alertTitle = String(localized: "Import completed")
-            let lines = result.summaryLines(
-                insertedText: { count in
-                    String.localizedStringWithFormat(
-                        String(localized: "Inserted: %d"),
-                        count
-                    )
-                },
-                updatedText: { count in
-                    String.localizedStringWithFormat(
-                        String(localized: "Updated: %d"),
-                        count
-                    )
-                },
-                totalText: { count in
-                    String.localizedStringWithFormat(
-                        String(localized: "Total: %d"),
-                        count
-                    )
-                }
-            )
-            alertMessage = lines.joined(separator: "\n")
-            isShowingAlert = true
-        } catch {
-            presentError(message: error.localizedDescription)
-        }
-    }
-
-    func presentError(
-        message: String
-    ) {
-        alertTitle = String(localized: "Error")
-        alertMessage = message
-        isShowingAlert = true
     }
 }
 

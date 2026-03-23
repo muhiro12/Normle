@@ -1,19 +1,9 @@
 repos:
   - repo: local
     hooks:
-      - id: mhplatform-guardrails
-        name: mhplatform-guardrails
-        entry: bash ci_scripts/tasks/check_mhplatform_guardrails.sh
+      - id: repo-pre-commit
+        name: repo-pre-commit
+        entry: bash ci_scripts/tasks/verify_pre_commit.sh
         language: system
         pass_filenames: false
-  - repo: https://github.com/realm/SwiftLint
-    rev: 0.63.2
-    hooks:
-      - id: swiftlint
-        name: swiftlint-format
-        entry: swiftlint --fix --format --force-exclude
-        exclude: (^|/)Package\.swift$
-      - id: swiftlint
-        name: swiftlint-strict
-        entry: swiftlint --strict --force-exclude
-        exclude: (^|/)Package\.swift$
+        always_run: true

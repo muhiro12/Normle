@@ -26,20 +26,22 @@ StoreKit-backed runtime state.
 
 ## Architecture And Technologies
 
+- Related docs:
+  [Designs/Architecture/ARCHITECTURE_GUIDE.md](Designs/Architecture/ARCHITECTURE_GUIDE.md)
+  and [Designs/Overviews/normle-current-overview.md](Designs/Overviews/normle-current-overview.md)
 - **Shared-library-first design** - core logic lives in
   `NormleLibrary/Sources`, while the app target stays focused on assembly and
   presentation.
 - **MHPlatform consumer split** - the app target adopts `MHPlatform`, while
   `NormleLibrary` stays on `MHPlatformCore` so shared code stops at the
   core-safe platform surface.
-- **Advanced runtime path remains optional** - upstream 1.2 keeps
-  `MHAppRuntime` as an advanced app path, but Normle intentionally stays on the
-  full-platform `MHPlatform` surface because the app uses package-owned runtime
-  views and bootstrap helpers.
-- **SwiftData + CloudKit** - the shared library owns model-container creation
-  and migration planning for local and cloud-backed stores.
+- **App-owned persistence bootstrap** - `Normle` owns `ModelContainer`
+  construction, CloudKit fallback, previews, and smoke-test containers, while
+  `NormleLibrary` owns `NormleSchemaV1` and `NormleSchemaMigrationPlan`.
 - **App assembly boundary** - `Normle/Sources/NormleAppAssembly.swift` wires
   runtime dependencies and environment injection.
+- **Screen-scoped adapters** - transform, mapping, and settings screens use
+  small `@Observable` screen models so the views stay presentation-focused.
 - **Scripted verification** - helper scripts under `ci_scripts/tasks/` provide
   stable entrypoints for local verification and automation.
 
@@ -59,17 +61,70 @@ StoreKit-backed runtime state.
 
 ## Build And Test
 
-Use the helper scripts in `ci_scripts/` as needed. For full local verification:
+Use the helper scripts in `ci_scripts/` as needed. The repository contract is:
+Direct entrypoints live in `ci_scripts/tasks/`, shared shell helpers live in
+`ci_scripts/lib/`, and `ci_scripts/ci_post_clone.sh` is reserved for external
+post-clone CI setup.
+
+- `bash ci_scripts/tasks/check_environment.sh --profile <format|build|verify>`
+  diagnoses missing local prerequisites before tool-dependent flows.
+- `bash ci_scripts/tasks/format_swift.sh` is the explicit SwiftLint autofix
+  step to run after Swift edits and before the final verification gate.
+- `bash ci_scripts/tasks/verify_task_completion.sh` is the non-destructive
+  verification gate for task completion.
+- `bash ci_scripts/tasks/verify_pre_commit.sh` reruns the same non-destructive
+  verification gate for Git `pre-commit` and manual final rechecks.
+- `bash ci_scripts/tasks/verify_repository_state.sh` checks the current
+  repository state and still writes CI run artifacts.
+
+SwiftLint is resolved from the `SimplyDanny/SwiftLintPlugins` package declared
+in `Normle.xcodeproj`. The repository scripts do not require a separately
+installed `swiftlint` binary on your `PATH`.
+
+Before running the full verify gate, diagnose the local prerequisites:
 
 ```sh
-bash ci_scripts/tasks/verify.sh
+bash ci_scripts/tasks/check_environment.sh --profile verify
+```
+
+After Swift edits, run the explicit autofix step:
+
+```sh
+bash ci_scripts/tasks/format_swift.sh
+```
+
+Then run the non-destructive full recheck:
+
+```sh
+bash ci_scripts/tasks/verify_task_completion.sh
+```
+
+For release-time verification or a clean-worktree full run, force the standard
+verify entrypoint to execute all required checks:
+
+```sh
+CI_RUN_FORCE_FULL=1 bash ci_scripts/tasks/verify_task_completion.sh
+```
+
+If you only need the final pre-commit recheck shell:
+
+```sh
+bash ci_scripts/tasks/verify_pre_commit.sh
 ```
 
 If you only need required builds or tests based on local changes:
 
 ```sh
-bash ci_scripts/tasks/run_required_builds.sh
+bash ci_scripts/tasks/verify_repository_state.sh
 ```
+
+If you want Git's `pre-commit` hook to enforce the same repository flow,
+install `pre-commit` in your local environment and run `pre-commit install`.
+The hook delegates to `bash ci_scripts/tasks/verify_pre_commit.sh` through the
+local `.pre-commit-config.yaml`.
+
+The scripts below are optional targeted helpers, not standardized repository
+entrypoints.
 
 If you only need the app build:
 
@@ -77,10 +132,23 @@ If you only need the app build:
 bash ci_scripts/tasks/build_app.sh
 ```
 
+If you only need app tests:
+
+```sh
+bash ci_scripts/tasks/test_app.sh
+```
+
 If you only need library tests:
 
 ```sh
 bash ci_scripts/tasks/test_shared_library.sh
+```
+
+If you prefer to run the SwiftLint steps directly:
+
+```sh
+bash ci_scripts/tasks/format_swift.sh
+bash ci_scripts/tasks/lint_swift.sh
 ```
 
 ### CI Artifact Layout

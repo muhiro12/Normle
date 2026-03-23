@@ -19,7 +19,7 @@ print_failure() {
   local message=$1
   local details=${2:-}
 
-  echo "MHPlatform guardrail violation: ${message}" >&2
+  echo "MHPlatform boundary violation: ${message}" >&2
   if [[ -n "$details" ]]; then
     echo "$details" >&2
   fi
@@ -213,4 +213,4 @@ if [[ $status -ne 0 ]]; then
   exit "$status"
 fi
 
-echo "MHPlatform guardrails passed."
+echo "MHPlatform boundaries passed."
