@@ -8,7 +8,7 @@
 
 import Combine
 import Foundation
-import MHPreferences
+import MHPlatformCore
 
 @preconcurrency
 @MainActor

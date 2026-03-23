@@ -6,7 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHPreferences
+import MHPlatform
 import MHUI
 import NormleLibrary
 import SwiftData

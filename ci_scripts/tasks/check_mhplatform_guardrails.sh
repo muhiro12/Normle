@@ -73,12 +73,12 @@ fi
 
 library_umbrella_hits=$(
   collect_matches \
-    'product\(name:\s*"MHPlatform"|dependencies:\s*\[\s*"MHPlatform"\s*\]' \
+    'product\(name:\s*"(MHPlatform|MHAppRuntime|MHAppRuntimeCore|MHDeepLinking|MHLogging|MHNotificationPlans|MHNotificationPayloads|MHRouteExecution|MHPersistenceMaintenance|MHPreferences|MHMutationFlow|MHReviewPolicy)"\s*,\s*package:\s*"MHPlatform"\)' \
     NormleLibrary/Package.swift
 )
 if [[ -n "$library_umbrella_hits" ]]; then
   print_failure \
-    "NormleLibrary must not depend on the MHPlatform umbrella product." \
+    "NormleLibrary must adopt MHPlatformCore instead of direct MHPlatform app-facing or concrete products." \
     "$library_umbrella_hits"
 fi
 
@@ -87,24 +87,45 @@ project_umbrella_hits=$(
     'productName = MHPlatform;|/\* MHPlatform in Frameworks \*/' \
     Normle.xcodeproj/project.pbxproj
 )
-if [[ -n "$project_umbrella_hits" ]]; then
+if [[ -z "$project_umbrella_hits" ]]; then
   print_failure \
-    "The Xcode project must not link the MHPlatform umbrella product." \
-    "$project_umbrella_hits"
+    "The Xcode project must link the MHPlatform umbrella product." \
+    "$(rg -n 'MHPlatform|MHAppRuntime|MHLogging|MHPreferences|MHDeepLinking|MHRouteExecution|MHPersistenceMaintenance|MHMutationFlow|MHReviewPolicy' Normle.xcodeproj/project.pbxproj || true)"
 fi
 
-umbrella_import_hits=$(
+project_direct_product_hits=$(
   collect_matches \
-    '^import MHPlatform$' \
-    Normle \
-    NormleLibrary \
-    NormleTests \
+    'productName = (MHAppRuntime|MHLogging|MHPreferences|MHDeepLinking|MHRouteExecution|MHPersistenceMaintenance|MHMutationFlow|MHReviewPolicy);|/\* (MHAppRuntime|MHLogging|MHPreferences|MHDeepLinking|MHRouteExecution|MHPersistenceMaintenance|MHMutationFlow|MHReviewPolicy) in Frameworks \*/' \
+    Normle.xcodeproj/project.pbxproj
+)
+if [[ -n "$project_direct_product_hits" ]]; then
+  print_failure \
+    "The app target must adopt MHPlatform instead of direct MHPlatform concrete products." \
+    "$project_direct_product_hits"
+fi
+
+app_narrow_import_hits=$(
+  collect_matches \
+    '^import MH(AppRuntime|AppRuntimeCore|Logging|Preferences|DeepLinking|RouteExecution|PersistenceMaintenance|MutationFlow|ReviewPolicy)$' \
+    Normle/Sources \
     -g '*.swift'
 )
-if [[ -n "$umbrella_import_hits" ]]; then
+if [[ -n "$app_narrow_import_hits" ]]; then
   print_failure \
-    "Umbrella imports are forbidden. Use narrow MHPlatform modules instead." \
-    "$umbrella_import_hits"
+    "App target sources must import MHPlatform instead of narrow MHPlatform modules." \
+    "$app_narrow_import_hits"
+fi
+
+library_invalid_import_hits=$(
+  collect_matches \
+    '^import (MHPlatform|MHAppRuntime|MHAppRuntimeCore|MHDeepLinking|MHLogging|MHNotificationPlans|MHNotificationPayloads|MHRouteExecution|MHPersistenceMaintenance|MHPreferences|MHMutationFlow|MHReviewPolicy)$' \
+    NormleLibrary/Sources \
+    -g '*.swift'
+)
+if [[ -n "$library_invalid_import_hits" ]]; then
+  print_failure \
+    "NormleLibrary sources must import MHPlatformCore instead of direct MHPlatform app-facing or concrete modules." \
+    "$library_invalid_import_hits"
 fi
 
 if [[ -z "$mhplatform_package_block" ]] || \
@@ -120,6 +141,17 @@ if [[ -z "$mhplatform_package_block" ]] || \
   print_failure \
     "NormleLibrary/Package.swift must require MHPlatform with the 1.x SemVer range." \
     "${mhplatform_package_block:-$(sed -n '1,120p' NormleLibrary/Package.swift)}"
+fi
+
+library_core_dependency_hits=$(
+  collect_matches \
+    'product\(name:\s*"MHPlatformCore"\s*,\s*package:\s*"MHPlatform"\)' \
+    NormleLibrary/Package.swift
+)
+if [[ -z "$library_core_dependency_hits" ]]; then
+  print_failure \
+    "NormleLibrary/Package.swift must adopt MHPlatformCore." \
+    "$(sed -n '1,120p' NormleLibrary/Package.swift)"
 fi
 
 if [[ -z "$mhplatform_project_block" ]] || \

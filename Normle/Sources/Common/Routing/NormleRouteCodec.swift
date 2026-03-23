@@ -6,7 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
-import MHDeepLinking
+import MHPlatform
 
 nonisolated enum NormleRouteCodec {
     static let deepLink = MHDeepLinkCodec<NormleRoute>(

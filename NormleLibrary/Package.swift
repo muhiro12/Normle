@@ -27,7 +27,7 @@ let package = Package(
         .target(
             name: "NormleLibrary",
             dependencies: [
-                .product(name: "MHPreferences", package: "MHPlatform"),
+                .product(name: "MHPlatformCore", package: "MHPlatform"),
                 .product(name: "SwiftUtilities", package: "SwiftUtilities")
             ],
             path: ".",

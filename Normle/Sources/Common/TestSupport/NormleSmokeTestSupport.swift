@@ -8,8 +8,7 @@
 
 #if DEBUG
 
-import MHAppRuntimeCore
-import MHRouteExecution
+import MHPlatform
 import NormleLibrary
 import SwiftData
 import SwiftUI
