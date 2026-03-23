@@ -3809,41 +3809,6 @@
         }
       }
     },
-    "This action cannot be undone." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This action cannot be undone."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta acción no se puede deshacer."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cette action est irréversible."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この操作は取り消せません。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此操作无法撤销。"
-          }
-        }
-      }
-    },
     "This removes local history, mappings, tags, preferences, pending deep links, sync settings, and resets tips on the next launch." : {
       "localizations" : {
         "en" : {
