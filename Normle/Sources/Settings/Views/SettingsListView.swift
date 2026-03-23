@@ -68,7 +68,7 @@ struct SettingsListView: View {
             }
         } message: {
             Text(
-                "This removes local history, mappings, tags, preferences, tips, "
+                "This removes local history, mappings, tags, preferences, "
                     + "pending deep links, and sync settings on this device."
             )
         }

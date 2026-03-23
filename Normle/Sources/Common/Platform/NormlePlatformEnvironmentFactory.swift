@@ -6,6 +6,7 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import Foundation
 import MHPlatform
 import NormleLibrary
 import SwiftData
@@ -13,11 +14,16 @@ import SwiftData
 enum NormlePlatformEnvironmentFactory {
     @MainActor
     static func make(
-        modelContainer: ModelContainer
+        modelContainer: ModelContainer,
+        userDefaults: UserDefaults = .standard
     ) -> NormlePlatformEnvironment {
-        let preferencesStore = UserPreferencesStore()
+        let preferencesStore = UserPreferencesStore(
+            userDefaults: userDefaults
+        )
         let routeInbox = makeRouteInbox()
-        let pendingRouteStore = NormlePendingRouteStore()
+        let pendingRouteStore = NormlePendingRouteStore(
+            userDefaults: userDefaults
+        )
 
         return .init(
             modelContainer: modelContainer,
@@ -34,9 +40,13 @@ enum NormlePlatformEnvironmentFactory {
 
     @MainActor
     static func makePreview(
-        modelContainer: ModelContainer
+        modelContainer: ModelContainer,
+        userDefaults: UserDefaults = .standard
     ) -> NormlePlatformEnvironment {
-        make(modelContainer: modelContainer)
+        make(
+            modelContainer: modelContainer,
+            userDefaults: userDefaults
+        )
     }
 
     private static func makeAppConfiguration() -> MHAppConfiguration {

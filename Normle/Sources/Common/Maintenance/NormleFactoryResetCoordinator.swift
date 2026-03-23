@@ -42,7 +42,6 @@ final class NormleFactoryResetCoordinator {
         static let clearPersistedModels = "clearPersistedModels"
         static let resetPreferences = "resetPreferences"
         static let clearAppFlags = "clearAppFlags"
-        static let resetTips = "resetTips"
         static let rebuildAppSession = "rebuildAppSession"
     }
 
@@ -136,11 +135,6 @@ private extension NormleFactoryResetCoordinator {
                     )
                 }
             },
-            .init(name: StepName.resetTips) {
-                try await MainActor.run {
-                    try NormleTipManager.reset()
-                }
-            },
             .init(name: StepName.rebuildAppSession) {
                 await MainActor.run {
                     _ = dependencies.sessionController.rebuild()
@@ -176,8 +170,6 @@ private extension NormleFactoryResetCoordinator {
             return "Resetting preferences"
         case StepName.clearAppFlags:
             return "Clearing app flags"
-        case StepName.resetTips:
-            return "Resetting tips"
         case StepName.rebuildAppSession:
             return "Rebuilding app session"
         default:

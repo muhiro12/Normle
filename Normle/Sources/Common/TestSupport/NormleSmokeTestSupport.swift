@@ -8,6 +8,7 @@
 
 #if DEBUG
 
+import Foundation
 import MHPlatform
 import NormleLibrary
 import SwiftData
@@ -15,8 +16,37 @@ import SwiftUI
 
 enum NormleSmokeTestSupport {
     @MainActor
-    static func makeEnvironment() -> NormlePlatformEnvironment {
-        NormleAppAssembly.smokeTest().platformEnvironment
+    static func makeEnvironment(
+        userDefaults: UserDefaults = .standard
+    ) -> NormlePlatformEnvironment {
+        let modelContainer: ModelContainer
+
+        do {
+            modelContainer = try NormleAppModelContainerFactory.makeInMemoryModelContainer()
+        } catch {
+            preconditionFailure(error.localizedDescription)
+        }
+
+        return NormlePlatformEnvironmentFactory.makePreview(
+            modelContainer: modelContainer,
+            userDefaults: userDefaults
+        )
+    }
+
+    @MainActor
+    static func makeSessionController(
+        container: ModelContainer,
+        userDefaults: UserDefaults = .standard
+    ) -> NormleAppSessionController {
+        .init {
+            .init(
+                platformEnvironment: NormlePlatformEnvironmentFactory.makePreview(
+                    modelContainer: container,
+                    userDefaults: userDefaults
+                ),
+                isCloudSyncEnabled: false
+            )
+        }
     }
 
     @MainActor
@@ -40,12 +70,58 @@ enum NormleSmokeTestSupport {
     }
 
     @MainActor
+    static func insertSampleMapping(
+        in environment: NormlePlatformEnvironment
+    ) throws {
+        let context = environment.modelContainer.mainContext
+        _ = try MappingRule.create(
+            context: context,
+            source: "alice@example.com",
+            target: "[Email]"
+        )
+        try context.save()
+    }
+
+    @MainActor
+    static func insertSampleTag(
+        in environment: NormlePlatformEnvironment
+    ) throws {
+        let context = environment.modelContainer.mainContext
+        _ = try Tag.create(
+            context: context,
+            name: "Sensitive",
+            type: .maskRule
+        )
+        try context.save()
+    }
+
+    @MainActor
     static func historyCount(
         in environment: NormlePlatformEnvironment
     ) throws -> Int {
         let context = environment.modelContainer.mainContext
         return try context.fetchCount(
             FetchDescriptor<TransformRecord>()
+        )
+    }
+
+    @MainActor
+    static func mappingCount(
+        in environment: NormlePlatformEnvironment
+    ) throws -> Int {
+        let context = environment.modelContainer.mainContext
+        return try context.fetchCount(
+            FetchDescriptor<MappingRule>()
+        )
+    }
+
+    @MainActor
+    static func tagCount(
+        in environment: NormlePlatformEnvironment
+    ) throws -> Int {
+        let context = environment.modelContainer.mainContext
+        return try context.fetchCount(
+            FetchDescriptor<Tag>()
         )
     }
 

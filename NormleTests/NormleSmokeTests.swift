@@ -6,6 +6,8 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import Foundation
+import NormleLibrary
 import Testing
 
 @testable import Normle
@@ -64,5 +66,172 @@ struct NormleSmokeTests {
             in: environment
         )
         #expect(historyCount == 0)
+    }
+
+    @Test
+    func factoryResetClearsPersistedStateAndRebuildsAppSession() async throws {
+        let suiteName = "NormleSmokeTests.\(UUID().uuidString)"
+        guard let userDefaults = UserDefaults(
+            suiteName: suiteName
+        ) else {
+            Issue.record("Failed to create isolated user defaults")
+            return
+        }
+
+        userDefaults.removePersistentDomain(
+            forName: suiteName
+        )
+        defer {
+            userDefaults.removePersistentDomain(
+                forName: suiteName
+            )
+        }
+
+        let environment = NormleSmokeTestSupport.makeEnvironment(
+            userDefaults: userDefaults
+        )
+        let sessionController = NormleSmokeTestSupport.makeSessionController(
+            container: environment.modelContainer,
+            userDefaults: userDefaults
+        )
+        let coordinator = NormleFactoryResetCoordinator()
+
+        try seedFactoryResetState(
+            in: environment,
+            userDefaults: userDefaults
+        )
+
+        await coordinator.run(
+            context: environment.modelContainer.mainContext,
+            preferencesStore: environment.preferencesStore,
+            pendingRouteStore: environment.pendingRouteStore,
+            sessionController: sessionController,
+            userDefaults: userDefaults
+        )
+
+        try expectFactoryResetCleanup(
+            in: environment,
+            userDefaults: userDefaults,
+            sessionController: sessionController,
+            coordinator: coordinator
+        )
+    }
+}
+
+private extension NormleSmokeTests {
+    var persistedFlagKeys: [BoolAppStorageKey] {
+        [
+            .isSubscribeOn,
+            .isICloudOn,
+            .isURLMaskingEnabled,
+            .isEmailMaskingEnabled,
+            .isPhoneMaskingEnabled
+        ]
+    }
+
+    func seedFactoryResetState(
+        in environment: NormlePlatformEnvironment,
+        userDefaults: UserDefaults
+    ) throws {
+        try NormleSmokeTestSupport.insertSampleHistory(
+            in: environment
+        )
+        try NormleSmokeTestSupport.insertSampleMapping(
+            in: environment
+        )
+        try NormleSmokeTestSupport.insertSampleTag(
+            in: environment
+        )
+
+        environment.preferencesStore.update { preferences in
+            preferences.maskingPreferences = .init(
+                isURLMaskingEnabled: false,
+                isEmailMaskingEnabled: false,
+                isPhoneMaskingEnabled: false
+            )
+            preferences.presetSelection = .init(
+                isCustomMappingEnabled: true,
+                caseTransform: .uppercase,
+                alphanumericWidthTransform: .halfwidthAlphanumericToFullwidth,
+                spaceWidthTransform: nil,
+                katakanaWidthTransform: nil,
+                digitsWidthTransform: nil,
+                base64Transform: nil,
+                urlTransform: nil,
+                qrTransform: nil
+            )
+        }
+
+        persistedFlagKeys.forEach { key in
+            userDefaults.set(
+                true,
+                forKey: key.preferenceKey.storageKey
+            )
+        }
+
+        #expect(
+            NormleSmokeTestSupport.storePendingRoute(
+                .settings,
+                in: environment
+            ) != nil
+        )
+        #expect(
+            environment.preferencesStore.preferences != .defaults
+        )
+        #expect(
+            userDefaults.data(
+                forKey: DataAppStorageKey.userPreferences.preferenceKey.storageKey
+            ) != nil
+        )
+    }
+
+    func expectFactoryResetCleanup(
+        in environment: NormlePlatformEnvironment,
+        userDefaults: UserDefaults,
+        sessionController: NormleAppSessionController,
+        coordinator: NormleFactoryResetCoordinator
+    ) throws {
+        #expect(
+            try NormleSmokeTestSupport.historyCount(
+                in: environment
+            ) == 0
+        )
+        #expect(
+            try NormleSmokeTestSupport.mappingCount(
+                in: environment
+            ) == 0
+        )
+        #expect(
+            try NormleSmokeTestSupport.tagCount(
+                in: environment
+            ) == 0
+        )
+        #expect(environment.preferencesStore.preferences == .defaults)
+        #expect(
+            userDefaults.data(
+                forKey: DataAppStorageKey.userPreferences.preferenceKey.storageKey
+            ) == nil
+        )
+
+        persistedFlagKeys.forEach { key in
+            #expect(
+                userDefaults.object(
+                    forKey: key.preferenceKey.storageKey
+                ) == nil
+            )
+        }
+
+        #expect(
+            environment.pendingRouteStore.consumeLatestRoute() == nil
+        )
+        #expect(sessionController.revision == 1)
+        #expect(coordinator.isRunning == false)
+        #expect(coordinator.activeStepDescription == nil)
+
+        let pendingAlert = sessionController.consumePendingAlert()
+        #expect(pendingAlert?.title == "Factory reset complete")
+        #expect(
+            pendingAlert?.message == "Normle returned to a clean local state on this device."
+        )
     }
 }
