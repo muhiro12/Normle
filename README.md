@@ -10,8 +10,8 @@ StoreKit-backed runtime state.
 ## Targets
 
 - **Normle** - the iOS and macOS app that hosts the SwiftUI experience,
-  platform configuration, runtime wiring, and the app-facing `MHPlatform`
-  consumer surface.
+  platform configuration, runtime wiring, and the default full-platform
+  `MHPlatform` consumer surface.
 - **NormleLibrary** - the shared domain layer containing transform pipelines,
   mapping transfer services, masking and restore logic, history persistence,
   preference-backed helpers, and the shared-library-safe `MHPlatformCore`
@@ -32,6 +32,10 @@ StoreKit-backed runtime state.
 - **MHPlatform consumer split** - the app target adopts `MHPlatform`, while
   `NormleLibrary` stays on `MHPlatformCore` so shared code stops at the
   core-safe platform surface.
+- **Advanced runtime path remains optional** - upstream 1.2 keeps
+  `MHAppRuntime` as an advanced app path, but Normle intentionally stays on the
+  full-platform `MHPlatform` surface because the app uses package-owned runtime
+  views and bootstrap helpers.
 - **SwiftData + CloudKit** - the shared library owns model-container creation
   and migration planning for local and cloud-backed stores.
 - **App assembly boundary** - `Normle/Sources/NormleAppAssembly.swift` wires

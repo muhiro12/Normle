@@ -12,6 +12,7 @@ repository_root=$(cd "$script_directory/../.." && pwd)
 cd "$repository_root"
 
 canonical_remote_url="https://github.com/muhiro12/MHPlatform.git"
+expected_mhplatform_version="1.2.0"
 status=0
 
 print_failure() {
@@ -73,12 +74,12 @@ fi
 
 library_umbrella_hits=$(
   collect_matches \
-    'product\(name:\s*"(MHPlatform|MHAppRuntime|MHAppRuntimeCore|MHDeepLinking|MHLogging|MHNotificationPlans|MHNotificationPayloads|MHRouteExecution|MHPersistenceMaintenance|MHPreferences|MHMutationFlow|MHReviewPolicy)"\s*,\s*package:\s*"MHPlatform"\)' \
+    'product\(name:\s*"(MHPlatform|MHAppRuntime|MHDeepLinking|MHLogging|MHNotificationPlans|MHNotificationPayloads|MHRouteExecution|MHPersistenceMaintenance|MHPreferences|MHMutationFlow|MHReviewPolicy)"\s*,\s*package:\s*"MHPlatform"\)' \
     NormleLibrary/Package.swift
 )
 if [[ -n "$library_umbrella_hits" ]]; then
   print_failure \
-    "NormleLibrary must adopt MHPlatformCore instead of direct MHPlatform app-facing or concrete products." \
+    "NormleLibrary must adopt MHPlatformCore instead of direct MHPlatform app-facing or advanced products." \
     "$library_umbrella_hits"
 fi
 
@@ -106,7 +107,7 @@ fi
 
 app_narrow_import_hits=$(
   collect_matches \
-    '^import MH(AppRuntime|AppRuntimeCore|Logging|Preferences|DeepLinking|RouteExecution|PersistenceMaintenance|MutationFlow|ReviewPolicy)$' \
+    '^import MH(AppRuntime|Logging|Preferences|DeepLinking|RouteExecution|PersistenceMaintenance|MutationFlow|ReviewPolicy)$' \
     Normle/Sources \
     -g '*.swift'
 )
@@ -118,13 +119,13 @@ fi
 
 library_invalid_import_hits=$(
   collect_matches \
-    '^import (MHPlatform|MHAppRuntime|MHAppRuntimeCore|MHDeepLinking|MHLogging|MHNotificationPlans|MHNotificationPayloads|MHRouteExecution|MHPersistenceMaintenance|MHPreferences|MHMutationFlow|MHReviewPolicy)$' \
+    '^import (MHPlatform|MHAppRuntime|MHDeepLinking|MHLogging|MHNotificationPlans|MHNotificationPayloads|MHRouteExecution|MHPersistenceMaintenance|MHPreferences|MHMutationFlow|MHReviewPolicy)$' \
     NormleLibrary/Sources \
     -g '*.swift'
 )
 if [[ -n "$library_invalid_import_hits" ]]; then
   print_failure \
-    "NormleLibrary sources must import MHPlatformCore instead of direct MHPlatform app-facing or concrete modules." \
+    "NormleLibrary sources must import MHPlatformCore instead of direct MHPlatform app-facing or advanced modules." \
     "$library_invalid_import_hits"
 fi
 
@@ -195,9 +196,9 @@ do
       "$mhplatform_block"
   fi
 
-  if ! grep -Eq '"version" : "1\.1\.0"' <<<"$mhplatform_block"; then
+  if ! grep -Eq "\"version\" : \"${expected_mhplatform_version//./\\.}\"" <<<"$mhplatform_block"; then
     print_failure \
-      "${resolved_file} must record MHPlatform version 1.1.0." \
+      "${resolved_file} must record MHPlatform version ${expected_mhplatform_version}." \
       "$mhplatform_block"
   fi
 
