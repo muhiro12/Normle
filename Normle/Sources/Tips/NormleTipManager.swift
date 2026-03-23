@@ -44,7 +44,10 @@ enum NormleTipManager {
 
     static func prepareForLaunch(
         userDefaults: UserDefaults = .standard,
-        resetDatastore: () throws -> Void = Tips.resetDatastore
+        resetDatastore: () throws -> Void = Tips.resetDatastore,
+        handleError: (any Error) -> Void = { error in
+            assertionFailure(error.localizedDescription)
+        }
     ) {
         let storageKey = BoolAppStorageKey.shouldResetTipsOnNextLaunch.rawValue
         guard userDefaults.bool(forKey: storageKey) else {
@@ -57,7 +60,7 @@ enum NormleTipManager {
                 forKey: storageKey
             )
         } catch {
-            assertionFailure(error.localizedDescription)
+            handleError(error)
         }
     }
 }

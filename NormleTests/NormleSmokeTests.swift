@@ -185,6 +185,48 @@ struct NormleSmokeTests {
             userDefaults.object(forKey: tipResetStorageKey) == nil
         )
     }
+
+    @Test
+    func failedScheduledTipResetRemainsPendingForNextLaunch() {
+        let suiteName = "NormleSmokeTests.\(UUID().uuidString)"
+        guard let userDefaults = UserDefaults(
+            suiteName: suiteName
+        ) else {
+            Issue.record("Failed to create isolated user defaults")
+            return
+        }
+
+        userDefaults.removePersistentDomain(
+            forName: suiteName
+        )
+        defer {
+            userDefaults.removePersistentDomain(
+                forName: suiteName
+            )
+        }
+
+        struct SampleError: Error {}
+
+        var recordedError: (any Error)?
+        NormleTipManager.scheduleReset(
+            userDefaults: userDefaults
+        )
+
+        NormleTipManager.prepareForLaunch(
+            userDefaults: userDefaults,
+            resetDatastore: {
+                throw SampleError()
+            },
+            handleError: { error in
+                recordedError = error
+            }
+        )
+
+        #expect(recordedError is SampleError)
+        #expect(
+            userDefaults.bool(forKey: tipResetStorageKey)
+        )
+    }
 }
 
 private extension NormleSmokeTests {
