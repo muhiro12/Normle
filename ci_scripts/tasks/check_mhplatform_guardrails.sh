@@ -163,9 +163,9 @@ do
       "$mhplatform_block"
   fi
 
-  if ! grep -Eq '"version" : "1\.0\.0"' <<<"$mhplatform_block"; then
+  if ! grep -Eq '"version" : "1\.1\.0"' <<<"$mhplatform_block"; then
     print_failure \
-      "${resolved_file} must record MHPlatform version 1.0.0." \
+      "${resolved_file} must record MHPlatform version 1.1.0." \
       "$mhplatform_block"
   fi
 
