@@ -305,9 +305,15 @@ private extension NormleSmokeTests {
         #expect(coordinator.activeStepDescription == nil)
 
         let pendingAlert = sessionController.consumePendingAlert()
-        #expect(pendingAlert?.title == "Factory reset complete")
         #expect(
-            pendingAlert?.message == "Normle returned to a clean local state on this device."
+            pendingAlert?.title == String(
+                localized: "Factory reset complete"
+            )
+        )
+        #expect(
+            pendingAlert?.message == String(
+                localized: "Normle returned to a clean local state on this device."
+            )
         )
     }
 }

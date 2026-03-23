@@ -90,13 +90,19 @@ final class NormleFactoryResetCoordinator {
         switch outcome {
         case .succeeded:
             sessionController.presentAlert(
-                title: "Factory reset complete",
-                message: "Normle returned to a clean local state on this device."
+                title: String(localized: "Factory reset complete"),
+                message: String(
+                    localized: "Normle returned to a clean local state on this device."
+                )
             )
         case let .failed(error, failedStep, _):
             sessionController.presentAlert(
-                title: "Factory reset failed",
-                message: "\(displayName(for: failedStep)) failed: \(error.localizedDescription)"
+                title: String(localized: "Factory reset failed"),
+                message: String.localizedStringWithFormat(
+                    String(localized: "%@ failed: %@"),
+                    displayName(for: failedStep),
+                    error.localizedDescription
+                )
             )
         }
     }
@@ -172,17 +178,17 @@ private extension NormleFactoryResetCoordinator {
     ) -> String {
         switch stepName {
         case StepName.clearPendingRoutes:
-            return "Clearing pending deep links"
+            return String(localized: "Clearing pending deep links")
         case StepName.clearPersistedModels:
-            return "Deleting local data"
+            return String(localized: "Deleting local data")
         case StepName.resetPreferences:
-            return "Resetting preferences"
+            return String(localized: "Resetting preferences")
         case StepName.clearAppFlags:
-            return "Clearing app flags"
+            return String(localized: "Clearing app flags")
         case StepName.scheduleTipsReset:
-            return "Scheduling tips reset"
+            return String(localized: "Scheduling tips reset")
         case StepName.rebuildAppSession:
-            return "Rebuilding app session"
+            return String(localized: "Rebuilding app session")
         default:
             return stepName
         }

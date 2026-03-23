@@ -138,7 +138,8 @@ private extension SettingsListView {
 
             if screenModel.factoryResetCoordinator.isRunning {
                 ProgressView(
-                    screenModel.factoryResetCoordinator.activeStepDescription ?? "Factory reset in progress"
+                    screenModel.factoryResetCoordinator.activeStepDescription
+                        ?? String(localized: "Factory reset in progress")
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .mhRow()
