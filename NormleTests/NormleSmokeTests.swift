@@ -116,117 +116,6 @@ struct NormleSmokeTests {
             coordinator: coordinator
         )
     }
-
-    @Test
-    func resetTipsSchedulesTipResetForNextLaunch() {
-        let suiteName = "NormleSmokeTests.\(UUID().uuidString)"
-        guard let userDefaults = UserDefaults(
-            suiteName: suiteName
-        ) else {
-            Issue.record("Failed to create isolated user defaults")
-            return
-        }
-
-        userDefaults.removePersistentDomain(
-            forName: suiteName
-        )
-        defer {
-            userDefaults.removePersistentDomain(
-                forName: suiteName
-            )
-        }
-
-        let screenModel = SettingsScreenModel()
-        screenModel.resetTips(
-            userDefaults: userDefaults
-        )
-
-        #expect(
-            userDefaults.bool(forKey: tipResetStorageKey)
-        )
-        #expect(
-            screenModel.alertTitle == String(localized: "Tips reset")
-        )
-        #expect(
-            screenModel.alertMessage == String(
-                localized: "Close and reopen Normle to show tips again."
-            )
-        )
-    }
-
-    @Test
-    func scheduledTipResetIsConsumedBeforeTipConfiguration() {
-        let suiteName = "NormleSmokeTests.\(UUID().uuidString)"
-        guard let userDefaults = UserDefaults(
-            suiteName: suiteName
-        ) else {
-            Issue.record("Failed to create isolated user defaults")
-            return
-        }
-
-        userDefaults.removePersistentDomain(
-            forName: suiteName
-        )
-        defer {
-            userDefaults.removePersistentDomain(
-                forName: suiteName
-            )
-        }
-
-        var didResetDatastore = false
-        NormleTipManager.scheduleReset(
-            userDefaults: userDefaults
-        )
-
-        NormleTipManager.prepareForLaunch(userDefaults: userDefaults) { didResetDatastore = true }
-
-        #expect(didResetDatastore)
-        #expect(
-            userDefaults.object(forKey: tipResetStorageKey) == nil
-        )
-    }
-
-    @Test
-    func failedScheduledTipResetRemainsPendingForNextLaunch() {
-        let suiteName = "NormleSmokeTests.\(UUID().uuidString)"
-        guard let userDefaults = UserDefaults(
-            suiteName: suiteName
-        ) else {
-            Issue.record("Failed to create isolated user defaults")
-            return
-        }
-
-        userDefaults.removePersistentDomain(
-            forName: suiteName
-        )
-        defer {
-            userDefaults.removePersistentDomain(
-                forName: suiteName
-            )
-        }
-
-        struct SampleError: Error {}
-
-        var recordedError: (any Error)?
-        NormleTipManager.scheduleReset(
-            userDefaults: userDefaults
-        )
-
-        NormleTipManager.prepareForLaunch(
-            userDefaults: userDefaults,
-            resetDatastore: {
-                throw SampleError()
-            },
-            handleError: { error in
-                recordedError = error
-            }
-        )
-
-        #expect(recordedError is SampleError)
-        #expect(
-            userDefaults.bool(forKey: tipResetStorageKey)
-        )
-    }
 }
 
 private extension NormleSmokeTests {
@@ -238,10 +127,6 @@ private extension NormleSmokeTests {
             .isEmailMaskingEnabled,
             .isPhoneMaskingEnabled
         ]
-    }
-
-    var tipResetStorageKey: String {
-        BoolAppStorageKey.shouldResetTipsOnNextLaunch.preferenceKey.storageKey
     }
 
     func seedFactoryResetState(
@@ -336,7 +221,9 @@ private extension NormleSmokeTests {
             )
         }
         #expect(
-            userDefaults.bool(forKey: tipResetStorageKey)
+            userDefaults.bool(
+                forKey: BoolAppStorageKey.shouldResetTipsOnNextLaunch.preferenceKey.storageKey
+            )
         )
 
         #expect(

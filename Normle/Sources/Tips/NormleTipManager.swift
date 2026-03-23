@@ -12,18 +12,25 @@ import TipKit
 
 enum NormleTipManager {
     static func configure(
-        userDefaults: UserDefaults = .standard
+        userDefaults: UserDefaults = .standard,
+        resetDatastore: () throws -> Void = Tips.resetDatastore,
+        configureTips: ([Tips.ConfigurationOption]) throws -> Void = Tips.configure,
+        handleError: (any Error) -> Void = { error in
+            assertionFailure(error.localizedDescription)
+        }
     ) {
         prepareForLaunch(
-            userDefaults: userDefaults
+            userDefaults: userDefaults,
+            resetDatastore: resetDatastore,
+            handleError: handleError
         )
 
         do {
-            try Tips.configure([
+            try configureTips([
                 .displayFrequency(.immediate)
             ])
         } catch {
-            assertionFailure(error.localizedDescription)
+            handleError(error)
         }
     }
 
