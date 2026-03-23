@@ -3346,6 +3346,40 @@
         }
       }
     },
+    "This removes local history, mappings, tags, preferences, pending deep links, sync settings, and resets tips on the next launch." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This removes local history, mappings, tags, preferences, pending deep links, sync settings, and resets tips on the next launch."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto elimina el historial local, las asignaciones, las etiquetas, las preferencias, los enlaces profundos pendientes y la configuracion de sincronizacion, y restablece los consejos en el proximo inicio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela supprime l'historique local, les correspondances, les etiquettes, les preferences, les liens profonds en attente et les reglages de synchronisation, puis reinitialise les astuces au prochain lancement."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この操作により、このデバイス上のローカル履歴、マッピング、タグ、設定、保留中のディープリンク、同期設定が削除され、次回起動時にヒントがリセットされます。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这会移除此设备上的本地历史记录、映射、标签、偏好设置、待处理的深层链接和同步设置，并在下次启动时重置提示。"
+          }
+        }
+      }
+    },
     "Tips reset" : {
       "localizations" : {
         "en" : {
@@ -3356,60 +3390,60 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Tips reset"
+            "state" : "translated",
+            "value" : "Consejos restablecidos"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Tips reset"
+            "state" : "translated",
+            "value" : "Astuces reinitialisees"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Tips reset"
+            "state" : "translated",
+            "value" : "ヒントをリセットしました"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Tips reset"
+            "state" : "translated",
+            "value" : "提示已重置"
           }
         }
       }
     },
-    "Tips will appear again as you move through the app." : {
+    "Close and reopen Normle to show tips again." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tips will appear again as you move through the app."
+            "value" : "Close and reopen Normle to show tips again."
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Tips will appear again as you move through the app."
+            "state" : "translated",
+            "value" : "Cierra y vuelve a abrir Normle para volver a mostrar los consejos."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Tips will appear again as you move through the app."
+            "state" : "translated",
+            "value" : "Fermez puis rouvrez Normle pour reafficher les astuces."
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Tips will appear again as you move through the app."
+            "state" : "translated",
+            "value" : "ヒントを再表示するには、Normle を終了して再度開いてください。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Tips will appear again as you move through the app."
+            "state" : "translated",
+            "value" : "请关闭并重新打开 Normle，以再次显示提示。"
           }
         }
       }

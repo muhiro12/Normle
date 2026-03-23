@@ -144,9 +144,13 @@ struct NormleSmokeTests {
         #expect(
             userDefaults.bool(forKey: tipResetStorageKey)
         )
-        #expect(screenModel.alertTitle == "Tips reset")
         #expect(
-            screenModel.alertMessage == "Close and reopen Normle to show tips again."
+            screenModel.alertTitle == String(localized: "Tips reset")
+        )
+        #expect(
+            screenModel.alertMessage == String(
+                localized: "Close and reopen Normle to show tips again."
+            )
         )
     }
 
