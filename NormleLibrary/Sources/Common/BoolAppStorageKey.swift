@@ -14,6 +14,7 @@ public enum BoolAppStorageKey: String, MHBoolPreferenceKeyRepresentable {
     case isURLMaskingEnabled = "f3R8q1L0"
     case isEmailMaskingEnabled = "K9m4T2s7"
     case isPhoneMaskingEnabled = "p6V1x8N3"
+    case shouldResetTipsOnNextLaunch = "b2N7q4T6"
 
     public var preferenceKey: MHBoolPreferenceKey {
         .init(storageKey: rawValue)

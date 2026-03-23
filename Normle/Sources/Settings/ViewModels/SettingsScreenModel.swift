@@ -18,7 +18,6 @@ final class SettingsScreenModel {
 
     var alertTitle = String()
     var alertMessage = String()
-    var tipsRefreshID: UUID = .init()
 
     var isShowingAlert: Bool {
         alertMessage.isEmpty == false
@@ -52,17 +51,16 @@ final class SettingsScreenModel {
         )
     }
 
-    func resetTips() {
-        do {
-            try NormleTipManager.reset()
-            tipsRefreshID = .init()
-            alertTitle = String(localized: "Tips reset")
-            alertMessage = String(localized: "Tips will appear again as you move through the app.")
-        } catch {
-            presentError(
-                message: error.localizedDescription
-            )
-        }
+    func resetTips(
+        userDefaults: UserDefaults = .standard
+    ) {
+        NormleTipManager.scheduleReset(
+            userDefaults: userDefaults
+        )
+        alertTitle = String(localized: "Tips reset")
+        alertMessage = String(
+            localized: "Close and reopen Normle to show tips again."
+        )
     }
 
     func dismissAlert() {

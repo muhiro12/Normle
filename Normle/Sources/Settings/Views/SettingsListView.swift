@@ -35,7 +35,6 @@ struct SettingsListView: View {
             dataSection
             helpSection
         }
-        .id(screenModel.tipsRefreshID)
         .mhListChrome(title: "Settings")
         .confirmationDialog(
             "Delete all history?",
@@ -69,7 +68,7 @@ struct SettingsListView: View {
         } message: {
             Text(
                 "This removes local history, mappings, tags, preferences, "
-                    + "pending deep links, and sync settings on this device."
+                    + "pending deep links, sync settings, and resets tips on the next launch."
             )
         }
         .alert(

@@ -42,6 +42,7 @@ final class NormleFactoryResetCoordinator {
         static let clearPersistedModels = "clearPersistedModels"
         static let resetPreferences = "resetPreferences"
         static let clearAppFlags = "clearAppFlags"
+        static let scheduleTipsReset = "scheduleTipsReset"
         static let rebuildAppSession = "rebuildAppSession"
     }
 
@@ -135,6 +136,14 @@ private extension NormleFactoryResetCoordinator {
                     )
                 }
             },
+            .init(name: StepName.scheduleTipsReset) {
+                await MainActor.run {
+                    dependencies.preferenceStore.set(
+                        true,
+                        for: BoolAppStorageKey.shouldResetTipsOnNextLaunch.preferenceKey
+                    )
+                }
+            },
             .init(name: StepName.rebuildAppSession) {
                 await MainActor.run {
                     _ = dependencies.sessionController.rebuild()
@@ -170,6 +179,8 @@ private extension NormleFactoryResetCoordinator {
             return "Resetting preferences"
         case StepName.clearAppFlags:
             return "Clearing app flags"
+        case StepName.scheduleTipsReset:
+            return "Scheduling tips reset"
         case StepName.rebuildAppSession:
             return "Rebuilding app session"
         default:

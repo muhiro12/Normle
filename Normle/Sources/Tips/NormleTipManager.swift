@@ -6,10 +6,18 @@
 //  Copyright © 2026 Hiromu Nakano. All rights reserved.
 //
 
+import Foundation
+import NormleLibrary
 import TipKit
 
 enum NormleTipManager {
-    static func configure() {
+    static func configure(
+        userDefaults: UserDefaults = .standard
+    ) {
+        prepareForLaunch(
+            userDefaults: userDefaults
+        )
+
         do {
             try Tips.configure([
                 .displayFrequency(.immediate)
@@ -25,7 +33,31 @@ enum NormleTipManager {
         }
     }
 
-    static func reset() throws {
-        try Tips.resetDatastore()
+    static func scheduleReset(
+        userDefaults: UserDefaults = .standard
+    ) {
+        userDefaults.set(
+            true,
+            forKey: BoolAppStorageKey.shouldResetTipsOnNextLaunch.rawValue
+        )
+    }
+
+    static func prepareForLaunch(
+        userDefaults: UserDefaults = .standard,
+        resetDatastore: () throws -> Void = Tips.resetDatastore
+    ) {
+        let storageKey = BoolAppStorageKey.shouldResetTipsOnNextLaunch.rawValue
+        guard userDefaults.bool(forKey: storageKey) else {
+            return
+        }
+
+        do {
+            try resetDatastore()
+            userDefaults.removeObject(
+                forKey: storageKey
+            )
+        } catch {
+            assertionFailure(error.localizedDescription)
+        }
     }
 }
