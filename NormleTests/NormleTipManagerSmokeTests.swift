@@ -49,6 +49,38 @@ struct NormleTipManagerSmokeTests {
                 localized: "Close and reopen Normle to show tips again."
             )
         )
+        #expect(screenModel.isShowingAlert)
+    }
+
+    @Test
+    func dismissAlertClearsTipResetMessage() {
+        let suiteName = "NormleTipManagerSmokeTests.\(UUID().uuidString)"
+        guard let userDefaults = UserDefaults(
+            suiteName: suiteName
+        ) else {
+            Issue.record("Failed to create isolated user defaults")
+            return
+        }
+
+        userDefaults.removePersistentDomain(
+            forName: suiteName
+        )
+        defer {
+            userDefaults.removePersistentDomain(
+                forName: suiteName
+            )
+        }
+
+        let screenModel = SettingsScreenModel()
+        screenModel.resetTips(
+            userDefaults: userDefaults
+        )
+
+        screenModel.dismissAlert()
+
+        #expect(screenModel.isShowingAlert == false)
+        #expect(screenModel.alertTitle.isEmpty)
+        #expect(screenModel.alertMessage.isEmpty)
     }
 
     @Test
