@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import MHPlatform
 import NormleLibrary
 import Testing
 
@@ -112,6 +113,61 @@ struct NormleSmokeTests {
         try expectFactoryResetCleanup(
             in: environment,
             userDefaults: userDefaults,
+            sessionController: sessionController,
+            coordinator: coordinator
+        )
+    }
+
+    @Test
+    func factoryResetFailurePresentsLocalizedAlert() async throws {
+        let suiteName = "NormleSmokeTests.\(UUID().uuidString)"
+        guard let userDefaults = UserDefaults(
+            suiteName: suiteName
+        ) else {
+            Issue.record("Failed to create isolated user defaults")
+            return
+        }
+
+        userDefaults.removePersistentDomain(
+            forName: suiteName
+        )
+        defer {
+            userDefaults.removePersistentDomain(
+                forName: suiteName
+            )
+        }
+
+        struct SampleError: LocalizedError, Sendable {
+            var errorDescription: String? {
+                "Sample failure"
+            }
+        }
+
+        let environment = NormleSmokeTestSupport.makeEnvironment(
+            userDefaults: userDefaults
+        )
+        let sessionController = NormleSmokeTestSupport.makeSessionController(
+            container: environment.modelContainer,
+            userDefaults: userDefaults
+        )
+        let coordinator = NormleFactoryResetCoordinator()
+        try NormleSmokeTestSupport.insertSampleHistory(
+            in: environment
+        )
+
+        await coordinator.run(
+            context: environment.modelContainer.mainContext,
+            preferencesStore: environment.preferencesStore,
+            pendingRouteStore: environment.pendingRouteStore,
+            sessionController: sessionController,
+            userDefaults: userDefaults,
+            destructiveReset: makeFactoryResetFailureRunner(
+                error: SampleError()
+            )
+        )
+
+        try expectFactoryResetFailureState(
+            in: environment,
             sessionController: sessionController,
             coordinator: coordinator
         )
@@ -242,6 +298,59 @@ private extension NormleSmokeTests {
         #expect(
             pendingAlert?.message == String(
                 localized: "Normle returned to a clean local state on this device."
+            )
+        )
+    }
+
+    func makeFactoryResetFailureRunner(
+        error: some LocalizedError & Sendable
+    ) -> (
+        [MHDestructiveResetStep],
+        @escaping @Sendable (MHDestructiveResetEvent) -> Void
+    ) async -> MHDestructiveResetOutcome {
+        { _, onEvent in
+            onEvent(
+                .stepStarted(name: "clearPersistedModels")
+            )
+            onEvent(
+                .stepFailed(
+                    name: "clearPersistedModels",
+                    message: error.localizedDescription
+                )
+            )
+            return .failed(
+                error: error,
+                failedStep: "clearPersistedModels",
+                completedSteps: ["clearPendingRoutes"]
+            )
+        }
+    }
+
+    func expectFactoryResetFailureState(
+        in environment: NormlePlatformEnvironment,
+        sessionController: NormleAppSessionController,
+        coordinator: NormleFactoryResetCoordinator
+    ) throws {
+        #expect(
+            try NormleSmokeTestSupport.historyCount(
+                in: environment
+            ) == 1
+        )
+        #expect(sessionController.revision == 0)
+        #expect(coordinator.isRunning == false)
+        #expect(coordinator.activeStepDescription == nil)
+
+        let pendingAlert = sessionController.consumePendingAlert()
+        #expect(
+            pendingAlert?.title == String(
+                localized: "Factory reset failed"
+            )
+        )
+        #expect(
+            pendingAlert?.message == String.localizedStringWithFormat(
+                String(localized: "%@ failed: %@"),
+                String(localized: "Deleting local data"),
+                "Sample failure"
             )
         )
     }

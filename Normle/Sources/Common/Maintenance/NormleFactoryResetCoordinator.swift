@@ -54,7 +54,16 @@ final class NormleFactoryResetCoordinator {
         preferencesStore: UserPreferencesStore,
         pendingRouteStore: NormlePendingRouteStore,
         sessionController: NormleAppSessionController,
-        userDefaults: UserDefaults = .standard
+        userDefaults: UserDefaults = .standard,
+        destructiveReset: (
+            _ steps: [MHDestructiveResetStep],
+            _ onEvent: @escaping @Sendable (MHDestructiveResetEvent) -> Void
+        ) async -> MHDestructiveResetOutcome = { steps, onEvent in
+            await MHDestructiveResetService.run(
+                steps: steps,
+                onEvent: onEvent
+            )
+        }
     ) async {
         guard isRunning == false else {
             return
@@ -74,8 +83,8 @@ final class NormleFactoryResetCoordinator {
             sessionController: sessionController
         )
 
-        let outcome = await MHDestructiveResetService.run(
-            steps: makeSteps(
+        let outcome = await destructiveReset(
+            makeSteps(
                 dependencies: dependencies
             )
         ) { event in
