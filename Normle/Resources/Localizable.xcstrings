@@ -555,26 +555,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Choose presets first"
+            "state" : "translated",
+            "value" : "Elige primero los ajustes predefinidos"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Choose presets first"
+            "state" : "translated",
+            "value" : "Choisissez d'abord des préréglages"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Choose presets first"
+            "state" : "translated",
+            "value" : "まずプリセットを選択"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Choose presets first"
+            "state" : "translated",
+            "value" : "先选择预设"
           }
         }
       }
@@ -827,26 +827,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Create your first mapping"
+            "state" : "translated",
+            "value" : "Crea tu primer mapeo"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Create your first mapping"
+            "state" : "translated",
+            "value" : "Créez votre première correspondance"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Create your first mapping"
+            "state" : "translated",
+            "value" : "最初のマッピングを作成"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Create your first mapping"
+            "state" : "translated",
+            "value" : "创建你的第一个映射"
           }
         }
       }
@@ -1337,26 +1337,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Enable this to keep history and mappings synced with iCloud."
+            "state" : "translated",
+            "value" : "Activa esta opción para mantener el historial y los mapeos sincronizados con iCloud."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Enable this to keep history and mappings synced with iCloud."
+            "state" : "translated",
+            "value" : "Activez cette option pour synchroniser l'historique et les correspondances avec iCloud."
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Enable this to keep history and mappings synced with iCloud."
+            "state" : "translated",
+            "value" : "これを有効にすると、履歴とマッピングが iCloud と同期されます。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Enable this to keep history and mappings synced with iCloud."
+            "state" : "translated",
+            "value" : "启用此选项可让历史记录和映射与 iCloud 保持同步。"
           }
         }
       }
@@ -1677,26 +1677,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
+            "state" : "translated",
+            "value" : "Resalta parte del texto de entrada para convertir reemplazos recurrentes en un mapeo reutilizable."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
+            "state" : "translated",
+            "value" : "Surlignez une partie du texte saisi pour transformer les remplacements récurrents en correspondance réutilisable."
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
+            "state" : "translated",
+            "value" : "入力文の一部を選択すると、繰り返し使う置換を再利用可能なマッピングにできます。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Highlight part of your input to turn recurring replacements into a reusable mapping."
+            "state" : "translated",
+            "value" : "高亮输入内容的一部分，可将重复出现的替换转换为可复用的映射。"
           }
         }
       }
@@ -1745,26 +1745,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "History keeps source, target, and restore context for each saved transform."
+            "state" : "translated",
+            "value" : "El historial guarda el origen, el destino y el contexto de restauración de cada transformación guardada."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "History keeps source, target, and restore context for each saved transform."
+            "state" : "translated",
+            "value" : "L'historique conserve le texte source, le texte cible et le contexte de restauration de chaque transformation enregistrée."
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "History keeps source, target, and restore context for each saved transform."
+            "state" : "translated",
+            "value" : "履歴には、保存した各変換の元文、変換後テキスト、復元用コンテキストが保持されます。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "History keeps source, target, and restore context for each saved transform."
+            "state" : "translated",
+            "value" : "历史记录会保留每次已保存转换的源文本、目标文本和恢复上下文。"
           }
         }
       }
@@ -1983,26 +1983,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Licenses"
+            "state" : "translated",
+            "value" : "Licencias"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Licenses"
+            "state" : "translated",
+            "value" : "Licences"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Licenses"
+            "state" : "translated",
+            "value" : "ライセンス"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Licenses"
+            "state" : "translated",
+            "value" : "许可证"
           }
         }
       }
@@ -2153,26 +2153,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Mappings let you replace repeated text patterns during transforms."
+            "state" : "translated",
+            "value" : "Los mapeos te permiten reemplazar patrones de texto repetidos durante las transformaciones."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Mappings let you replace repeated text patterns during transforms."
+            "state" : "translated",
+            "value" : "Les correspondances vous permettent de remplacer les motifs de texte répétés pendant les transformations."
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Mappings let you replace repeated text patterns during transforms."
+            "state" : "translated",
+            "value" : "マッピングを使うと、変換時に繰り返し現れるテキストパターンを置き換えられます。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Mappings let you replace repeated text patterns during transforms."
+            "state" : "translated",
+            "value" : "映射可让你在转换过程中替换重复出现的文本模式。"
           }
         }
       }
@@ -2697,26 +2697,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Open a record for restore details"
+            "state" : "translated",
+            "value" : "Abre un registro para ver los detalles de la restauración"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Open a record for restore details"
+            "state" : "translated",
+            "value" : "Ouvrez un enregistrement pour voir les détails de la restauration"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Open a record for restore details"
+            "state" : "translated",
+            "value" : "記録を開いて復元の詳細を確認"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Open a record for restore details"
+            "state" : "translated",
+            "value" : "打开记录以查看恢复详情"
           }
         }
       }
@@ -2731,26 +2731,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Open Subscription to enable iCloud sync across your devices."
+            "state" : "translated",
+            "value" : "Abre Suscripción para activar la sincronización de iCloud en todos tus dispositivos."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Open Subscription to enable iCloud sync across your devices."
+            "state" : "translated",
+            "value" : "Ouvrez Abonnement pour activer la synchronisation iCloud sur tous vos appareils."
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Open Subscription to enable iCloud sync across your devices."
+            "state" : "translated",
+            "value" : "サブスクリプションを開くと、すべてのデバイスで iCloud 同期を有効にできます。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Open Subscription to enable iCloud sync across your devices."
+            "state" : "translated",
+            "value" : "打开订阅页面即可在你的所有设备上启用 iCloud 同步。"
           }
         }
       }
@@ -2969,26 +2969,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Restore from this record"
+            "state" : "translated",
+            "value" : "Restaurar desde este registro"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Restore from this record"
+            "state" : "translated",
+            "value" : "Restaurer à partir de cet enregistrement"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Restore from this record"
+            "state" : "translated",
+            "value" : "この記録から復元"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Restore from this record"
+            "state" : "translated",
+            "value" : "从此记录恢复"
           }
         }
       }
@@ -3275,26 +3275,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select text to make a mapping"
+            "state" : "translated",
+            "value" : "Selecciona texto para crear un mapeo"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select text to make a mapping"
+            "state" : "translated",
+            "value" : "Sélectionnez du texte pour créer une correspondance"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select text to make a mapping"
+            "state" : "translated",
+            "value" : "テキストを選択してマッピングを作成"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select text to make a mapping"
+            "state" : "translated",
+            "value" : "选择文本以创建映射"
           }
         }
       }
@@ -3513,26 +3513,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Start by selecting one or more transforms before you run and save a result."
+            "state" : "translated",
+            "value" : "Empieza seleccionando una o más transformaciones antes de ejecutar y guardar un resultado."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Start by selecting one or more transforms before you run and save a result."
+            "state" : "translated",
+            "value" : "Commencez par sélectionner une ou plusieurs transformations avant d'exécuter puis d'enregistrer un résultat."
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Start by selecting one or more transforms before you run and save a result."
+            "state" : "translated",
+            "value" : "まず 1 つ以上の変換を選択してから実行し、結果を保存してください。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Start by selecting one or more transforms before you run and save a result."
+            "state" : "translated",
+            "value" : "请先选择一个或多个转换，然后再运行并保存结果。"
           }
         }
       }
@@ -3649,26 +3649,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Subscription unlocks sync"
+            "state" : "translated",
+            "value" : "La suscripción desbloquea la sincronización"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Subscription unlocks sync"
+            "state" : "translated",
+            "value" : "L'abonnement déverrouille la synchronisation"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Subscription unlocks sync"
+            "state" : "translated",
+            "value" : "サブスクリプションで同期が使えます"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Subscription unlocks sync"
+            "state" : "translated",
+            "value" : "订阅可解锁同步功能"
           }
         }
       }
@@ -4057,26 +4057,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Turn on iCloud sync"
+            "state" : "translated",
+            "value" : "Activa la sincronización de iCloud"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Turn on iCloud sync"
+            "state" : "translated",
+            "value" : "Activez la synchronisation iCloud"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Turn on iCloud sync"
+            "state" : "translated",
+            "value" : "iCloud同期を有効にする"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Turn on iCloud sync"
+            "state" : "translated",
+            "value" : "开启 iCloud 同步"
           }
         }
       }
@@ -4159,26 +4159,26 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Use this saved record to rebuild text when you need to recover a prior response."
+            "state" : "translated",
+            "value" : "Usa este registro guardado para reconstruir el texto cuando necesites recuperar una respuesta anterior."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Use this saved record to rebuild text when you need to recover a prior response."
+            "state" : "translated",
+            "value" : "Utilisez cet enregistrement pour reconstruire le texte lorsque vous devez récupérer une réponse précédente."
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Use this saved record to rebuild text when you need to recover a prior response."
+            "state" : "translated",
+            "value" : "以前の応答を復元したいときは、この保存済み記録を使ってテキストを再構築できます。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Use this saved record to rebuild text when you need to recover a prior response."
+            "state" : "translated",
+            "value" : "当你需要恢复之前的响应时，可使用这条已保存记录重新构建文本。"
           }
         }
       }
