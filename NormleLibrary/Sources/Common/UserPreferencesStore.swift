@@ -14,7 +14,7 @@ import MHPlatformCore
 @MainActor
 public final class UserPreferencesStore: ObservableObject {
     private let preferenceStore: MHPreferenceStore
-    private let preferenceKey: MHCodablePreferenceKey<UserPreferences>
+    private let preferenceKey: MHCodablePreferenceDescriptor<UserPreferences>
 
     @Published public private(set) var preferences: UserPreferences = .defaults
 
@@ -51,7 +51,7 @@ private extension UserPreferencesStore {
     static func loadPreferences(
         userDefaults: UserDefaults,
         preferenceStore: MHPreferenceStore,
-        preferenceKey: MHCodablePreferenceKey<UserPreferences>
+        preferenceKey: MHCodablePreferenceDescriptor<UserPreferences>
     ) -> UserPreferences {
         guard let storedData = userDefaults.data(
             forKey: preferenceKey.storageKey

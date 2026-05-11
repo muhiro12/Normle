@@ -11,7 +11,10 @@ import MHPlatformCore
 public enum DataAppStorageKey: String {
     case userPreferences = "U9r3E7p2"
 
-    public var preferenceKey: MHCodablePreferenceKey<UserPreferences> {
-        .init(storageKey: rawValue)
+    public var preferenceKey: MHCodablePreferenceDescriptor<UserPreferences> {
+        .init(
+            storageKey: rawValue,
+            defaultSelection: .standard
+        )
     }
 }

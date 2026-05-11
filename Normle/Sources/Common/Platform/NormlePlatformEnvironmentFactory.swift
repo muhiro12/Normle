@@ -54,7 +54,6 @@ enum NormlePlatformEnvironmentFactory {
             subscriptionProductIDs: [Secret.productID],
             subscriptionGroupID: nil,
             nativeAdUnitID: NormleAdMobConfiguration.nativeAdUnitID,
-            preferencesSuiteName: nil,
             showsLicenses: true
         )
     }

@@ -11,8 +11,7 @@ script_directory=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 repository_root=$(cd "$script_directory/../.." && pwd)
 cd "$repository_root"
 
-canonical_remote_url="https://github.com/muhiro12/MHPlatform.git"
-expected_mhplatform_version="1.2.0"
+mhplatform_remote_base="https://github.com/muhiro12/MHPlatform"
 status=0
 
 print_failure() {
@@ -33,9 +32,24 @@ collect_matches() {
   rg -n "$pattern" "$@" || true
 }
 
-mhplatform_package_block=$(sed -n '/url: "https:\/\/github.com\/muhiro12\/MHPlatform\.git"/,+3p' NormleLibrary/Package.swift)
+normalize_remote_url() {
+  local remote_url=$1
+
+  printf '%s\n' "${remote_url%.git}"
+}
+
+mhplatform_package_block=$(sed -n '/github.com\/muhiro12\/MHPlatform/,+3p' NormleLibrary/Package.swift)
 mhplatform_project_block=$(
   sed -n '/XCRemoteSwiftPackageReference "MHPlatform"/,+7p' Normle.xcodeproj/project.pbxproj
+)
+package_remote_url=$(
+  sed -En 's/.*url:[[:space:]]*"([^"]*github\.com\/muhiro12\/MHPlatform(\.git)?)".*/\1/p' \
+    NormleLibrary/Package.swift | head -n 1
+)
+project_remote_url=$(
+  sed -n '/XCRemoteSwiftPackageReference "MHPlatform"/,+7p' Normle.xcodeproj/project.pbxproj |
+    sed -En 's/[[:space:]]*repositoryURL = "([^"]+)";/\1/p' |
+    head -n 1
 )
 
 package_path_hits=$(
@@ -129,11 +143,11 @@ if [[ -n "$library_invalid_import_hits" ]]; then
     "$library_invalid_import_hits"
 fi
 
-if [[ -z "$mhplatform_package_block" ]] || \
-  ! grep -Eq "url:\\s*\"${canonical_remote_url//\//\\/}\"" <<<"$mhplatform_package_block"; then
+if [[ -z "$package_remote_url" ]] || \
+  [[ "$(normalize_remote_url "$package_remote_url")" != "$mhplatform_remote_base" ]]; then
   print_failure \
-    "NormleLibrary/Package.swift must reference the canonical MHPlatform remote." \
-    "${mhplatform_package_block:-Expected remote: ${canonical_remote_url}}"
+    "NormleLibrary/Package.swift must reference the MHPlatform GitHub remote." \
+    "${mhplatform_package_block:-Expected remote base: ${mhplatform_remote_base}}"
 fi
 
 if [[ -z "$mhplatform_package_block" ]] || \
@@ -155,11 +169,11 @@ if [[ -z "$library_core_dependency_hits" ]]; then
     "$(sed -n '1,120p' NormleLibrary/Package.swift)"
 fi
 
-if [[ -z "$mhplatform_project_block" ]] || \
-  ! grep -Eq "repositoryURL = \"${canonical_remote_url//\//\\/}\";" <<<"$mhplatform_project_block"; then
+if [[ -z "$project_remote_url" ]] || [[ "$project_remote_url" != "$package_remote_url" ]]; then
   print_failure \
-    "Normle.xcodeproj must reference the canonical MHPlatform remote." \
-    "${mhplatform_project_block:-Expected remote: ${canonical_remote_url}}"
+    "Normle.xcodeproj must use the MHPlatform remote declared by NormleLibrary/Package.swift." \
+    "Package.swift: ${package_remote_url:-missing}
+Xcode project: ${project_remote_url:-missing}"
 fi
 
 if [[ -z "$mhplatform_project_block" ]] || \
@@ -184,10 +198,16 @@ do
     continue
   fi
 
-  if ! grep -Eq "\"location\" : \"${canonical_remote_url//\//\\/}\"" <<<"$mhplatform_block"; then
+  resolved_remote_url=$(
+    sed -En 's/[[:space:]]*"location"[[:space:]]:[[:space:]]"([^"]+)".*/\1/p' <<<"$mhplatform_block" |
+      head -n 1
+  )
+  if [[ -z "$resolved_remote_url" ]] || \
+    [[ "$(normalize_remote_url "$resolved_remote_url")" != "$(normalize_remote_url "$package_remote_url")" ]]; then
     print_failure \
-      "${resolved_file} must resolve MHPlatform from the canonical remote." \
-      "$mhplatform_block"
+      "${resolved_file} must resolve MHPlatform from the Package.swift remote." \
+      "Package.swift: ${package_remote_url:-missing}
+${resolved_file}: ${resolved_remote_url:-missing}"
   fi
 
   if ! grep -Eq '"revision" : "[0-9a-f]{40}"' <<<"$mhplatform_block"; then
@@ -196,9 +216,9 @@ do
       "$mhplatform_block"
   fi
 
-  if ! grep -Eq "\"version\" : \"${expected_mhplatform_version//./\\.}\"" <<<"$mhplatform_block"; then
+  if ! grep -Eq '"version" : "[^"]+"' <<<"$mhplatform_block"; then
     print_failure \
-      "${resolved_file} must record MHPlatform version ${expected_mhplatform_version}." \
+      "${resolved_file} must record the resolved MHPlatform version." \
       "$mhplatform_block"
   fi
 

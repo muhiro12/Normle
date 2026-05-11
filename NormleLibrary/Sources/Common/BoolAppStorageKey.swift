@@ -8,7 +8,7 @@
 
 import MHPlatformCore
 
-public enum BoolAppStorageKey: String, MHBoolPreferenceKeyRepresentable {
+public enum BoolAppStorageKey: String, MHBoolPrefDescriptorRepresentable {
     case isSubscribeOn = "m5k3I8s9"
     case isICloudOn = "c1o9U2d4"
     case isURLMaskingEnabled = "f3R8q1L0"
@@ -16,7 +16,14 @@ public enum BoolAppStorageKey: String, MHBoolPreferenceKeyRepresentable {
     case isPhoneMaskingEnabled = "p6V1x8N3"
     case shouldResetTipsOnNextLaunch = "b2N7q4T6"
 
-    public var preferenceKey: MHBoolPreferenceKey {
-        .init(storageKey: rawValue)
+    public var preferenceDescriptor: MHBoolPreferenceDescriptor {
+        .init(
+            storageKey: rawValue,
+            defaultSelection: .standard
+        )
+    }
+
+    public var preferenceKey: MHBoolPreferenceDescriptor {
+        preferenceDescriptor
     }
 }

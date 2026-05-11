@@ -9,6 +9,7 @@
 import MHPlatform
 import NormleLibrary
 import Observation
+import SwiftData
 import SwiftUI
 
 struct ContentView: View {
@@ -33,7 +34,7 @@ struct ContentView: View {
     @ViewBuilder var body: some View {
         tabContent
             .mhRouteHandler(platformEnvironment.routeInbox) { route in
-                await navigationModel.apply(
+                navigationModel.apply(
                     route,
                     context: modelContext
                 )
