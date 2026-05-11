@@ -13,19 +13,27 @@ import Testing
 struct UserPreferencesStoreTests {
     @MainActor
     @Test
-    func initCompletesMissingFieldsAndWritesBackNormalizedPayload() throws {
+    func initLoadsPersistedCurrentPayload() throws {
         let userDefaults = makeUserDefaults()
-        let payload = """
-        {
-          "maskingPreferences": {
-            "isURLMaskingEnabled": false
-          },
-          "presetSelection": {
-            "caseTransform": "uppercase"
-          }
-        }
-        """
-        let data = try #require(payload.data(using: .utf8))
+        let expectedPreferences = UserPreferences(
+            maskingPreferences: .init(
+                isURLMaskingEnabled: false,
+                isEmailMaskingEnabled: true,
+                isPhoneMaskingEnabled: false
+            ),
+            presetSelection: .init(
+                isCustomMappingEnabled: true,
+                caseTransform: .uppercase,
+                alphanumericWidthTransform: .halfwidthAlphanumericToFullwidth,
+                spaceWidthTransform: nil,
+                katakanaWidthTransform: nil,
+                digitsWidthTransform: nil,
+                base64Transform: nil,
+                urlTransform: nil,
+                qrTransform: nil
+            )
+        )
+        let data = try JSONEncoder().encode(expectedPreferences)
 
         userDefaults.set(
             data,
@@ -34,21 +42,14 @@ struct UserPreferencesStoreTests {
 
         let store = UserPreferencesStore(userDefaults: userDefaults)
 
-        #expect(store.preferences.maskingPreferences.isURLMaskingEnabled == false)
-        #expect(store.preferences.maskingPreferences.isEmailMaskingEnabled)
-        #expect(store.preferences.maskingPreferences.isPhoneMaskingEnabled)
-        #expect(store.preferences.presetSelection.caseTransform == .uppercase)
-        #expect(store.preferences.presetSelection.isCustomMappingEnabled == false)
-        #expect(store.preferences.presetSelection.base64Transform == nil)
+        #expect(store.preferences == expectedPreferences)
         let storedData = try #require(
             userDefaults.data(
                 forKey: NormleUserDefaultsKeys.Standard.userPreferences.rawValue
             )
         )
-        let storedPreferences = UserPreferences.decode(from: storedData)
 
-        #expect(storedPreferences == store.preferences)
-        #expect(storedData != data)
+        #expect(storedData == data)
     }
 
     @MainActor
@@ -67,7 +68,7 @@ struct UserPreferencesStoreTests {
                 forKey: NormleUserDefaultsKeys.Standard.userPreferences.rawValue
             )
         )
-        let decoded = UserPreferences.decode(from: storedData)
+        let decoded = try JSONDecoder().decode(UserPreferences.self, from: storedData)
 
         #expect(decoded.maskingPreferences.isPhoneMaskingEnabled == false)
         #expect(decoded.presetSelection.base64Transform == .base64Encode)

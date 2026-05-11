@@ -23,11 +23,7 @@ public final class UserPreferencesStore: ObservableObject {
     ) {
         preferenceStore = .init(userDefaults: userDefaults)
         preferenceKey = MHPreferenceDescriptors().userPreferences
-        preferences = Self.loadPreferences(
-            userDefaults: userDefaults,
-            preferenceStore: preferenceStore,
-            preferenceKey: preferenceKey
-        )
+        preferences = preferenceStore.codable(for: preferenceKey) ?? .defaults
     }
 
     public func update(_ mutation: (inout UserPreferences) -> Void) {
@@ -43,39 +39,5 @@ public final class UserPreferencesStore: ObservableObject {
             updatedPreferences,
             for: preferenceKey
         )
-    }
-}
-
-private extension UserPreferencesStore {
-    static func loadPreferences(
-        userDefaults: UserDefaults,
-        preferenceStore: MHPreferenceStore,
-        preferenceKey: MHCodablePreferenceDescriptor<UserPreferences>
-    ) -> UserPreferences {
-        guard let storedData = userDefaults.data(
-            forKey: preferenceKey.storageKey
-        ) else {
-            return .defaults
-        }
-
-        let preferences: UserPreferences
-
-        if let storedPreferences = preferenceStore.codable(
-            for: preferenceKey
-        ) {
-            preferences = storedPreferences
-        } else {
-            preferences = UserPreferences.decode(from: storedData)
-        }
-
-        guard preferences.encode() != storedData else {
-            return preferences
-        }
-
-        preferenceStore.setCodable(
-            preferences,
-            for: preferenceKey
-        )
-        return preferences
     }
 }
