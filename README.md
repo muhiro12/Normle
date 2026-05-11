@@ -71,11 +71,15 @@ post-clone CI setup.
 - `bash ci_scripts/tasks/format_swift.sh` is the explicit SwiftLint autofix
   step to run after Swift edits and before the final verification gate.
 - `bash ci_scripts/tasks/verify_task_completion.sh` is the non-destructive
-  verification gate for task completion.
-- `bash ci_scripts/tasks/verify_pre_commit.sh` reruns the same non-destructive
-  verification gate for Git `pre-commit` and manual final rechecks.
+  verification gate for Codex task completion.
 - `bash ci_scripts/tasks/verify_repository_state.sh` checks the current
   repository state and still writes CI run artifacts.
+- `bash ci_scripts/tasks/verify_pre_push.sh` is the optional Git `pre-push`
+  wrapper for the same non-destructive verification gate.
+- Release UI smoke auditing is intentionally separate from the normal verify
+  gate. Use the global `$xcode-ui-smoke-auditor` skill and the
+  [release UI smoke audit guide](Designs/Architecture/release-ui-smoke-audit.md)
+  when a release or UI-sensitive change needs live Simulator evidence.
 
 SwiftLint is resolved from the `SimplyDanny/SwiftLintPlugins` package declared
 in `Normle.xcodeproj`. The repository scripts do not require a separately
@@ -106,22 +110,23 @@ verify entrypoint to execute all required checks:
 CI_RUN_FORCE_FULL=1 bash ci_scripts/tasks/verify_task_completion.sh
 ```
 
-If you only need the final pre-commit recheck shell:
-
-```sh
-bash ci_scripts/tasks/verify_pre_commit.sh
-```
-
 If you only need required builds or tests based on local changes:
 
 ```sh
 bash ci_scripts/tasks/verify_repository_state.sh
 ```
 
-If you want Git's `pre-commit` hook to enforce the same repository flow,
-install `pre-commit` in your local environment and run `pre-commit install`.
-The hook delegates to `bash ci_scripts/tasks/verify_pre_commit.sh` through the
-local `.pre-commit-config.yaml`.
+If you want Git's `pre-push` hook to enforce the same repository flow,
+configure the hook to delegate to `bash ci_scripts/tasks/verify_pre_push.sh`.
+
+If you only need the optional `pre-push` wrapper shell:
+
+```sh
+bash ci_scripts/tasks/verify_pre_push.sh
+```
+
+Existing local `pre-commit` installs can still delegate through
+`.pre-commit-config.yaml` to `bash ci_scripts/tasks/verify_pre_commit.sh`.
 
 The scripts below are optional targeted helpers, not standardized repository
 entrypoints.

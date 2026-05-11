@@ -95,11 +95,10 @@ tasks.filter { $0.isCompleted }
 
 ## Build and Test Entry Point
 
-Agents MUST use one of these standardized entrypoints:
+Agents MUST use this standardized verification entrypoint:
 
 ``` sh
 bash ci_scripts/tasks/verify_task_completion.sh
-bash ci_scripts/tasks/verify_repository_state.sh
 ```
 
 Agents may run `bash ci_scripts/tasks/check_environment.sh --profile verify`
@@ -108,8 +107,12 @@ When Swift files are edited, agents should run
 `bash ci_scripts/tasks/format_swift.sh` before the final verification gate.
 `bash ci_scripts/tasks/verify_task_completion.sh` is the non-destructive
 verification gate.
-`bash ci_scripts/tasks/verify_pre_commit.sh` reruns the same non-destructive
-verification shell for manual final checks and `.pre-commit-config.yaml`.
+`bash ci_scripts/tasks/verify_pre_push.sh` is the optional Git `pre-push`
+wrapper for the same non-destructive verification gate.
+`bash ci_scripts/tasks/verify_repository_state.sh` is the supplemental
+repository-state verification entrypoint that still writes CI run artifacts.
+`bash ci_scripts/tasks/verify_pre_commit.sh` is retained for existing local
+pre-commit installs that delegate through `.pre-commit-config.yaml`.
 SwiftLint is resolved from the `SimplyDanny/SwiftLintPlugins` package declared
 in `Normle.xcodeproj`, not from a separately installed `swiftlint` binary.
 
@@ -118,3 +121,11 @@ Each run stores `summary.md`, `commands.txt`, `meta.json`, `logs/`, `results/`, 
 Shared CI directories are under `.build/ci/shared/` (`cache/`, `DerivedData/`, `tmp/`, `home/`).
 Only the newest 5 run directories are retained.
 The entire `.build/ci` directory is disposable.
+
+## Release UI Smoke Audit
+
+Release UI smoke auditing is separate from the standard verification
+entrypoint. When release or UI-sensitive work needs live Simulator evidence,
+use the global `$xcode-ui-smoke-auditor` skill and keep the audit
+non-destructive by default. Do not erase simulator data, reset containers, or
+add UI test targets solely for the audit unless explicitly requested.
