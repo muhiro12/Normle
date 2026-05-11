@@ -12,17 +12,7 @@ import SwiftData
 /// Imports and exports collections of mapping rules.
 public enum MappingRuleTransferService {
     private enum TransferFormat {
-        static let currentVersion = 2
-        static let minimumSupportedVersion = 1
-    }
-
-    private enum PayloadCodingKeys: String, CodingKey {
-        case date
-        case source
-        case target
-        case isEnabled
-        case original
-        case masked
+        static let currentVersion = 1
     }
 
     /// Describes how imported rules should be merged with existing rules.
@@ -63,64 +53,6 @@ public enum MappingRuleTransferService {
         let source: String
         let target: String
         let isEnabled: Bool
-
-        init(
-            date: Date,
-            source: String,
-            target: String,
-            isEnabled: Bool
-        ) {
-            self.date = date
-            self.source = source
-            self.target = target
-            self.isEnabled = isEnabled
-        }
-
-        init(from decoder: Decoder) throws {
-            let container = try decoder.container(
-                keyedBy: PayloadCodingKeys.self
-            )
-            date = try container.decode(
-                Date.self,
-                forKey: .date
-            )
-            if let decodedSource = try container.decodeIfPresent(
-                String.self,
-                forKey: .source
-            ) {
-                source = decodedSource
-            } else {
-                source = try container.decode(
-                    String.self,
-                    forKey: .original
-                )
-            }
-            if let decodedTarget = try container.decodeIfPresent(
-                String.self,
-                forKey: .target
-            ) {
-                target = decodedTarget
-            } else {
-                target = try container.decode(
-                    String.self,
-                    forKey: .masked
-                )
-            }
-            isEnabled = try container.decode(
-                Bool.self,
-                forKey: .isEnabled
-            )
-        }
-
-        func encode(to encoder: Encoder) throws {
-            var container = encoder.container(
-                keyedBy: PayloadCodingKeys.self
-            )
-            try container.encode(date, forKey: .date)
-            try container.encode(source, forKey: .source)
-            try container.encode(target, forKey: .target)
-            try container.encode(isEnabled, forKey: .isEnabled)
-        }
     }
 
     private struct Transfer: Codable {
@@ -219,11 +151,7 @@ private extension MappingRuleTransferService {
             from: data
         )
 
-        let supportedVersions = [
-            TransferFormat.minimumSupportedVersion,
-            TransferFormat.currentVersion
-        ]
-        guard supportedVersions.contains(transfer.version) else {
+        guard transfer.version == TransferFormat.currentVersion else {
             throw TransferError.unsupportedVersion
         }
 

@@ -33,15 +33,14 @@ public final class UserPreferencesStore: ObservableObject {
     public func update(_ mutation: (inout UserPreferences) -> Void) {
         var updatedPreferences = preferences
         mutation(&updatedPreferences)
-        let normalizedPreferences = updatedPreferences.normalized()
 
-        guard normalizedPreferences != preferences else {
+        guard updatedPreferences != preferences else {
             return
         }
 
-        preferences = normalizedPreferences
+        preferences = updatedPreferences
         preferenceStore.setCodable(
-            normalizedPreferences,
+            updatedPreferences,
             for: preferenceKey
         )
     }
@@ -64,7 +63,7 @@ private extension UserPreferencesStore {
         if let storedPreferences = preferenceStore.codable(
             for: preferenceKey
         ) {
-            preferences = storedPreferences.normalized()
+            preferences = storedPreferences
         } else {
             preferences = UserPreferences.decode(from: storedData)
         }

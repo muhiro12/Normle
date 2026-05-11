@@ -37,7 +37,7 @@ StoreKit-backed runtime state.
   core-safe platform surface.
 - **App-owned persistence bootstrap** - `Normle` owns `ModelContainer`
   construction, CloudKit fallback, previews, and smoke-test containers, while
-  `NormleLibrary` owns `NormleSchemaV1` and `NormleSchemaMigrationPlan`.
+  `NormleLibrary` owns the SwiftData model types and persistence rules.
 - **App assembly boundary** - `Normle/Sources/NormleAppAssembly.swift` wires
   runtime dependencies and environment injection.
 - **Screen-scoped adapters** - transform, mapping, and settings screens use

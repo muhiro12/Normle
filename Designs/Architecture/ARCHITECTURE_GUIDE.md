@@ -19,7 +19,7 @@ Related decisions:
 
 | Layer | Owns | Must not own |
 | --- | --- | --- |
-| Domain (`NormleLibrary`) | Transform rules, masking and restore logic, mapping transfer formats, SwiftData models, schema versions, migration plan, preference-backed value types | App lifecycle wiring, `ModelContainer` fallback policy, TipKit invalidation, file import/export UI flow, alert presentation |
+| Domain (`NormleLibrary`) | Transform rules, masking and restore logic, mapping transfer formats, SwiftData models, persistence rules, preference-backed value types | App lifecycle wiring, `ModelContainer` fallback policy, TipKit invalidation, file import/export UI flow, alert presentation |
 | Adapter (`Normle`) | `ModelContainer` creation, CloudKit on/off fallback, runtime bootstrap, route intake, mutation workflow wiring, TipKit, clipboard, file import/export, destructive reset orchestration | Reimplementing transform, mapping, restore, or persistence rules already owned by `NormleLibrary` |
 | View (SwiftUI) | Layout, bindings, sheet/dialog presentation state, transient selection and navigation state, display-only formatting | Direct domain branching, data import/export rules, mutation retry policy, runtime/bootstrap ownership |
 
@@ -65,8 +65,6 @@ completion, but transform and persistence rules stay in `NormleLibrary`.
 Keep in `NormleLibrary`:
 
 - `@Model` types
-- `NormleSchemaV1`
-- `NormleSchemaMigrationPlan`
 - domain services that accept `ModelContext`
 
 Keep in `Normle`:

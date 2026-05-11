@@ -107,41 +107,36 @@ struct MappingRuleTransferServiceTests {
     }
 
     @Test
-    func importHandlesLegacyFieldNames() throws {
+    func importRejectsUnsupportedTransferVersion() throws {
         let context = try makeContext()
         let payload = """
         {
-          "version": 1,
+          "version": 2,
           "exportedAt": "2024-01-01T00:00:00Z",
           "rules": [
             {
               "date": "2024-01-01T00:00:00Z",
-              "original": "Legacy",
-              "masked": "Alias",
+              "source": "Source",
+              "target": "Target",
               "isEnabled": true
             }
           ]
         }
         """
         guard let data = payload.data(using: .utf8) else {
-            Issue.record("Failed to build legacy payload")
+            Issue.record("Failed to build unsupported payload")
             return
         }
 
-        let result = try MappingRuleTransferService.importData(
-            data,
-            context: context,
-            policy: .replaceAll
-        )
-
-        #expect(result.insertedCount == 1)
-        #expect(result.updatedCount == 0)
-        #expect(result.totalCount == 1)
-
-        let fetched = try context.fetch(FetchDescriptor<MappingRule>())
-        #expect(fetched.count == 1)
-        #expect(fetched.first?.source == "Legacy")
-        #expect(fetched.first?.target == "Alias")
+        #expect(
+            throws: MappingRuleTransferService.TransferError.unsupportedVersion
+        ) {
+            try MappingRuleTransferService.importData(
+                data,
+                context: context,
+                policy: .replaceAll
+            )
+        }
     }
 
     @Test

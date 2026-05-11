@@ -17,7 +17,6 @@ struct UserPreferencesStoreTests {
         let userDefaults = makeUserDefaults()
         let payload = """
         {
-          "version": 1,
           "maskingPreferences": {
             "isURLMaskingEnabled": false
           },

@@ -21,5 +21,5 @@ services belong there.
 - New reusable operations should be expressed through library services first.
 - App-side views and screen models should call shared APIs instead of
   reconstructing the behavior directly.
-- Schema versioning stays reviewable because `NormleSchemaV1` and
-  `NormleSchemaMigrationPlan` remain library-owned contracts.
+- Persistence stays reviewable because SwiftData model types and the services
+  that mutate them remain library-owned contracts.

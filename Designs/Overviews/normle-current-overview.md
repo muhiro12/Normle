@@ -13,14 +13,14 @@ library plus one app target:
 
 - `Normle` owns runtime bootstrap, platform adapters, screen models, and UI.
 - `NormleLibrary` owns reusable business logic, SwiftData models, schema
-  versioning, and persistence rules that accept `ModelContext`.
+  and persistence rules that accept `ModelContext`.
 
 ## Surface Summary
 
 | Surface | Current role | Key responsibilities |
 | --- | --- | --- |
 | `Normle` | Primary product surface | SwiftUI screens, runtime assembly, `ModelContainer` creation, TipKit, route handling, app alerts, destructive reset orchestration |
-| `NormleLibrary` | Shared domain layer | Transform execution, masking rules, mapping transfer, history persistence, restore logic, schema versioning, preference-backed value types |
+| `NormleLibrary` | Shared domain layer | Transform execution, masking rules, mapping transfer, history persistence, restore logic, preference-backed value types |
 | `NormleTests` | App integration / smoke surface | Runtime bootstrap smoke test, app-owned container factory tests |
 
 ## Current End-User Features
