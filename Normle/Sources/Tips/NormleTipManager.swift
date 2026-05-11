@@ -45,7 +45,7 @@ enum NormleTipManager {
     ) {
         userDefaults.set(
             true,
-            forKey: BoolAppStorageKey.shouldResetTipsOnNextLaunch.rawValue
+            forKey: NormleUserDefaultsKeys.Standard.shouldResetTipsOnNextLaunch.rawValue
         )
     }
 
@@ -56,7 +56,7 @@ enum NormleTipManager {
             assertionFailure(error.localizedDescription)
         }
     ) {
-        let storageKey = BoolAppStorageKey.shouldResetTipsOnNextLaunch.rawValue
+        let storageKey = NormleUserDefaultsKeys.Standard.shouldResetTipsOnNextLaunch.rawValue
         guard userDefaults.bool(forKey: storageKey) else {
             return
         }

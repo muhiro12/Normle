@@ -140,7 +140,7 @@ private extension NormleFactoryResetCoordinator {
                         preferences = .defaults
                     }
                     dependencies.preferenceStore.remove(
-                        DataAppStorageKey.userPreferences.preferenceKey
+                        MHPreferenceDescriptors().userPreferences
                     )
                 }
             },
@@ -155,7 +155,7 @@ private extension NormleFactoryResetCoordinator {
                 await MainActor.run {
                     dependencies.preferenceStore.set(
                         true,
-                        for: BoolAppStorageKey.shouldResetTipsOnNextLaunch.preferenceKey
+                        for: MHPreferenceDescriptors().shouldResetTipsOnNextLaunch
                     )
                 }
             },
@@ -235,14 +235,14 @@ private extension NormleFactoryResetCoordinator {
         preferenceStore: MHPreferenceStore
     ) {
         [
-            BoolAppStorageKey.isSubscribeOn,
-            BoolAppStorageKey.isICloudOn,
-            BoolAppStorageKey.isURLMaskingEnabled,
-            BoolAppStorageKey.isEmailMaskingEnabled,
-            BoolAppStorageKey.isPhoneMaskingEnabled
-        ].forEach { key in
+            MHPreferenceDescriptors().isSubscribeOn,
+            MHPreferenceDescriptors().isICloudOn,
+            MHPreferenceDescriptors().isURLMaskingEnabled,
+            MHPreferenceDescriptors().isEmailMaskingEnabled,
+            MHPreferenceDescriptors().isPhoneMaskingEnabled
+        ].forEach { descriptor in
             preferenceStore.remove(
-                key.preferenceKey
+                descriptor
             )
         }
     }

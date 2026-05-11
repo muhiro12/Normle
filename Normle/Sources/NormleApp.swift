@@ -12,7 +12,7 @@ import SwiftUI
 
 @main
 struct NormleApp: App {
-    @AppStorage(BoolAppStorageKey.isICloudOn)
+    @AppStorage(\.isICloudOn)
     private var isICloudOn
 
     @State private var sessionController: NormleAppSessionController

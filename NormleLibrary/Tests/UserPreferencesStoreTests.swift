@@ -29,7 +29,7 @@ struct UserPreferencesStoreTests {
 
         userDefaults.set(
             data,
-            forKey: DataAppStorageKey.userPreferences.rawValue
+            forKey: NormleUserDefaultsKeys.Standard.userPreferences.rawValue
         )
 
         let store = UserPreferencesStore(userDefaults: userDefaults)
@@ -42,7 +42,7 @@ struct UserPreferencesStoreTests {
         #expect(store.preferences.presetSelection.base64Transform == nil)
         let storedData = try #require(
             userDefaults.data(
-                forKey: DataAppStorageKey.userPreferences.rawValue
+                forKey: NormleUserDefaultsKeys.Standard.userPreferences.rawValue
             )
         )
         let storedPreferences = UserPreferences.decode(from: storedData)
@@ -64,7 +64,7 @@ struct UserPreferencesStoreTests {
 
         let storedData = try #require(
             userDefaults.data(
-                forKey: DataAppStorageKey.userPreferences.rawValue
+                forKey: NormleUserDefaultsKeys.Standard.userPreferences.rawValue
             )
         )
         let decoded = UserPreferences.decode(from: storedData)

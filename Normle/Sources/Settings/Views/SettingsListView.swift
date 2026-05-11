@@ -20,9 +20,9 @@ struct SettingsListView: View {
     private var sessionController
     @Environment(NormlePlatformEnvironment.self)
     private var platformEnvironment
-    @AppStorage(BoolAppStorageKey.isSubscribeOn)
+    @AppStorage(\.isSubscribeOn)
     private var isSubscribeOn
-    @AppStorage(BoolAppStorageKey.isICloudOn)
+    @AppStorage(\.isICloudOn)
     private var isICloudOn
 
     @State private var screenModel = SettingsScreenModel()

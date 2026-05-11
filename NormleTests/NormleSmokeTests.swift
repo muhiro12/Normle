@@ -175,13 +175,15 @@ struct NormleSmokeTests {
 }
 
 private extension NormleSmokeTests {
-    var persistedFlagKeys: [BoolAppStorageKey] {
-        [
-            .isSubscribeOn,
-            .isICloudOn,
-            .isURLMaskingEnabled,
-            .isEmailMaskingEnabled,
-            .isPhoneMaskingEnabled
+    var persistedFlagStorageKeys: [String] {
+        let descriptors = MHPreferenceDescriptors()
+
+        return [
+            descriptors.isSubscribeOn.storageKey,
+            descriptors.isICloudOn.storageKey,
+            descriptors.isURLMaskingEnabled.storageKey,
+            descriptors.isEmailMaskingEnabled.storageKey,
+            descriptors.isPhoneMaskingEnabled.storageKey
         ]
     }
 
@@ -218,10 +220,10 @@ private extension NormleSmokeTests {
             )
         }
 
-        persistedFlagKeys.forEach { key in
+        persistedFlagStorageKeys.forEach { storageKey in
             userDefaults.set(
                 true,
-                forKey: key.preferenceKey.storageKey
+                forKey: storageKey
             )
         }
 
@@ -236,7 +238,7 @@ private extension NormleSmokeTests {
         )
         #expect(
             userDefaults.data(
-                forKey: DataAppStorageKey.userPreferences.preferenceKey.storageKey
+                forKey: MHPreferenceDescriptors().userPreferences.storageKey
             ) != nil
         )
     }
@@ -265,20 +267,20 @@ private extension NormleSmokeTests {
         #expect(environment.preferencesStore.preferences == .defaults)
         #expect(
             userDefaults.data(
-                forKey: DataAppStorageKey.userPreferences.preferenceKey.storageKey
+                forKey: MHPreferenceDescriptors().userPreferences.storageKey
             ) == nil
         )
 
-        persistedFlagKeys.forEach { key in
+        persistedFlagStorageKeys.forEach { storageKey in
             #expect(
                 userDefaults.object(
-                    forKey: key.preferenceKey.storageKey
+                    forKey: storageKey
                 ) == nil
             )
         }
         #expect(
             userDefaults.bool(
-                forKey: BoolAppStorageKey.shouldResetTipsOnNextLaunch.preferenceKey.storageKey
+                forKey: MHPreferenceDescriptors().shouldResetTipsOnNextLaunch.storageKey
             )
         )
 

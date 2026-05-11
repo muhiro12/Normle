@@ -19,7 +19,7 @@ struct NormleAppAssembly {
 
     static func live() -> Self {
         let isCloudSyncEnabled = MHPreferenceStore().bool(
-            for: BoolAppStorageKey.isICloudOn.preferenceKey
+            for: MHPreferenceDescriptors().isICloudOn
         )
         let result = NormleAppModelContainerFactory.makeLiveContainer(
             cloudSyncEnabled: isCloudSyncEnabled,

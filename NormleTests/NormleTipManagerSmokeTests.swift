@@ -214,6 +214,6 @@ struct NormleTipManagerSmokeTests {
 
 private extension NormleTipManagerSmokeTests {
     var tipResetStorageKey: String {
-        BoolAppStorageKey.shouldResetTipsOnNextLaunch.preferenceKey.storageKey
+        NormleUserDefaultsKeys.Standard.shouldResetTipsOnNextLaunch.rawValue
     }
 }

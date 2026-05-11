@@ -22,9 +22,9 @@ struct ContentView: View {
     @Environment(\.modelContext)
     private var modelContext
 
-    @AppStorage(BoolAppStorageKey.isSubscribeOn)
+    @AppStorage(\.isSubscribeOn)
     private var isSubscribeOn
-    @AppStorage(BoolAppStorageKey.isICloudOn)
+    @AppStorage(\.isICloudOn)
     private var isICloudOn
     @State private var navigationModel = NormleNavigationModel()
     @State private var alertTitle = String()

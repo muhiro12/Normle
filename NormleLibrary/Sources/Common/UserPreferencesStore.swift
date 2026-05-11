@@ -22,7 +22,7 @@ public final class UserPreferencesStore: ObservableObject {
         userDefaults: UserDefaults = .standard
     ) {
         preferenceStore = .init(userDefaults: userDefaults)
-        preferenceKey = DataAppStorageKey.userPreferences.preferenceKey
+        preferenceKey = MHPreferenceDescriptors().userPreferences
         preferences = Self.loadPreferences(
             userDefaults: userDefaults,
             preferenceStore: preferenceStore,
